@@ -468,8 +468,15 @@ const StudentList = () => {
                                             )}
                                             {visibleCols.has('name') && (
                                                 <td className="sl-td-name">
-                                                    <div className="sl-name-row">
-                                                        <span className="sl-name">{s.name || '—'}</span>
+                                                    <div className="sl-name-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 'min-content' }}>
+                                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                                            <span className="sl-name">{s.name || '—'}</span>
+                                                            {s.isStaffChild && (
+                                                                <span style={{ fontSize: '10px', fontWeight: 600, color: '#0284c7', backgroundColor: '#e0f2fe', padding: '2px 6px', borderRadius: '4px', width: 'fit-content', border: '1px solid #bae6fd', lineHeight: 1 }}>
+                                                                    Teacher's Ward
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                         {isDisabled && <span className="sl-badge-inactive">Inactive</span>}
                                                     </div>
                                                 </td>

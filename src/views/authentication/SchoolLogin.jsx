@@ -11,6 +11,7 @@ import {
   IconBuildingBank
 } from
   '@tabler/icons-react';
+import { api } from 'src/lib/api-client';
 
 // ——————————————————————————————————————————
 // Demo credentials for development / testing.
@@ -79,38 +80,51 @@ const SchoolLogin = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
 
-    // Simulate a brief loading delay for UX polish
-    setTimeout(() => {
-      const demo = DEMO_USERS[username];
-      if (demo && demo.password === password) {
-        // Store a dummy token and user — no real backend needed
-        localStorage.setItem('auth_token', 'dummy_token_for_demo_testing');
-        localStorage.setItem('auth_user', JSON.stringify(demo.user));
-        // Redirect to school dashboard
-        window.location.href = '/school/dashboard';
+    try {
+      // 1. Authenticate with backend
+      const response = await api.post('/super-admin/login', {
+        username,
+        password
+      });
+
+      // 2. Save token FIRST — axios interceptor needs it for the /me call
+      localStorage.setItem('auth_token', response.access_token);
+
+      // 3. Fetch profile and add role
+      const profile = await api.get('/super-admin/me');
+      const userData = { ...profile, role: 'super_admin' };
+
+      // 4. Persist user to localStorage and do a full reload to ensure clean state
+      localStorage.setItem('auth_user', JSON.stringify(userData));
+      window.location.href = '/super/dashboard';
+
+    } catch (err) {
+      console.error('Login error:', err);
+      // Clean up any partial state
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_user');
+
+      if (err.response && err.response.status === 401) {
+        setError('Invalid username or password');
       } else {
-        setError('Invalid username or password. Try a Quick Login below.');
+        setError('Login failed. Please try again later.');
       }
+    } finally {
       setIsLoading(false);
-    }, 600);
+    }
   };
 
   const quickLogin = (role) => {
     const demo = DEMO_USERS[role];
-    if (!demo) return;
-    setError('');
-    setIsLoading(true);
-    // Log in immediately with demo credentials
-    setTimeout(() => {
-      localStorage.setItem('auth_token', 'dummy_token_for_demo_testing');
-      localStorage.setItem('auth_user', JSON.stringify(demo.user));
-      window.location.href = '/school/dashboard';
-    }, 400);
+    if (demo) {
+      setUsername(role);
+      setPassword(demo.password);
+    }
   };
 
   return (

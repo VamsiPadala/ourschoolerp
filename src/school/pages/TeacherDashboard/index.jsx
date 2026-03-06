@@ -1,469 +1,343 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
-    BarChart, Bar, PieChart, Pie, Cell,
-    XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area
+    BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area, RadarChart, Radar,
+    PolarGrid, PolarAngleAxis, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
-import { Bell, Pencil, Clock, ChevronLeft, ChevronRight, Calendar, Edit, Share2, Medal, AlertCircle, Hospital, FileWarning } from 'lucide-react';
-import '../Reports/Reports.css';
+import '../Dashboard/Dashboard.css';
+import '../Dashboard/RolesDashboard.css';
+import './TeacherDashboard.css';
 
-// ─── Data (same fields as before, just presented better) ─────────────────────
-const teacherPhoto = 'https://preskool.dreamstechnologies.com/html/template/assets/img/teachers/teacher-05.jpg';
+// ── DATA ─────────────────────────────────────────────────────────────
+const kpiCards = [
+    { label: 'My Students', value: '186', sub: '6 Classes', icon: '👨‍🎓', color: '#3d5ee1', bg: '#eef1fd' },
+    { label: "Today's Classes", value: '5', sub: '2 Remaining', icon: '📖', color: '#28c76f', bg: '#e8faf1' },
+    { label: 'Attendance Rate', value: '94.2%', sub: 'This Month', icon: '✅', color: '#ff9f43', bg: '#fff5e6' },
+    { label: 'Avg Class Score', value: '78.4%', sub: 'Last Exam', icon: '📊', color: '#7367f0', bg: '#efedfd' },
+    { label: 'Homework Due', value: '3', sub: 'Pending Review', icon: '📝', color: '#00cfe8', bg: '#e0f9fc' },
+    { label: 'Leave Balance', value: '12', sub: 'Days Remaining', icon: '🏖️', color: '#ea5455', bg: '#fce8e8' },
+];
 
 const todaysClasses = [
-    { time: '09:00 - 09:45', class: 'Class V, B', subject: 'Physics', color: '#3d5ee1', bg: '#eef1fd' },
-    { time: '09:00 - 09:45', class: 'Class IV, C', subject: 'Physics', color: '#ea5455', bg: '#fce8e8' },
-    { time: '11:30 - 12:15', class: 'Class V, B', subject: 'Physics', color: '#7367f0', bg: '#efedfd' },
-    { time: '01:30 - 02:15', class: 'Class V, B', subject: 'Physics', color: '#00cfe8', bg: '#e0f9fc' },
+    { time: '08:30 AM', subject: 'Mathematics', class: 'X-A', room: 'R-101', done: true },
+    { time: '10:00 AM', subject: 'Mathematics', class: 'IX-B', room: 'R-102', done: true },
+    { time: '11:30 AM', subject: 'Mathematics', class: 'X-B', room: 'R-101', done: true },
+    { time: '01:00 PM', subject: 'Mathematics', class: 'VIII-A', room: 'R-103', done: false },
+    { time: '02:30 PM', subject: 'Mathematics', class: 'XI-A', room: 'R-105', done: false },
 ];
 
-const attendanceStats = { present: 25, absent: 2, halfday: 0, late: 1 };
-const weekDaysAttendance = [
-    { day: 'Mon', value: 85, status: 'present' }, { day: 'Tue', value: 70, status: 'present' },
-    { day: 'Wed', value: 90, status: 'present' }, { day: 'Thu', value: 60, status: 'present' },
-    { day: 'Fri', value: 45, status: 'absent' }, { day: 'Sat', value: 30, status: 'default' },
+const weeklyAttendance = [
+    { day: 'Mon', pct: 96 }, { day: 'Tue', pct: 94 }, { day: 'Wed', pct: 91 },
+    { day: 'Thu', pct: 95 }, { day: 'Fri', pct: 92 }, { day: 'Sat', pct: 86 },
 ];
 
-const bestPerformers = [
-    { name: 'Class IV, C', percentage: 80, avatar: 'https://preskool.dreamstechnologies.com/html/template/assets/img/students/student-01.jpg' },
-    { name: 'Class III, B', percentage: 54, avatar: 'https://preskool.dreamstechnologies.com/html/template/assets/img/students/student-02.jpg' },
-    { name: 'Class V, A', percentage: 76, avatar: 'https://preskool.dreamstechnologies.com/html/template/assets/img/students/student-03.jpg' },
+const classPerformance = [
+    { class: 'VIII-A', avg: 74 }, { class: 'IX-B', avg: 79 },
+    { class: 'X-A', avg: 83 }, { class: 'X-B', avg: 78 },
+    { class: 'XI-A', avg: 76 }, { class: 'XII-A', avg: 82 },
 ];
 
-const studentProgress = [
-    { name: 'Susan Boswell', class: 'III, B', percentage: 98, medal: 'gold', avatar: 'https://preskool.dreamstechnologies.com/html/template/assets/img/students/student-01.jpg' },
-    { name: 'Richard Mayes', class: 'V, A', percentage: 98, medal: 'silver', avatar: 'https://preskool.dreamstechnologies.com/html/template/assets/img/students/student-02.jpg' },
-    { name: 'Veronica Randle', class: 'V, B', percentage: 78, medal: null, avatar: 'https://preskool.dreamstechnologies.com/html/template/assets/img/students/student-03.jpg' },
+const gradeDistribution = [
+    { name: 'A+ (90+)', value: 32, color: '#28c76f' },
+    { name: 'A (80-89)', value: 48, color: '#3d5ee1' },
+    { name: 'B (70-79)', value: 54, color: '#ff9f43' },
+    { name: 'C (60-69)', value: 30, color: '#00cfe8' },
+    { name: 'D (<60)', value: 22, color: '#ea5455' },
 ];
 
-const lessonPlans = [
-    { class: 'Class V, B', title: 'Introduction Note to Physics on Tech', progress: 80, color: '#28c76f', bg: '#e8faf1' },
-    { class: 'Class V, A', title: 'Biometric & their Working Functionality', progress: 80, color: '#ff9f43', bg: '#fff5e6' },
-    { class: 'Class IV, C', title: 'Analyze and interpret literary texts skills', progress: 80, color: '#00cfe8', bg: '#e0f9fc' },
-    { class: 'Class V, A', title: 'Enhance vocabulary and grammar skills', progress: 30, color: '#ea5455', bg: '#fce8e8' },
+const topStudents = [
+    { name: 'Anjali Sharma', class: 'X-A', score: 97, avatar: '👩‍🎓', bg: '#eef1fd', color: '#3d5ee1' },
+    { name: 'Rohit Menon', class: 'XII-A', score: 95, avatar: '👨‍🎓', bg: '#e8faf1', color: '#28c76f' },
+    { name: 'Fatima Sheikh', class: 'XI-A', score: 93, avatar: '👩‍🎓', bg: '#fff5e6', color: '#ff9f43' },
+    { name: 'Aditya Kumar', class: 'X-B', score: 91, avatar: '👨‍🎓', bg: '#efedfd', color: '#7367f0' },
+    { name: 'Priya Rao', class: 'IX-B', score: 89, avatar: '👩‍🎓', bg: '#e0f9fc', color: '#00cfe8' },
 ];
 
-const studentMarks = [
-    { id: '35013', name: 'Janet', class: 'III', section: 'A', marks: '89%', cgpa: '4.2', status: 'Pass', avatar: 'https://preskool.dreamstechnologies.com/html/template/assets/img/students/student-01.jpg' },
-    { id: '35013', name: 'Joann', class: 'IV', section: 'B', marks: '88%', cgpa: '3.2', status: 'Pass', avatar: 'https://preskool.dreamstechnologies.com/html/template/assets/img/students/student-02.jpg' },
-    { id: '35011', name: 'Kathleen', class: 'II', section: 'A', marks: '69%', cgpa: '4.5', status: 'Pass', avatar: 'https://preskool.dreamstechnologies.com/html/template/assets/img/students/student-03.jpg' },
-    { id: '35010', name: 'Gifford', class: 'I', section: 'B', marks: '21%', cgpa: '4.5', status: 'Pass', avatar: 'https://preskool.dreamstechnologies.com/html/template/assets/img/students/student-04.jpg' },
-    { id: '35009', name: 'Lisa', class: 'II', section: 'B', marks: '31%', cgpa: '3.9', status: 'Fail', avatar: 'https://preskool.dreamstechnologies.com/html/template/assets/img/students/student-05.jpg' },
+const pendingHomework = [
+    { title: 'Chapter 8 – Quadratic Equations', class: 'X-A', due: 'Mar 05', submitted: 28, total: 38 },
+    { title: 'Chapter 6 – Trigonometry', class: 'XI-A', due: 'Mar 06', submitted: 22, total: 32 },
+    { title: 'Chapter 3 – Coordinate Geometry', class: 'IX-B', due: 'Mar 07', submitted: 30, total: 35 },
 ];
 
-const leaveStatuses = [
-    { type: 'Emergency Leave', date: '15 Jun 2024', status: 'Pending', icon: '🚨', statusClass: 'rpt-badge-blue' },
-    { type: 'Medical Leave', date: '15 Jun 2024', status: 'Approved', icon: '🏥', statusClass: 'rpt-badge-green' },
-    { type: 'Medical Leave', date: '16 Jun 2024', status: 'Declined', icon: '🏥', statusClass: 'rpt-badge-red' },
-    { type: 'Not Well', date: '16 Jun 2024', status: 'Approved', icon: '😷', statusClass: 'rpt-badge-green' },
+const syllabusProgress = [
+    { class: 'X-A', pct: 78, color: '#3d5ee1' },
+    { class: 'X-B', pct: 72, color: '#28c76f' },
+    { class: 'IX-B', pct: 85, color: '#ff9f43' },
+    { class: 'VIII-A', pct: 91, color: '#7367f0' },
+    { class: 'XI-A', pct: 65, color: '#ea5455' },
+    { class: 'XII-A', pct: 60, color: '#00cfe8' },
 ];
 
-const syllabusCompleted = 95;
-const syllabusCircumference = 2 * Math.PI * 40;
-const syllabusOffset = syllabusCircumference - (syllabusCompleted / 100) * syllabusCircumference;
+const recentActivities = [
+    { title: 'Marked attendance for X-A', time: '08:35 AM', icon: '✅', bg: '#e8faf1', color: '#28c76f' },
+    { title: 'Uploaded marks for IX-B', time: '10:15 AM', icon: '📊', bg: '#efedfd', color: '#7367f0' },
+    { title: 'New homework added for X-B', time: '11:50 AM', icon: '📝', bg: '#e0f9fc', color: '#00cfe8' },
+    { title: 'Leave request submitted', time: '12:30 PM', icon: '🏖️', bg: '#fff5e6', color: '#ff9f43' },
+];
 
-// ─── Mini Calendar ──────────────────────────────────────────────────────────
-const MiniCalendar = () => {
-    const [currentMonth, setCurrentMonth] = useState(new Date(2026, 1, 1));
-    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    const weekDays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload?.length) {
+        return (
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 8, padding: '10px 14px', fontSize: 13 }}>
+                <p style={{ fontWeight: 700, marginBottom: 4 }}>{label}</p>
+                {payload.map((p, i) => (
+                    <p key={i} style={{ color: p.color, margin: '2px 0' }}>{p.name}: <strong>{p.value}{typeof p.value === 'number' && p.value < 200 ? '%' : ''}</strong></p>
+                ))}
+            </div>
+        );
+    }
+    return null;
+};
 
-    const getDays = (date) => {
-        const year = date.getFullYear(), month = date.getMonth();
-        const firstDay = new Date(year, month, 1).getDay();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        const prevLastDay = new Date(year, month, 0).getDate();
-        const days = [];
-        for (let i = firstDay - 1; i >= 0; i--) days.push({ day: prevLastDay - i, cur: false });
-        for (let i = 1; i <= daysInMonth; i++) days.push({ day: i, cur: true, isToday: i === 1 });
-        const rem = 42 - days.length;
-        for (let i = 1; i <= rem; i++) days.push({ day: i, cur: false });
-        return days;
-    };
+// ── COMPONENT ─────────────────────────────────────────────────────────
+const TeacherDashboard = () => {
+    const [currentTab, setCurrentTab] = useState('overview');
+    const now = new Date();
+    const hour = now.getHours();
+    const greeting = hour < 12 ? 'Good Morning' : hour < 17 ? 'Good Afternoon' : 'Good Evening';
 
     return (
-        <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <button onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))} style={{ border: 'none', background: '#f1f3f9', borderRadius: 8, width: 28, height: 28, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <ChevronLeft size={14} color="#6e6b7b" />
-                </button>
-                <span style={{ fontSize: 13, fontWeight: 700, color: '#333448' }}>{monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}</span>
-                <button onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))} style={{ border: 'none', background: '#f1f3f9', borderRadius: 8, width: 28, height: 28, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <ChevronRight size={14} color="#6e6b7b" />
-                </button>
+        <div className="dashboard-page">
+            {/* Header */}
+            <div className="page-header">
+                <div className="page-title">
+                    <h4>Teacher Dashboard</h4>
+                    <nav className="breadcrumb"><span>Dashboard</span> / <span className="current">Teacher Dashboard</span></nav>
+                </div>
+                <div className="page-header-actions">
+                    <button className="btn btn-outline">📅 My Schedule</button>
+                    <button className="btn btn-primary">+ Add Homework</button>
+                </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', textAlign: 'center', background: '#f8fafc', borderRadius: 10, overflow: 'hidden', border: '1px solid #eef0f4' }}>
-                {weekDays.map(d => <div key={d} style={{ padding: '8px 0', fontSize: 11, fontWeight: 700, color: '#8c90a4' }}>{d}</div>)}
-                {getDays(currentMonth).map((d, i) => (
-                    <div key={i} style={{ padding: '7px 0', fontSize: 12, color: !d.cur ? '#d1d5db' : '#333448', borderTop: '1px solid #eef0f4', cursor: 'pointer' }}>
-                        {d.isToday
-                            ? <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 26, height: 26, borderRadius: '50%', background: '#3d5ee1', color: '#fff', fontWeight: 700 }}>{d.day}</span>
-                            : d.day}
+
+            {/* Welcome Banner */}
+            <div className="tdb-welcome-banner dashboard-row">
+                <div className="tdb-welcome-left">
+                    <div className="tdb-avatar">👩‍🏫</div>
+                    <div className="tdb-welcome-text">
+                        <p className="tdb-greeting">{greeting},</p>
+                        <h3 className="tdb-name">Dr. Meera Iyer</h3>
+                        <p className="tdb-role">Mathematics Teacher · North Campus</p>
+                        <div className="tdb-welcome-stats">
+                            <span>📖 6 Classes Today</span>
+                            <span>👨‍🎓 186 Students</span>
+                            <span>⭐ 4.9 Rating</span>
+                        </div>
+                    </div>
+                </div>
+                <div className="tdb-welcome-right">
+                    <div className="tdb-quote">
+                        <span className="tdb-quote-icon">💡</span>
+                        <p>"Education is not the filling of a pail, but the lighting of a fire."</p>
+                    </div>
+                    <div className="tdb-quick-actions">
+                        <button className="tdb-quick-btn" style={{ background: '#eef1fd', color: '#3d5ee1' }}>📊 Take Attendance</button>
+                        <button className="tdb-quick-btn" style={{ background: '#e8faf1', color: '#28c76f' }}>📝 Add Marks</button>
+                        <button className="tdb-quick-btn" style={{ background: '#fff5e6', color: '#ff9f43' }}>📬 Send Notice</button>
+                    </div>
+                </div>
+            </div>
+
+            {/* KPI Grid */}
+            <div className="rdb-kpi-grid">
+                {kpiCards.map((k, i) => (
+                    <div key={i} className="rdb-kpi-card dashboard-card tdb-kpi-animated" style={{ animationDelay: `${i * 80}ms` }}>
+                        <div className="rdb-kpi-icon" style={{ background: k.bg, color: k.color }}>{k.icon}</div>
+                        <div className="rdb-kpi-info">
+                            <p className="rdb-kpi-label">{k.label}</p>
+                            <h3 className="rdb-kpi-value" style={{ color: k.color }}>{k.value}</h3>
+                            <span className="rdb-kpi-sub">{k.sub}</span>
+                        </div>
                     </div>
                 ))}
             </div>
-        </div>
-    );
-};
 
-// ─── Component ──────────────────────────────────────────────────────────────
-const TeacherDashboard = () => {
-    const [activePeriod, setActivePeriod] = useState('This Week');
-
-    return (
-        <div className="rpt-page">
-            {/* ── Page Header ───────────────────────────────────────── */}
-            <div className="rpt-page-header">
-                <div>
-                    <h4 className="rpt-page-title">Teacher Dashboard</h4>
-                    <nav className="rpt-breadcrumb">
-                        <Link to="/school/dashboard">Home</Link>
-                        <span> / </span>
-                        <span className="rpt-breadcrumb-current">Teacher Dashboard</span>
-                    </nav>
-                </div>
-                <div className="rpt-header-actions">
-                    {['This Week', 'This Month', 'This Year'].map(p => (
-                        <button key={p} className={`rpt-period-btn ${activePeriod === p ? 'active' : ''}`} onClick={() => setActivePeriod(p)}>{p}</button>
-                    ))}
-                </div>
-            </div>
-
-            {/* ── Welcome Banner ────────────────────────────────────── */}
-            <div style={{ background: 'linear-gradient(135deg, #3d5ee1 0%, #7367f0 100%)', borderRadius: 16, padding: '28px 32px', position: 'relative', overflow: 'hidden', minHeight: 120 }}>
-                <div style={{ position: 'absolute', right: 0, top: 0, height: '100%', pointerEvents: 'none', zIndex: 1 }}>
-                    <img src="https://preskool.dreamstechnologies.com/html/template/assets/img/bg/bg-01.png" alt="" style={{ height: '100%', objectFit: 'contain', objectPosition: 'right', opacity: 0.3 }} />
-                </div>
-                <div style={{ position: 'relative', zIndex: 2, maxWidth: '60%' }}>
-                    <h2 style={{ color: '#fff', fontSize: '1.6rem', fontWeight: 800, margin: '0 0 6px', letterSpacing: '-0.5px' }}>Good Morning, Ms. Teena! 👋</h2>
-                    <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: 15, margin: '0 0 12px' }}>Have a great day at work. Here's your daily overview.</p>
-                    <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
-                        <Bell size={16} />
-                        <strong style={{ color: '#fff' }}>Notice:</strong> Staff meeting at 9 AM today — Don't miss it!
-                    </p>
-                </div>
-            </div>
-
-            {/* ── Profile + Syllabus + Quick KPIs ─────────────────── */}
-            <div className="rpt-row rpt-row-2">
-                {/* Teacher Profile Card */}
-                <div className="rpt-card" style={{ background: '#1E293B', overflow: 'hidden', position: 'relative' }}>
-                    <div style={{ position: 'absolute', width: 200, height: 200, background: 'rgba(99,102,241,0.1)', borderRadius: '50%', top: -60, right: '10%' }} />
-                    <div style={{ position: 'absolute', width: 120, height: 120, background: 'rgba(99,102,241,0.08)', borderRadius: '50%', top: 30, right: '40%' }} />
-                    <div style={{ padding: '24px', position: 'relative', zIndex: 2 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-                            <div style={{ position: 'relative', flexShrink: 0 }}>
-                                <span style={{ position: 'absolute', top: -10, left: -10, zIndex: 20, background: '#8B5CF6', color: '#fff', padding: '3px 9px', fontSize: 11, fontWeight: 700, borderRadius: 5 }}>#T594651</span>
-                                <div style={{ width: 90, height: 90, borderRadius: 12, border: '3px solid rgba(255,255,255,0.3)', overflow: 'hidden', boxShadow: '0 8px 20px rgba(0,0,0,0.3)' }}>
-                                    <img src={teacherPhoto} alt="Teacher" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            {/* Row: Today's Schedule + Attendance + Grade Distribution */}
+            <div className="dashboard-row" style={{ display: 'grid', gridTemplateColumns: '2fr 2fr 1.5fr', gap: 16 }}>
+                {/* Today's Schedule */}
+                <div className="dashboard-card">
+                    <div className="card-header">
+                        <h5>Today's Schedule</h5>
+                        <span className="rdb-badge badge-blue">5 Classes</span>
+                    </div>
+                    <div className="card-body" style={{ paddingTop: 8 }}>
+                        {todaysClasses.map((cls, i) => (
+                            <div key={i} className="tdb-class-item" style={{ borderLeft: `3px solid ${cls.done ? '#28c76f' : '#3d5ee1'}` }}>
+                                <div className="tdb-class-time">{cls.time}</div>
+                                <div className="tdb-class-info">
+                                    <strong>{cls.subject}</strong>
+                                    <span>{cls.class} · {cls.room}</span>
                                 </div>
+                                <span className={`rdb-badge ${cls.done ? 'badge-green' : 'badge-blue'}`}>
+                                    {cls.done ? '✓ Done' : '▶ Next'}
+                                </span>
                             </div>
-                            <div style={{ flex: 1 }}>
-                                <h3 style={{ color: '#fff', fontSize: 20, fontWeight: 800, margin: '0 0 4px' }}>Henriques Morgan</h3>
-                                <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: 13, margin: '0 0 12px' }}>Classes: I-A, V-B &nbsp;•&nbsp; <span style={{ color: '#F59E0B', fontWeight: 600 }}>Physics</span></p>
-                                <button style={{ background: '#3d5ee1', color: '#fff', border: 'none', borderRadius: 9, padding: '8px 18px', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
-                                    <Pencil size={13} /> Edit Profile
-                                </button>
-                            </div>
-                        </div>
-                        {/* Quick stats row inside card */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginTop: 20, background: 'rgba(255,255,255,0.06)', borderRadius: 12, padding: 16 }}>
-                            {[
-                                { label: 'Present', value: attendanceStats.present, color: '#28c76f' },
-                                { label: 'Absent', value: attendanceStats.absent, color: '#ea5455' },
-                                { label: 'Halfday', value: attendanceStats.halfday, color: '#ff9f43' },
-                                { label: 'Late', value: attendanceStats.late, color: '#00cfe8' },
-                            ].map((s, i) => (
-                                <div key={i} style={{ textAlign: 'center' }}>
-                                    <p style={{ margin: 0, fontSize: 11, color: 'rgba(255,255,255,0.5)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{s.label}</p>
-                                    <h4 style={{ margin: '4px 0 0', fontSize: 24, fontWeight: 800, color: s.color }}>{s.value}</h4>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Attendance Chart */}
+                <div className="dashboard-card">
+                    <div className="card-header"><h5>Weekly Student Attendance (%)</h5></div>
+                    <div className="card-body" style={{ paddingTop: 0 }}>
+                        <ResponsiveContainer width="100%" height={240}>
+                            <AreaChart data={weeklyAttendance} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                <defs>
+                                    <linearGradient id="gTchAtnd" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#3d5ee1" stopOpacity={0.25} />
+                                        <stop offset="95%" stopColor="#3d5ee1" stopOpacity={0} />
+                                    </linearGradient>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 12 }} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 12 }} domain={[80, 100]} />
+                                <Tooltip content={<CustomTooltip />} />
+                                <Area type="monotone" dataKey="pct" name="Attendance" stroke="#3d5ee1" fill="url(#gTchAtnd)" strokeWidth={2.5} dot={{ r: 5, fill: '#3d5ee1', strokeWidth: 2, stroke: '#fff' }} />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+
+                {/* Grade Distribution */}
+                <div className="dashboard-card">
+                    <div className="card-header"><h5>Grade Distribution</h5></div>
+                    <div className="card-body" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 0 }}>
+                        <ResponsiveContainer width="100%" height={160}>
+                            <PieChart>
+                                <Pie isAnimationActive={false} data={gradeDistribution} cx="50%" cy="50%" outerRadius={70} dataKey="value"
+                                    label={({ percent }) => `${(percent * 100).toFixed(0)}%`} labelLine={false}>
+                                    {gradeDistribution.map((e, i) => <Cell key={i} fill={e.color} />)}
+                                </Pie>
+                                <Tooltip formatter={(v, n) => [`${v} students`, n]} />
+                            </PieChart>
+                        </ResponsiveContainer>
+                        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 4 }}>
+                            {gradeDistribution.map((g, i) => (
+                                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 12 }}>
+                                    <span className="rdb-dot" style={{ background: g.color }} />
+                                    <span style={{ flex: 1 }}>{g.name}</span>
+                                    <strong>{g.value}</strong>
                                 </div>
                             ))}
                         </div>
                     </div>
                 </div>
-
-                {/* Syllabus Progress */}
-                <div className="rpt-card">
-                    <div className="rpt-card-header">
-                        <h5 className="rpt-card-title">Syllabus Progress</h5>
-                        <span className="rpt-badge rpt-badge-green">Physics</span>
-                    </div>
-                    <div className="rpt-chart-body" style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
-                        <div style={{ position: 'relative', width: 120, height: 120, flexShrink: 0 }}>
-                            <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }}>
-                                <circle cx="50" cy="50" r="40" fill="none" stroke="#f0f2f7" strokeWidth="10" />
-                                <circle cx="50" cy="50" r="40" fill="none" stroke="#28c76f" strokeWidth="10" strokeLinecap="round"
-                                    strokeDasharray={syllabusCircumference} strokeDashoffset={syllabusOffset} />
-                            </svg>
-                            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <span style={{ fontSize: 22, fontWeight: 800, color: '#333448' }}>{syllabusCompleted}%</span>
-                            </div>
-                        </div>
-                        <div>
-                            <p style={{ margin: '0 0 16px', fontSize: 14, color: '#8c90a4' }}>Total Syllabus Coverage</p>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                                {[{ label: 'Completed', pct: syllabusCompleted, color: '#28c76f' }, { label: 'Pending', pct: 100 - syllabusCompleted, color: '#ea5455' }].map((s, i) => (
-                                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                                        <span style={{ width: 10, height: 10, borderRadius: 3, background: s.color, flexShrink: 0 }}></span>
-                                        <span style={{ fontSize: 13, color: '#6e6b7b', fontWeight: 600 }}>{s.label}</span>
-                                        <strong style={{ marginLeft: 'auto', color: '#333448' }}>{s.pct}%</strong>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="rpt-bar-wrap" style={{ marginTop: 16 }}>
-                                <div className="rpt-bar-fill" style={{ width: `${syllabusCompleted}%`, background: 'linear-gradient(90deg, #28c76f, #3d5ee1)' }} />
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            {/* ── Today's Classes ───────────────────────────────────── */}
-            <div className="rpt-card">
-                <div className="rpt-card-header">
-                    <h5 className="rpt-card-title">Today's Classes</h5>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <button style={{ border: '1px solid #eef0f4', background: '#fff', borderRadius: 8, width: 30, height: 30, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ChevronLeft size={16} color="#6e6b7b" /></button>
-                        <span style={{ fontSize: 13, color: '#8c90a4', fontWeight: 600 }}>16 May 2024</span>
-                        <button style={{ border: '1px solid #eef0f4', background: '#fff', borderRadius: 8, width: 30, height: 30, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ChevronRight size={16} color="#6e6b7b" /></button>
-                    </div>
-                </div>
-                <div className="rpt-chart-body">
-                    <div style={{ display: 'flex', gap: 16, overflowX: 'auto', paddingBottom: 4 }}>
-                        {todaysClasses.map((cls, i) => (
-                            <div key={i} style={{ minWidth: 160, borderRadius: 14, overflow: 'hidden', border: '1px solid #eef0f4', flexShrink: 0, transition: 'all 0.3s', cursor: 'pointer' }}>
-                                <div style={{ background: cls.color, padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 6 }}>
-                                    <Clock size={13} color="#fff" />
-                                    <span style={{ color: '#fff', fontSize: 12, fontWeight: 700 }}>{cls.time}</span>
-                                </div>
-                                <div style={{ padding: '14px', background: cls.bg, textAlign: 'center' }}>
-                                    <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: cls.color }}>{cls.class}</p>
-                                    <p style={{ margin: '4px 0 0', fontSize: 12, color: '#8c90a4' }}>{cls.subject}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
-            {/* ── Attendance + Best Performers ─────────────────────── */}
-            <div className="rpt-row rpt-row-2">
-                {/* Attendance */}
-                <div className="rpt-card">
-                    <div className="rpt-card-header">
-                        <h5 className="rpt-card-title">My Attendance</h5>
-                        <span style={{ fontSize: 12, color: '#8c90a4', fontWeight: 600 }}>14 May – 21 May 2024</span>
-                    </div>
-                    <div className="rpt-chart-body">
-                        <ResponsiveContainer width="100%" height={120}>
-                            <BarChart data={weekDaysAttendance} margin={{ top: 5, right: 5, left: -35, bottom: 0 }}>
-                                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 11 }} dy={8} />
-                                <Tooltip formatter={(v) => [v + '%', 'Score']} cursor={{ fill: '#f8f9fa' }} />
-                                <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={28}>
-                                    {weekDaysAttendance.map((d, i) => (
-                                        <Cell key={i} fill={d.status === 'absent' ? '#ea5455' : d.status === 'default' ? '#e5e7eb' : '#3d5ee1'} />
+            {/* Row: Class Performance + Top Students + Activity */}
+            <div className="dashboard-row" style={{ display: 'grid', gridTemplateColumns: '2fr 1.5fr 1fr', gap: 16 }}>
+                {/* Class Performance */}
+                <div className="dashboard-card">
+                    <div className="card-header"><h5>Class-wise Average Score (%)</h5></div>
+                    <div className="card-body" style={{ paddingTop: 0 }}>
+                        <ResponsiveContainer width="100%" height={200}>
+                            <BarChart data={classPerformance} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                                <XAxis dataKey="class" axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 12 }} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 12 }} domain={[60, 100]} />
+                                <Tooltip content={<CustomTooltip />} />
+                                <Bar dataKey="avg" name="Avg Score" radius={[6, 6, 0, 0]} barSize={24}>
+                                    {classPerformance.map((entry, i) => (
+                                        <Cell key={i} fill={entry.avg >= 80 ? '#28c76f' : entry.avg >= 75 ? '#ff9f43' : '#ea5455'} />
                                     ))}
                                 </Bar>
                             </BarChart>
                         </ResponsiveContainer>
-                        <p style={{ margin: '10px 0 14px', fontSize: 12, color: '#8c90a4' }}>Total working days: <strong style={{ color: '#333448' }}>28 Days</strong></p>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
-                            {[
-                                { label: 'Present', value: attendanceStats.present, bg: '#e8faf1', color: '#28c76f' },
-                                { label: 'Absent', value: attendanceStats.absent, bg: '#fce8e8', color: '#ea5455' },
-                                { label: 'Halfday', value: attendanceStats.halfday, bg: '#fff5e6', color: '#ff9f43' },
-                                { label: 'Late', value: attendanceStats.late, bg: '#e0f9fc', color: '#00cfe8' },
-                            ].map((s, i) => (
-                                <div key={i} style={{ background: s.bg, borderRadius: 12, padding: '12px 8px', textAlign: 'center' }}>
-                                    <p style={{ margin: 0, fontSize: 11, color: s.color, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.4px' }}>{s.label}</p>
-                                    <h4 style={{ margin: '4px 0 0', fontSize: 22, fontWeight: 800, color: s.color }}>{s.value}</h4>
-                                </div>
-                            ))}
-                        </div>
                     </div>
                 </div>
 
-                {/* Best Performers */}
-                <div className="rpt-card">
-                    <div className="rpt-card-header">
-                        <h5 className="rpt-card-title">Best Performers</h5>
-                        <a href="#" className="rpt-view-all">View All →</a>
-                    </div>
-                    <div className="rpt-chart-body">
-                        <div className="rpt-subject-table">
-                            {bestPerformers.map((p, i) => (
-                                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 0', borderBottom: i < bestPerformers.length - 1 ? '1px solid #f0f2f7' : 'none' }}>
-                                    <div style={{ width: 44, height: 44, borderRadius: '50%', overflow: 'hidden', border: '2px solid #eef0f4', flexShrink: 0 }}>
-                                        <img src={p.avatar} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => e.target.src = 'https://via.placeholder.com/44'} />
-                                    </div>
-                                    <div style={{ flex: 1 }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                                            <span style={{ fontWeight: 700, fontSize: 14, color: '#333448' }}>{p.name}</span>
-                                            <strong style={{ color: '#3d5ee1', fontSize: 14 }}>{p.percentage}%</strong>
-                                        </div>
-                                        <div className="rpt-bar-wrap">
-                                            <div className="rpt-bar-fill" style={{ width: `${p.percentage}%`, background: p.percentage >= 75 ? '#28c76f' : '#ff9f43' }} />
-                                        </div>
-                                    </div>
+                {/* Top Students */}
+                <div className="dashboard-card">
+                    <div className="card-header"><h5>Top Performers</h5></div>
+                    <div className="card-body" style={{ paddingTop: 8 }}>
+                        {topStudents.map((s, i) => (
+                            <div key={i} className="rdb-staff-item" style={{ marginBottom: 8 }}>
+                                <div className="tdb-rank-badge">{i + 1}</div>
+                                <div className="rdb-staff-avatar" style={{ background: s.bg, color: s.color }}>{s.avatar}</div>
+                                <div className="rdb-staff-meta">
+                                    <div className="rdb-staff-name">{s.name}</div>
+                                    <div className="rdb-staff-dept">{s.class}</div>
                                 </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* ── Student Progress ──────────────────────────────────── */}
-            <div className="rpt-card">
-                <div className="rpt-card-header">
-                    <h5 className="rpt-card-title">Student Progress — Top Students</h5>
-                    <a href="#" style={{ fontSize: 13, color: '#8c90a4', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <Calendar size={15} /> This Month
-                    </a>
-                </div>
-                <div className="rpt-chart-body">
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
-                        {studentProgress.map((s, i) => {
-                            const medalColors = { gold: '#F59E0B', silver: '#9CA3AF', bronze: '#CD7F32' };
-                            return (
-                                <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', borderRadius: 14, border: '1px solid #eef0f4', background: '#fafbfc', transition: 'all 0.3s' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                                        <div style={{ width: 48, height: 48, borderRadius: '50%', overflow: 'hidden', border: '2px solid #eef0f4', flexShrink: 0 }}>
-                                            <img src={s.avatar} alt={s.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => e.target.src = 'https://via.placeholder.com/48'} />
-                                        </div>
-                                        <div>
-                                            <h6 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: '#333448' }}>{s.name}</h6>
-                                            <p style={{ margin: 0, fontSize: 12, color: '#8c90a4' }}>Class {s.class}</p>
-                                        </div>
-                                    </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                        {s.medal && <Medal size={20} style={{ color: medalColors[s.medal] || '#CD7F32' }} />}
-                                        <span style={{ padding: '4px 12px', borderRadius: 20, fontSize: 13, fontWeight: 700, background: s.percentage >= 90 ? '#e8faf1' : '#e0f9fc', color: s.percentage >= 90 ? '#28c76f' : '#00cfe8' }}>{s.percentage}%</span>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-            </div>
-
-            {/* ── Lesson Plans ─────────────────────────────────────── */}
-            <div className="rpt-card">
-                <div className="rpt-card-header">
-                    <h5 className="rpt-card-title">Syllabus / Lesson Plans</h5>
-                    <a href="#" className="rpt-view-all">View All →</a>
-                </div>
-                <div className="rpt-chart-body">
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
-                        {lessonPlans.map((lesson, i) => (
-                            <div key={i} style={{ borderRadius: 14, overflow: 'hidden', border: '1px solid #eef0f4' }}>
-                                <div style={{ height: 4, background: lesson.color }} />
-                                <div style={{ padding: '18px' }}>
-                                    <span style={{ display: 'inline-block', padding: '4px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, background: lesson.bg, color: lesson.color, marginBottom: 10 }}>{lesson.class}</span>
-                                    <h5 style={{ fontSize: 13, fontWeight: 700, color: '#333448', marginBottom: 14, minHeight: 40, lineHeight: 1.4 }}>{lesson.title}</h5>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                                        <span style={{ fontSize: 12, color: '#8c90a4' }}>Progress</span>
-                                        <strong style={{ fontSize: 13, color: lesson.color }}>{lesson.progress}%</strong>
-                                    </div>
-                                    <div className="rpt-bar-wrap">
-                                        <div className="rpt-bar-fill" style={{ width: `${lesson.progress}%`, background: lesson.color }} />
-                                    </div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 14, paddingTop: 12, borderTop: '1px solid #f0f2f7' }}>
-                                        <a href="#" style={{ fontSize: 12, color: '#8c90a4', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}><Edit size={12} /> Reschedule</a>
-                                        <a href="#" style={{ fontSize: 12, color: '#3d5ee1', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}><Share2 size={12} /> Share</a>
-                                    </div>
-                                </div>
+                                <span className="rdb-badge badge-green">{s.score}%</span>
                             </div>
                         ))}
                     </div>
                 </div>
+
+                {/* Recent Activity */}
+                <div className="dashboard-card">
+                    <div className="card-header"><h5>Recent Activity</h5></div>
+                    <div className="card-body" style={{ paddingTop: 8 }}>
+                        <ul className="rdb-activity-list">
+                            {recentActivities.map((a, i) => (
+                                <li key={i} className="rdb-activity-item">
+                                    <div className="rdb-activity-icon" style={{ background: a.bg, color: a.color }}>{a.icon}</div>
+                                    <div className="rdb-activity-content">
+                                        <p className="rdb-activity-title">{a.title}</p>
+                                        <span className="rdb-activity-time">{a.time}</span>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
             </div>
 
-            {/* ── Student Marks Table + Leave Status ───────────────── */}
-            <div className="rpt-row" style={{ gridTemplateColumns: '2fr 1fr' }}>
-                {/* Student Marks Table */}
-                <div className="rpt-table-card">
-                    <div className="rpt-table-header">
-                        <h5 className="rpt-table-title">Student Marks</h5>
-                        <div className="rpt-table-actions">
-                            <select className="rpt-select" style={{ fontSize: 12, padding: '6px 12px' }}><option>All Classes</option><option>Class I</option><option>Class II</option></select>
-                            <select className="rpt-select" style={{ fontSize: 12, padding: '6px 12px' }}><option>All Sections</option><option>Section A</option><option>Section B</option></select>
-                        </div>
+            {/* Row: Pending Homework + Syllabus Progress */}
+            <div className="dashboard-row" style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 16 }}>
+                <div className="dashboard-card">
+                    <div className="card-header">
+                        <h5>Pending Homework Reviews</h5>
+                        <span className="rdb-badge badge-orange">3 Pending</span>
                     </div>
-                    <div className="rpt-table-wrap">
-                        <table className="rpt-table">
+                    <div style={{ overflowX: 'auto' }}>
+                        <table className="rdb-table">
                             <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Student</th>
-                                    <th>Class</th>
-                                    <th>Section</th>
-                                    <th>Marks %</th>
-                                    <th>CGPA</th>
-                                    <th>Status</th>
-                                </tr>
+                                <tr><th>Topic</th><th>Class</th><th>Due</th><th>Submitted</th><th>Action</th></tr>
                             </thead>
                             <tbody>
-                                {studentMarks.map((s, i) => (
-                                    <tr key={i}>
-                                        <td style={{ color: '#8c90a4' }}>{s.id}</td>
-                                        <td>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                                                <div style={{ width: 36, height: 36, borderRadius: '50%', overflow: 'hidden', border: '2px solid #eef0f4', flexShrink: 0 }}>
-                                                    <img src={s.avatar} alt={s.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => e.target.src = 'https://via.placeholder.com/36'} />
+                                {pendingHomework.map((hw, i) => {
+                                    const pct = Math.round(hw.submitted / hw.total * 100);
+                                    return (
+                                        <tr key={i}>
+                                            <td><strong>{hw.title}</strong></td>
+                                            <td><span className="rdb-badge badge-blue">{hw.class}</span></td>
+                                            <td style={{ fontSize: 12 }}>{hw.due}</td>
+                                            <td>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                                    <div style={{ width: 60, height: 5, background: 'var(--border-color)', borderRadius: 3, overflow: 'hidden' }}>
+                                                        <div style={{ width: `${pct}%`, height: '100%', background: '#3d5ee1', borderRadius: 3 }} />
+                                                    </div>
+                                                    <span style={{ fontSize: 12 }}>{hw.submitted}/{hw.total}</span>
                                                 </div>
-                                                <strong>{s.name}</strong>
-                                            </div>
-                                        </td>
-                                        <td>{s.class}</td>
-                                        <td>{s.section}</td>
-                                        <td><strong>{s.marks}</strong></td>
-                                        <td>{s.cgpa}</td>
-                                        <td>
-                                            <span className={`rpt-badge ${s.status === 'Pass' ? 'rpt-badge-green' : 'rpt-badge-red'}`}>{s.status}</span>
-                                        </td>
-                                    </tr>
-                                ))}
+                                            </td>
+                                            <td><button className="btn btn-outline" style={{ padding: '4px 12px', fontSize: 12 }}>Review</button></td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                {/* Leave Status */}
-                <div className="rpt-card">
-                    <div className="rpt-card-header">
-                        <h5 className="rpt-card-title">Leave Status</h5>
-                        <a href="#" style={{ fontSize: 12, color: '#8c90a4', textDecoration: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}><Calendar size={13} /> This Month</a>
-                    </div>
-                    <div className="rpt-chart-body" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                        {leaveStatuses.map((l, i) => (
-                            <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', borderRadius: 12, background: '#fafbfc', border: '1px solid #eef0f4' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                                    <div style={{ width: 38, height: 38, borderRadius: 10, background: '#f0f2f7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>{l.icon}</div>
-                                    <div>
-                                        <h6 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#333448' }}>{l.type}</h6>
-                                        <p style={{ margin: 0, fontSize: 11, color: '#8c90a4' }}>{l.date}</p>
-                                    </div>
+                <div className="dashboard-card">
+                    <div className="card-header"><h5>Syllabus Completion</h5></div>
+                    <div className="card-body" style={{ paddingTop: 8 }}>
+                        {syllabusProgress.map((s, i) => (
+                            <div key={i} className="rdb-fee-row">
+                                <div className="rdb-fee-meta">
+                                    <span className="rdb-fee-class">{s.class}</span>
+                                    <span className="rdb-fee-pct" style={{ color: s.color }}>{s.pct}%</span>
                                 </div>
-                                <span className={`rpt-badge ${l.statusClass}`}>{l.status}</span>
+                                <div className="rdb-fee-bar-bg">
+                                    <div className="rdb-fee-bar-fill" style={{ width: `${s.pct}%`, background: s.color }} />
+                                </div>
                             </div>
                         ))}
                     </div>
                 </div>
             </div>
 
-            {/* ── Calendar / Schedules ─────────────────────────────── */}
-            <div className="rpt-card">
-                <div className="rpt-card-header">
-                    <h5 className="rpt-card-title">Schedules & Calendar</h5>
-                    <button className="rpt-export-btn" style={{ fontSize: 12, padding: '6px 14px' }}>+ Add Event</button>
-                </div>
-                <div className="rpt-chart-body" style={{ maxWidth: 420 }}>
-                    <MiniCalendar />
-                </div>
-            </div>
-
-            <footer className="rpt-footer"><p>© 2025 MindWhile School ERP — Teacher Dashboard</p></footer>
+            <footer className="dashboard-footer"><p>Copyright © 2024 MindWhile. All rights reserved.</p></footer>
         </div>
     );
 };

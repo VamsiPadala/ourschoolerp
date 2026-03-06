@@ -275,7 +275,7 @@ const Expense = () => {
             {showAddModal && (
                 <div className="modal-overlay">
                     <div className="modal-content add-income-modal">
-                        <div className="modal-header" style={{ background: '#7367f0' }}>
+                        <div className="modal-header" style={{ background: '#3d5ee1' }}>
                             <h3>{isEditing ? 'Edit Expense' : 'Add Expense'}</h3>
                             <button className="close-btn" onClick={() => setShowAddModal(false)}>
                                 <IconPlus size={20} style={{ transform: 'rotate(45deg)' }} />
@@ -383,7 +383,7 @@ const Expense = () => {
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn-cancel" onClick={() => setShowAddModal(false)}>Cancel</button>
-                                <button type="submit" className="btn-submit" style={{ background: '#7367f0' }}>
+                                <button type="submit" className="btn-submit" style={{ background: '#3d5ee1' }}>
                                     {isEditing ? 'Save Changes' : 'Save'}
                                 </button>
                             </div>
@@ -395,7 +395,7 @@ const Expense = () => {
             {/* Stats Cards */}
             <div className="expense-stats-row">
                 <div className="expense-stat-card">
-                    <div className="expense-stat-icon purple">
+                    <div className="expense-stat-icon blue">
                         <IconTrendingDown size={22} />
                     </div>
                     <div className="expense-stat-info">
@@ -553,7 +553,7 @@ const Expense = () => {
             {viewingItem && (
                 <div className="modal-overlay">
                     <div className="modal-content add-income-modal">
-                        <div className="modal-header" style={{ background: '#7367f0' }}>
+                        <div className="modal-header" style={{ background: '#3d5ee1' }}>
                             <h3>Expense Details</h3>
                             <button className="close-btn" onClick={() => setViewingItem(null)}>
                                 <IconPlus size={20} style={{ transform: 'rotate(45deg)' }} />
@@ -563,7 +563,7 @@ const Expense = () => {
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '14px 0', borderBottom: '1px solid var(--border-color, #e9ecef)' }}>
                                     <span style={{ fontWeight: 600, color: 'var(--text-secondary, #6e6b7b)' }}>Invoice No</span>
-                                    <span style={{ fontWeight: 600, color: '#7367f0' }}>{viewingItem.invoiceNo}</span>
+                                    <span style={{ fontWeight: 600, color: '#3d5ee1' }}>{viewingItem.invoiceNo}</span>
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '14px 0', borderBottom: '1px solid var(--border-color, #e9ecef)' }}>
                                     <span style={{ fontWeight: 600, color: 'var(--text-secondary, #6e6b7b)' }}>Title</span>

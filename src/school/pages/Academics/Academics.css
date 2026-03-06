@@ -6,21 +6,21 @@
     --ac-success: #10b981;
     --ac-warning: #f59e0b;
     --ac-danger: #ef4444;
-    --ac-bg: #f7f8fa;
-    --ac-surface: #ffffff;
-    --ac-border: #e9ecef;
-    --ac-text-main: #333448;
-    --ac-text-muted: #6e6b7b;
-    --ac-text-light: #b5b5c3;
+    --ac-bg: var(--bg-main);
+    --ac-surface: var(--bg-card);
+    --ac-border: var(--border-color);
+    --ac-text-main: var(--text-primary);
+    --ac-text-muted: var(--text-secondary);
+    --ac-text-light: var(--text-secondary);
 
     /* Student Information Style Colors */
-    --sl-bg-page: #f7f8fa;
-    --sl-card-bg: #ffffff;
-    --sl-text-color: #333448;
-    --sl-text-muted: #6e6b7b;
-    --sl-text-light: #b5b5c3;
-    --sl-border-color: #e9ecef;
-    --sl-input-bg: #ffffff;
+    --sl-bg-page: var(--bg-main);
+    --sl-card-bg: var(--bg-card);
+    --sl-text-color: var(--text-primary);
+    --sl-text-muted: var(--text-secondary);
+    --sl-text-light: var(--text-secondary);
+    --sl-border-color: var(--border-color);
+    --sl-input-bg: var(--input-bg);
     --sl-primary-color: #3d5ee1;
     --sl-primary-dark: #2b4fc4;
     --sl-table-header-bg: linear-gradient(90deg, #3d5ee1, #2b4fc4);
@@ -301,6 +301,7 @@ textarea:focus {
     background-color: #e1f5fe !important;
     border-color: #29b6f6 !important;
     box-shadow: 0 0 0 4px rgba(41, 182, 246, 0.1) !important;
+    outline: none !important;
 }
 
 /* Full Page Form Container */
@@ -872,30 +873,40 @@ textarea:focus {
     min-width: 250px;
     max-width: 400px;
     position: relative;
+    height: 48px;
 }
 
 .toolbar-search svg {
     position: absolute;
-    left: 12px;
-    color: var(--sl-text-light);
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
     pointer-events: none;
+    z-index: 10;
 }
 
 .search-input-field {
     width: 100%;
-    padding: 10px 12px 10px 36px;
-    border: 1px solid var(--sl-border-color);
-    border-radius: 8px;
-    font-size: 13px;
+    height: 48px;
+    padding: 0 16px 0 44px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 14px;
+    color: #334155;
     outline: none;
     transition: all 0.2s ease;
-    background: var(--sl-input-bg);
-    color: var(--sl-text-color);
+    background: #ffffff;
+}
+
+.search-input-field::placeholder {
+    color: #94a3b8;
 }
 
 .search-input-field:focus {
-    border-color: var(--sl-primary-color);
-    box-shadow: 0 0 0 3px rgba(61, 94, 225, 0.1);
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
 }
 
 .toolbar-actions {

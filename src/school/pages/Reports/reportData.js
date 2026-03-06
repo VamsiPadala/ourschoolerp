@@ -48,6 +48,67 @@ export const REPORT_CONFIG = {
         badgeKey: 'status',
     },
 
+    /* New ─ Class Strength */
+    'class-strength': {
+        title: 'Class Strength Report',
+        icon: '🏫',
+        filters: ['class', 'section'],
+        columns: ['#', 'Class', 'Section', 'Boys', 'Girls', 'Total'],
+        rows: Array.from({ length: 36 }, (_, i) => ({
+            sno: i + 1, class: cls(i), section: sec(i),
+            boys: 15 + rnd(0, 15), girls: 15 + rnd(0, 15),
+            total: 30 + rnd(0, 30),
+        })),
+        rowKeys: ['sno', 'class', 'section', 'boys', 'girls', 'total'],
+        badgeKey: null,
+    },
+
+    /* New ─ Admission Reports */
+    'admissions': {
+        title: 'Admission Reports',
+        icon: '🎓',
+        filters: ['period', 'class'],
+        columns: ['#', 'Academic Year', 'Class', 'Total Admissions', 'Boys', 'Girls', 'Growth (%)'],
+        rows: Array.from({ length: 15 }, (_, i) => ({
+            sno: i + 1, period: ['2023-2024', '2024-2025', '2025-2026'][i % 3], class: cls(i),
+            total: 30 + rnd(0, 50), boys: 15 + rnd(0, 25), girls: 15 + rnd(0, 25),
+            pct: '+' + rnd(2, 12),
+        })),
+        rowKeys: ['sno', 'period', 'class', 'total', 'boys', 'girls', 'pct'],
+        badgeKey: null,
+    },
+
+    /* New ─ Left Students */
+    'left-students': {
+        title: 'Left Students Report',
+        icon: '📉',
+        filters: ['period', 'class'],
+        columns: ['#', 'Academic Year', 'Class', 'Student Name', 'Reason', 'Status'],
+        rows: Array.from({ length: 25 }, (_, i) => ({
+            sno: i + 1, period: ['2023-2024', '2024-2025', '2025-2026'][i % 3], class: cls(i),
+            name: name(i), reason: ['TC Taken', 'Dropped', 'Shifted School'][i % 3],
+            status: 'Left',
+        })),
+        rowKeys: ['sno', 'period', 'class', 'name', 'reason', 'status'],
+        badgeKey: 'status',
+    },
+
+    /* New ─ Student Movement */
+    'student-movement': {
+        title: 'Student Movement Report',
+        icon: '📈',
+        filters: ['period'],
+        columns: ['#', 'Academic Year', 'Opening Strength', 'New Admissions', 'Left Students', 'Final Strength', 'Growth (%)'],
+        rows: Array.from({ length: 5 }, (_, i) => ({
+            sno: i + 1, period: `202${1 + i}-202${2 + i}`,
+            opening: 1000 + (i * 100), new: 150 + rnd(10, 50), left: 30 + rnd(5, 20),
+            final: 1000 + (i * 100) + (150 + rnd(10, 50)) - (30 + rnd(5, 20)),
+            pct: '+' + rnd(2, 8),
+        })),
+        rowKeys: ['sno', 'period', 'opening', 'new', 'left', 'final', 'pct'],
+        badgeKey: null,
+    },
+
     /* 2 ─ Sponsorship Report */
     'sponsorship': {
         title: 'Sponsorship Report',
@@ -583,6 +644,23 @@ export const REPORT_CONFIG = {
         }),
         rowKeys: ['sno', 'admNo', 'name', 'class', 'section', 'total', 'pct', 'grade', 'attendance', 'action'],
         badgeKey: 'grade',
+    },
+
+    /* 29 ─ Global Examinations Fallback */
+    'examinations': {
+        title: 'Examination Dashboard',
+        icon: '📊',
+        filters: ['class', 'section'],
+        columns: ['#', 'Student Name', 'Exam', 'Marks', 'Max Marks', 'Pct %', 'Result'],
+        rows: Array.from({ length: 40 }, (_, i) => ({
+            sno: i + 1, name: name(i), exam: 'Annual 2024',
+            marks: rnd(30, 100), maxMarks: 100, pct: null, // pct calc in render
+            get 'pct'() { return this.marks; },
+            status: null, // calc in render
+            get 'status'() { return this.marks >= 35 ? 'Pass' : 'Fail'; }
+        })),
+        rowKeys: ['sno', 'name', 'exam', 'marks', 'maxMarks', 'pct', 'status'],
+        badgeKey: 'status',
     },
 
     /* -- Student Birthday Report -- */

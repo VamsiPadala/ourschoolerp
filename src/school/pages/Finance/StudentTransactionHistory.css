@@ -1,0 +1,229 @@
+/* ═══════════════════════════════════════════════════════════════
+   PREMIUM TRANSACTION HISTORY UI — v1.0
+   ═══════════════════════════════════════════════════════════════ */
+
+.th-page {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.th-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.th-title-area h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin: 0 0 4px;
+    color: #1e293b;
+    letter-spacing: -0.02em;
+}
+
+.th-breadcrumb {
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.th-breadcrumb span {
+    color: #3d5ee1;
+    font-weight: 600;
+}
+
+/* Student Profile Card */
+.th-student-card {
+    background: white;
+    border-radius: 1.25rem;
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+.th-student-avatar {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 1rem;
+    object-fit: cover;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 3px solid white;
+}
+
+.th-student-info h2 {
+    margin: 0 0 6px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.th-student-meta {
+    display: flex;
+    gap: 1.25rem;
+    font-size: 0.85rem;
+    color: #475569;
+}
+
+.th-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #f8fafc;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid #f1f5f9;
+}
+
+.th-meta-item strong {
+    color: #1e293b;
+}
+
+/* Stats Row */
+.th-stats-row {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.th-stat-box {
+    flex: 1;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 1.25rem;
+    box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+    border: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.th-stat-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.th-stat-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+.th-stat-icon {
+    position: absolute;
+    right: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+}
+
+/* Table Card */
+.th-table-card {
+    background: white;
+    border-radius: 1.25rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+.th-table-header {
+    background: #f8fafc;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1.5px solid #e2e8f0;
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.th-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.th-table th {
+    background: white;
+    padding: 1rem 1.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-align: left;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.th-table td {
+    padding: 1rem 1.5rem;
+    vertical-align: middle;
+    border-bottom: 1px dashed #e2e8f0;
+    font-size: 0.9rem;
+    color: #1e293b;
+}
+
+.th-table tbody tr:hover {
+    background: #fafbfd;
+}
+
+.th-badge {
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.th-badge-success {
+    background: #ebfaf2;
+    color: #28c76f;
+    border: 1px solid #bbf7d0;
+}
+
+.th-badge-warning {
+    background: #fff5e6;
+    color: #ff9f43;
+    border: 1px solid #fce8cc;
+}
+
+.th-badge-danger {
+    background: #fef2f2;
+    color: #ea5455;
+    border: 1px solid #fecdd3;
+}
+
+.th-badge-primary {
+    background: #eff2ff;
+    color: #3d5ee1;
+    border: 1px solid #c7d0fa;
+}

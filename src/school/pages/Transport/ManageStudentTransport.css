@@ -307,26 +307,31 @@
     left: 16px;
     top: 50%;
     transform: translateY(-50%);
-    color: #cbd5e1;
+    color: #94a3b8;
+    z-index: 10;
 }
 
 .search-input-pill {
     width: 100%;
     height: 48px;
-    padding: 0 16px 0 48px;
+    padding: 0 16px 0 44px;
     background: #ffffff;
     border: 1px solid #e2e8f0;
-    border-radius: 24px;
+    border-radius: 12px;
     font-size: 14px;
-    color: #475569;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-    transition: all 0.2s;
+    color: #334155;
+    box-shadow: none;
+    transition: all 0.2s ease;
+}
+
+.search-input-pill::placeholder {
+    color: #94a3b8;
 }
 
 .search-input-pill:focus {
-    border-color: #3d5ee1;
-    box-shadow: 0 0 0 4px rgba(61, 94, 225, 0.05);
-    outline: none;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.05) !important;
+    outline: none !important;
 }
 
 .export-button-group {
@@ -336,23 +341,37 @@
 }
 
 .export-btn {
-    padding: 8px 16px;
+    padding: 8px 14px;
     background: #fff;
     border: 1px solid #e2e8f0;
-    border-radius: 8px;
+    border-radius: 6px;
     font-size: 13px;
     color: #64748b;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.export-btn svg {
+    color: #94a3b8;
+    transition: color 0.2s;
 }
 
 .export-btn:hover {
     background: #f8fafc;
-    border-color: #cbd5e1;
-    color: #334155;
+    border-color: #3d5ee1;
+    color: #3d5ee1;
     transform: translateY(-1px);
 }
+
+.export-btn:hover svg {
+    color: #3d5ee1;
+}
+
+
 
 .filter-dropdown-btn {
     display: flex;

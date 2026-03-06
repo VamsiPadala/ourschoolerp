@@ -74,159 +74,166 @@ const ManageBooks = () => {
                 </button>
             </div>
 
-            <div className="accounts-card">
-                <div className="card-header">
-                    <h5>Book Inventory</h5>
-                </div>
-                <div className="card-body">
-                    <div className="filters-row">
-                        <div className="search-box">
-                            <IconSearch size={18} />
+            <div className="card shadow-soft border-0 mt-6" style={{ background: 'var(--bg-card)', borderRadius: '15px', overflow: 'hidden', border: '1px solid var(--border-color)' }}>
+                <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 25px', background: 'var(--bg-card)', gap: '20px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '40px', flex: 1 }}>
+                        <h5 className="mb-0" style={{ color: 'var(--text-primary)', fontWeight: '700', whiteSpace: 'nowrap' }}>Book Inventory</h5>
+                        <div className="search-box-pill" style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '50px', padding: '0 20px', display: 'flex', alignItems: 'center', gap: '12px', height: '42px', width: '360px', transition: 'all 0.3s ease', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
+                            <IconSearch size={22} color="var(--text-secondary)" style={{ opacity: 0.7 }} />
                             <input
                                 type="text"
-                                placeholder="Search by book title, author or ISBN..."
+                                placeholder="Search books..."
+                                style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    color: 'var(--text-primary)',
+                                    fontSize: '14px',
+                                    outline: 'none',
+                                    padding: '0',
+                                    height: '100%',
+                                    width: '100%',
+                                    boxShadow: 'none'
+                                }}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                     </div>
+                </div>
 
-                    <div className="table-container">
-                        <table className="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Title</th>
-                                    <th>Author</th>
-                                    <th>Category</th>
-                                    <th>ISBN</th>
-                                    <th>Rack No</th>
-                                    <th>Qty</th>
-                                    <th>Available</th>
-                                    <th>Action</th>
+                <div className="table-container p-0">
+                    <table className="data-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Category</th>
+                                <th>ISBN</th>
+                                <th>Rack No</th>
+                                <th>Qty</th>
+                                <th>Available</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {books.map(book => (
+                                <tr key={book.id}>
+                                    <td style={{ fontWeight: '600', color: 'var(--primary)' }}>{book.title}</td>
+                                    <td style={{ color: 'var(--text-primary)' }}>{book.author}</td>
+                                    <td><span className="badge-category" style={{ padding: '4px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: '600', background: 'var(--bg-main)', color: 'var(--text-secondary)' }}>{book.category}</span></td>
+                                    <td style={{ color: 'var(--text-secondary)' }}>{book.isbn}</td>
+                                    <td style={{ color: 'var(--text-primary)' }}>{book.rackNo}</td>
+                                    <td style={{ color: 'var(--text-primary)' }}>{book.quantity}</td>
+                                    <td><span style={{ color: book.available > 0 ? 'var(--success)' : 'var(--error)', fontWeight: '600' }}>{book.available}</span></td>
+                                    <td>
+                                        <div className="action-buttons">
+                                            <button className="action-btn edit" title="Edit" onClick={() => handleEdit(book)}><IconEdit size={16} /></button>
+                                            <button className="action-btn delete" title="Delete" onClick={() => handleDelete(book.id)}><IconTrash size={16} /></button>
+                                        </div>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {books.map(book => (
-                                    <tr key={book.id}>
-                                        <td style={{ fontWeight: '500' }}>{book.title}</td>
-                                        <td>{book.author}</td>
-                                        <td>{book.category}</td>
-                                        <td>{book.isbn}</td>
-                                        <td>{book.rackNo}</td>
-                                        <td>{book.quantity}</td>
-                                        <td>{book.available}</td>
-                                        <td>
-                                            <div className="action-buttons">
-                                                <button className="action-btn edit" title="Edit" onClick={() => handleEdit(book)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                    <IconEdit size={18} />
-                                                </button>
-                                                <button className="action-btn delete" title="Delete" onClick={() => handleDelete(book.id)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                    <IconTrash size={18} />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
             {/* Add Book Modal */}
-            {showAddModal && (
-                <div className="modal-overlay">
-                    <div className="modal-content add-income-modal">
-                        <div className="modal-header">
-                            <h3>Add Book</h3>
-                            <button type="button" className="close-btn" onClick={() => setShowAddModal(false)}>
-                                <IconPlus size={20} style={{ transform: 'rotate(45deg)' }} />
-                            </button>
-                        </div>
-                        <form className="modal-body" onSubmit={handleSubmit} style={{ maxHeight: '80vh', overflowY: 'auto' }}>
-                            <div className="form-group full-width">
-                                <label>Name <span style={{ color: '#ea5455' }}>*</span></label>
-                                <input
-                                    type="text"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleChange}
-                                    required
-                                    placeholder="Enter book name"
-                                />
-                            </div>
-
-                            <div className="form-group full-width">
-                                <label>Author <span style={{ color: '#ea5455' }}>*</span></label>
-                                <input
-                                    type="text"
-                                    name="author"
-                                    value={formData.author}
-                                    onChange={handleChange}
-                                    required
-                                    placeholder="Enter author name"
-                                />
-                            </div>
-
-                            <div className="form-group full-width">
-                                <label>Subject code <span style={{ color: '#ea5455' }}>*</span></label>
-                                <input
-                                    type="text"
-                                    name="subjectCode"
-                                    value={formData.subjectCode}
-                                    onChange={handleChange}
-                                    required
-                                    placeholder="Enter subject code"
-                                />
-                            </div>
-
-                            <div className="form-group full-width">
-                                <label>Price <span style={{ color: '#ea5455' }}>*</span></label>
-                                <input
-                                    type="text"
-                                    name="price"
-                                    value={formData.price}
-                                    onChange={handleChange}
-                                    required
-                                    placeholder="Enter price"
-                                />
-                            </div>
-
-                            <div className="form-group full-width">
-                                <label>Quantity <span style={{ color: '#ea5455' }}>*</span></label>
-                                <input
-                                    type="number"
-                                    name="quantity"
-                                    value={formData.quantity}
-                                    onChange={handleChange}
-                                    required
-                                    placeholder="Enter quantity"
-                                />
-                            </div>
-
-                            <div className="form-group full-width">
-                                <label>Rack no <span style={{ color: '#ea5455' }}>*</span></label>
-                                <input
-                                    type="text"
-                                    name="rackNo"
-                                    value={formData.rackNo}
-                                    onChange={handleChange}
-                                    required
-                                    placeholder="Enter rack number"
-                                />
-                            </div>
-
-                            <div className="modal-footer">
-                                <button type="button" className="btn-cancel" onClick={() => setShowAddModal(false)}>Cancel</button>
-                                <button type="submit" className="btn-submit">
-                                    Save
+            {
+                showAddModal && (
+                    <div className="modal-overlay">
+                        <div className="modal-content add-income-modal">
+                            <div className="modal-header">
+                                <h3>Add Book</h3>
+                                <button type="button" className="close-btn" onClick={() => setShowAddModal(false)}>
+                                    <IconPlus size={20} style={{ transform: 'rotate(45deg)' }} />
                                 </button>
                             </div>
-                        </form>
+                            <form className="modal-body" onSubmit={handleSubmit} style={{ maxHeight: '80vh', overflowY: 'auto' }}>
+                                <div className="form-group full-width">
+                                    <label>Name <span style={{ color: '#ea5455' }}>*</span></label>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        required
+                                        placeholder="Enter book name"
+                                    />
+                                </div>
+
+                                <div className="form-group full-width">
+                                    <label>Author <span style={{ color: '#ea5455' }}>*</span></label>
+                                    <input
+                                        type="text"
+                                        name="author"
+                                        value={formData.author}
+                                        onChange={handleChange}
+                                        required
+                                        placeholder="Enter author name"
+                                    />
+                                </div>
+
+                                <div className="form-group full-width">
+                                    <label>Subject code <span style={{ color: '#ea5455' }}>*</span></label>
+                                    <input
+                                        type="text"
+                                        name="subjectCode"
+                                        value={formData.subjectCode}
+                                        onChange={handleChange}
+                                        required
+                                        placeholder="Enter subject code"
+                                    />
+                                </div>
+
+                                <div className="form-group full-width">
+                                    <label>Price <span style={{ color: '#ea5455' }}>*</span></label>
+                                    <input
+                                        type="text"
+                                        name="price"
+                                        value={formData.price}
+                                        onChange={handleChange}
+                                        required
+                                        placeholder="Enter price"
+                                    />
+                                </div>
+
+                                <div className="form-group full-width">
+                                    <label>Quantity <span style={{ color: '#ea5455' }}>*</span></label>
+                                    <input
+                                        type="number"
+                                        name="quantity"
+                                        value={formData.quantity}
+                                        onChange={handleChange}
+                                        required
+                                        placeholder="Enter quantity"
+                                    />
+                                </div>
+
+                                <div className="form-group full-width">
+                                    <label>Rack no <span style={{ color: '#ea5455' }}>*</span></label>
+                                    <input
+                                        type="text"
+                                        name="rackNo"
+                                        value={formData.rackNo}
+                                        onChange={handleChange}
+                                        required
+                                        placeholder="Enter rack number"
+                                    />
+                                </div>
+
+                                <div className="modal-footer">
+                                    <button type="button" className="btn-cancel" onClick={() => setShowAddModal(false)}>Cancel</button>
+                                    <button type="submit" className="btn-submit">
+                                        Save
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 };
 

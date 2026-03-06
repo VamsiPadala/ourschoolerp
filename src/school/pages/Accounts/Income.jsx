@@ -289,22 +289,25 @@ const Income = () => {
                                             value={formData.date}
                                             onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                                         />
-                                        <IconCalendar size={18} className="field-icon" />
                                     </div>
                                 </div>
                                 <div className="form-group">
                                     <label>Amount</label>
-                                    <input
-                                        type="number"
-                                        placeholder="Enter amount"
-                                        value={formData.amount}
-                                        onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                                    />
+                                    <div className="input-with-icon">
+                                        <input
+                                            type="number"
+                                            placeholder="Enter amount"
+                                            className="amount-input"
+                                            value={formData.amount}
+                                            onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                                        />
+                                    </div>
                                 </div>
                                 <div className="form-group">
                                     <label>Payment Method</label>
                                     <div className="select-with-icon">
                                         <select
+                                            className="payment-select"
                                             value={formData.paymentMethod}
                                             onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
                                         >
@@ -313,7 +316,7 @@ const Income = () => {
                                             <option value="BANK">BANK</option>
                                             <option value="CASH">CASH</option>
                                         </select>
-                                        <IconChevronDown size={18} className="field-icon" />
+                                        <IconChevronDown size={16} className="field-icon select-chevron" />
                                     </div>
                                 </div>
                             </div>

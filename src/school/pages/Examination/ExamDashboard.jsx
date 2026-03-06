@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     IconPlus, IconSearch, IconEdit, IconTrash,
     IconCalendar, IconClipboardList, IconDownload, IconUserCheck,
-    IconFileTypePdf, IconFileTypeXls, IconChevronDown, IconFilter
+    IconFileTypePdf, IconFileTypeXls, IconChevronDown
 } from '@tabler/icons-react';
-import '../Transport/ManageStudentTransport.css';
+import '../Accounts/Accounts.css';
 
 const ExamDashboard = () => {
     const navigate = useNavigate();
@@ -148,93 +148,140 @@ const ExamDashboard = () => {
                 </div>
             </div>
 
-            <div className="card shadow-soft border-0 overflow-hidden mt-6">
-                <div className="premium-header-banner">
-                    <h4 className="mb-0">Exam List</h4>
-                </div>
-
-                <div className="table-toolbar-premium">
-                    <div className="search-pill-wrapper">
-                        <IconSearch size={18} className="search-icon-pill" />
-                        <input
-                            type="text"
-                            placeholder="Search..."
-                            className="search-input-pill"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
+            <div className="accounts-card">
+                <div className="card-header">
+                    <h5>Exam List</h5>
+                    <div className="header-actions" style={{ position: 'relative' }}>
+                        <button
+                            className="btn-outline"
+                            onClick={() => setShowExportMenu(!showExportMenu)}
+                        >
+                            <IconDownload size={16} />
+                            Export
+                            <IconChevronDown size={14} style={{ marginLeft: '4px' }} />
+                        </button>
+                        {showExportMenu && (
+                            <div className="export-menu" style={{
+                                position: 'absolute',
+                                top: '100%',
+                                right: 0,
+                                background: '#fff',
+                                border: '1px solid #e9ecef',
+                                borderRadius: '8px',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                                zIndex: 10,
+                                minWidth: '160px',
+                                padding: '4px 0',
+                                marginTop: '4px'
+                            }}>
+                                <button
+                                    onClick={handlePrint}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        width: '100%',
+                                        padding: '10px 16px',
+                                        border: 'none',
+                                        background: 'transparent',
+                                        cursor: 'pointer',
+                                        fontSize: '14px',
+                                        textAlign: 'left',
+                                        color: '#333448'
+                                    }}
+                                    onMouseEnter={(e) => e.target.style.background = '#f8f9fa'}
+                                    onMouseLeave={(e) => e.target.style.background = 'transparent'}
+                                >
+                                    <IconFileTypePdf size={16} color="#ea5455" />
+                                    Export as PDF
+                                </button>
+                                <button
+                                    onClick={handleExportCSV}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        width: '100%',
+                                        padding: '10px 16px',
+                                        border: 'none',
+                                        background: 'transparent',
+                                        cursor: 'pointer',
+                                        fontSize: '14px',
+                                        textAlign: 'left',
+                                        color: '#333448'
+                                    }}
+                                    onMouseEnter={(e) => e.target.style.background = '#f8f9fa'}
+                                    onMouseLeave={(e) => e.target.style.background = 'transparent'}
+                                >
+                                    <IconFileTypeXls size={16} color="#28c76f" />
+                                    Export as Excel
+                                </button>
+                            </div>
+                        )}
                     </div>
-
-                    <div className="export-button-group">
-                        <button className="export-btn">Copy</button>
-                        <button className="export-btn" onClick={handleExportCSV}>CSV</button>
-                        <button className="export-btn">Excel</button>
-                        <button className="export-btn">PDF</button>
-                        <button className="export-btn" onClick={handlePrint}>Print</button>
-                        <div className="filter-dropdown-btn">
-                            <IconFilter size={16} />
-                            <span>Filter</span>
-                            <IconChevronDown size={14} />
+                </div>
+                <div className="card-body">
+                    <div className="filters-row">
+                        <div className="search-box">
+                            <IconSearch size={18} />
+                            <input
+                                type="text"
+                                placeholder="Search by name or note..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
                         </div>
                     </div>
-                </div>
 
-                <div className="table-wrap px-0">
-                    <table className="premium-table-v2">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Exam Name</th>
-                                <th>Date</th>
-                                <th>Note</th>
-                                <th className="text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredData.map((item, index) => (
-                                <tr key={item.id} className="table-row-v2">
-                                    <td>{index + 1}</td>
-                                    <td>
-                                        <div className="font-semibold text-slate-700">{item.name}</div>
-                                    </td>
-                                    <td>
-                                        <div className="flex items-center gap-2 text-slate-500 font-medium">
-                                            <IconCalendar size={14} />
-                                            {formatDate(item.date)}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span className="text-slate-400 italic text-xs">{item.note || 'No notes added'}</span>
-                                    </td>
-                                    <td className="text-center">
-                                        <div className="action-button-flex">
-                                            <button
-                                                className="action-icon-btn view"
-                                                title="Assign Exam"
-                                                onClick={() => navigate('/school/exam/assign', { state: { exam: item } })}
-                                            >
-                                                <IconUserCheck size={16} />
-                                            </button>
-                                            <button
-                                                className="action-icon-btn edit"
-                                                title="Edit"
-                                                onClick={() => handleOpenEditModal(item)}
-                                            >
-                                                <IconEdit size={16} />
-                                            </button>
-                                            <button
-                                                className="action-icon-btn delete"
-                                                title="Delete"
-                                                onClick={() => handleDelete(item.id)}
-                                            >
-                                                <IconTrash size={16} />
-                                            </button>
-                                        </div>
-                                    </td>
+                    <div className="table-container">
+                        <table className="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Exam Name</th>
+                                    <th>Date</th>
+                                    <th>Note</th>
+                                    <th>Action</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {filteredData.map((item, index) => (
+                                    <tr key={item.id}>
+                                        <td>{index + 1}</td>
+                                        <td>
+                                            <span className="item-name">{item.name}</span>
+                                        </td>
+                                        <td>
+                                            <div className="date-cell">
+                                                <IconCalendar size={14} />
+                                                {formatDate(item.date)}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span className="item-desc">{item.note || '-'}</span>
+                                        </td>
+                                        <td>
+                                            <div className="action-buttons">
+                                                <button
+                                                    className="action-btn assign"
+                                                    title="Assign"
+                                                    onClick={() => navigate('/school/exam/assign')}
+                                                >
+                                                    <IconUserCheck size={16} />
+                                                </button>
+                                                <button className="action-btn edit" title="Edit" onClick={() => handleOpenEditModal(item)}>
+                                                    <IconEdit size={16} />
+                                                </button>
+                                                <button className="action-btn delete" title="Delete" onClick={() => handleDelete(item.id)}>
+                                                    <IconTrash size={16} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 

@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 import {
     IconPlus, IconSearch, IconEdit, IconTrash,
-    IconWallet, IconTag, IconNotes, IconFilter, IconChevronDown
+    IconWallet, IconTag, IconNotes, IconFilter, IconChevronDown,
+    IconCopy, IconFileSpreadsheet, IconFileTypeCsv, IconFileTypePdf
 } from '@tabler/icons-react';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
 import './Accounts.css';
 
 const ExpenseHeads = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filterCategory, setFilterCategory] = useState('all');
+    const [recordsPerPage, setRecordsPerPage] = useState(10);
     const [showAddModal, setShowAddModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [editingId, setEditingId] = useState(null);
@@ -78,6 +83,46 @@ const ExpenseHeads = () => {
         setShowAddModal(false);
     };
 
+    const handleCopy = () => {
+        const text = filteredData.map(item => `${item.name}\t${item.description}\t${item.category}`).join('\n');
+        navigator.clipboard.writeText(`Name\tDescription\tCategory\n${text}`);
+        alert('Table data copied to clipboard!');
+    };
+
+    const handleExportCSV = () => {
+        const headers = ['Name', 'Description', 'Category'];
+        const rows = filteredData.map(item => [item.name, item.description, item.category]);
+        const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'expense-heads.csv';
+        link.click();
+    };
+
+    const handleExportExcel = () => {
+        const headers = ['Name', 'Description', 'Category'];
+        const rows = filteredData.map(item => [item.name, item.description, item.category]);
+        const wsData = [headers, ...rows];
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'ExpenseHeads');
+        XLSX.writeFile(wb, 'expense-heads.xlsx');
+    };
+
+    const handleExportPDF = () => {
+        const doc = new jsPDF();
+        doc.text('Expense Heads Report', 14, 15);
+        autoTable(doc, {
+            head: [['Name', 'Description', 'Category']],
+            body: filteredData.map(item => [item.name, item.description, item.category]),
+            startY: 20,
+            theme: 'grid',
+            headStyles: { fillColor: [61, 94, 225] }
+        });
+        doc.save('expense-heads.pdf');
+    };
+
     return (
         <div className="heads-page">
             {/* Page Header */}
@@ -90,7 +135,7 @@ const ExpenseHeads = () => {
                         <span className="current">Expense Heads</span>
                     </nav>
                 </div>
-                <button className="heads-add-btn purple" onClick={handleOpenAddModal}>
+                <button className="heads-add-btn blue" onClick={handleOpenAddModal}>
                     <IconPlus size={18} />
                     Add Expense Head
                 </button>
@@ -100,7 +145,7 @@ const ExpenseHeads = () => {
             {showAddModal && (
                 <div className="modal-overlay">
                     <div className="modal-content add-income-modal">
-                        <div className="modal-header" style={{ background: '#7367f0' }}>
+                        <div className="modal-header" style={{ background: '#3d5ee1' }}>
                             <h3>{isEditing ? 'Edit Expense Head' : 'Add Expense Head'}</h3>
                             <button className="close-btn" onClick={() => setShowAddModal(false)}>
                                 <IconPlus size={20} style={{ transform: 'rotate(45deg)' }} />
@@ -143,7 +188,7 @@ const ExpenseHeads = () => {
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn-cancel" onClick={() => setShowAddModal(false)}>Cancel</button>
-                                <button type="submit" className="btn-submit" style={{ background: '#7367f0' }}>
+                                <button type="submit" className="btn-submit" style={{ background: '#3d5ee1' }}>
                                     {isEditing ? 'Save Changes' : 'Save'}
                                 </button>
                             </div>
@@ -185,7 +230,26 @@ const ExpenseHeads = () => {
             {/* Table Card */}
             <div className="heads-table-card">
                 <div className="heads-table-header">
-                    <h5>Master Expense Heads</h5>
+                    <div className="table-header-left">
+                        <div className="export-actions">
+                            <button className="export-action-btn" onClick={handleCopy} title="Copy to Clipboard">
+                                <IconCopy size={16} />
+                                <span>Copy</span>
+                            </button>
+                            <button className="export-action-btn" onClick={handleExportExcel} title="Export to Excel">
+                                <IconFileSpreadsheet size={16} />
+                                <span>Excel</span>
+                            </button>
+                            <button className="export-action-btn" onClick={handleExportCSV} title="Export to CSV">
+                                <IconFileTypeCsv size={16} />
+                                <span>CSV</span>
+                            </button>
+                            <button className="export-action-btn" onClick={handleExportPDF} title="Export to PDF">
+                                <IconFileTypePdf size={16} />
+                                <span>PDF</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div className="heads-table-body">
                     <div className="table-container">

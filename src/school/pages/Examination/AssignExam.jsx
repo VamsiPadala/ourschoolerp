@@ -111,20 +111,8 @@ const AssignExam = () => {
                         </div>
                     </div>
                 </div>
-                <div className="page-header-actions">
-                    <button className="btn-outline" onClick={handleReset}>
-                        <IconRefresh size={18} />
-                        Reset Filters
-                    </button>
-                    <button
-                        className="btn-primary"
-                        onClick={handleSave}
-                        disabled={selectedStudents.size === 0}
-                        style={{ background: selectedStudents.size > 0 ? '#4f46e5' : '#a5a6f6' }}
-                    >
-                        <IconUserCheck size={18} />
-                        Save Assignment ({selectedStudents.size})
-                    </button>
+                <div className="page-header-actions invisible-actions">
+                    {/* Actions moved to bottom-right fixed container */}
                 </div>
             </div>
 
@@ -274,6 +262,20 @@ const AssignExam = () => {
                 </div>
             </div>
 
+            {/* Fixed Bottom-Right Action Corner */}
+            <div className="fixed-action-corner">
+                <button className="btn-cancel-custom" onClick={handleReset}>
+                    Cancel
+                </button>
+                <button
+                    className="btn-assign-custom"
+                    onClick={handleSave}
+                    disabled={selectedStudents.size === 0}
+                >
+                    Assign to all ({selectedStudents.size})
+                </button>
+            </div>
+
             <style>{`
                 .back-button-wrapper {
                     display: flex;
@@ -303,22 +305,26 @@ const AssignExam = () => {
                 }
                 .search-icon {
                     position: absolute;
-                    left: 12px;
+                    left: 14px;
                     top: 50%;
                     transform: translateY(-50%);
                     color: #94a3b8;
+                    z-index: 10;
                 }
                 .search-field {
                     width: 100%;
-                    padding: 10px 12px 10px 40px;
+                    height: 48px;
+                    padding: 0 16px 0 44px;
                     border: 1px solid #e2e8f0;
-                    border-radius: 8px;
+                    border-radius: 12px;
                     font-size: 14px;
                     outline: none;
-                    transition: border-color 0.2s;
+                    transition: all 0.2s ease;
+                    background: #ffffff;
                 }
                 .search-field:focus {
-                    border-color: #4f46e5;
+                    border-color: #3b82f6;
+                    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.05);
                 }
                 .custom-checkbox input {
                     display: none;
@@ -363,6 +369,73 @@ const AssignExam = () => {
                 .btn-outline:hover {
                     border-color: #cbd5e1;
                     background: #f8fafc;
+                }
+                .fixed-action-corner {
+                    position: fixed;
+                    right: 40px;
+                    bottom: 40px;
+                    display: flex;
+                    gap: 12px;
+                    padding: 8px;
+                    z-index: 1000;
+                    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+                @keyframes slideUp {
+                    from { transform: translateY(100px); opacity: 0; }
+                    to { transform: translateY(0); opacity: 1; }
+                }
+                .btn-cancel-custom {
+                    padding: 0 28px;
+                    height: 48px;
+                    border-radius: 10px;
+                    border: none;
+                    background: #f1f5f9;
+                    color: #2563eb;
+                    font-weight: 600;
+                    font-size: 16px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                .btn-cancel-custom:hover {
+                    background: #e2e8f0;
+                }
+                .btn-assign-custom {
+                    padding: 0 32px;
+                    height: 48px;
+                    border-radius: 10px;
+                    border: none;
+                    background: #3b82f6;
+                    color: white;
+                    font-weight: 600;
+                    font-size: 16px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
+                }
+                .btn-assign-custom:hover:not(:disabled) {
+                    background: #2563eb;
+                    transform: translateY(-1px);
+                    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+                }
+                .btn-assign-custom:disabled {
+                    background: #93c5fd;
+                    cursor: not-allowed;
+                }
+                .invisible-actions {
+                    display: none;
+                }
+                @media (max-width: 640px) {
+                    .fixed-action-corner {
+                        right: 15px;
+                        bottom: 15px;
+                        left: 15px;
+                        gap: 10px;
+                    }
+                    .btn-cancel-custom, .btn-assign-custom {
+                        flex: 1;
+                        padding: 0 10px;
+                        font-size: 14px;
+                    }
                 }
             `}</style>
         </div>

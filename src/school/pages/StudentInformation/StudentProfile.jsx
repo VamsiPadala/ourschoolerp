@@ -40,6 +40,7 @@ const EditIcon = () => (
 const TABS = [
     { id: 'personal', label: 'Personal', icon: UserIcon },
     { id: 'academic', label: 'Academic', icon: AwardIcon },
+    { id: 'academic-history', label: 'Academic History', icon: BookIcon },
     { id: 'contact', label: 'Contact', icon: PhoneIcon },
     { id: 'address', label: 'Address', icon: MapPinIcon },
     { id: 'bank', label: 'Bank', icon: CreditCardIcon },
@@ -61,6 +62,30 @@ const StudentProfile = () => {
     const [activeTab, setActiveTab] = useState('personal');
 
     const student = useMemo(() => students.find(s => s.id === id) || null, [id, students]);
+
+    const calculateYearsInSchool = (admissionDate) => {
+        if (!admissionDate) return 'N/A';
+        const dateParts = admissionDate.split(/[-/]/);
+        let dateObj;
+        if (dateParts.length === 3) {
+            // Very basic heuristic for parsing either YYYY-MM-DD or DD/MM/YYYY
+            if (dateParts[0].length === 4) {
+                dateObj = new Date(admissionDate);
+            } else {
+                dateObj = new Date(`${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`);
+            }
+        } else {
+            return 'N/A'; // Invalid
+        }
+
+        if (isNaN(dateObj.getTime())) return 'N/A';
+        const now = new Date();
+        let years = now.getFullYear() - dateObj.getFullYear();
+        if (now.getMonth() < dateObj.getMonth() || (now.getMonth() === dateObj.getMonth() && now.getDate() < dateObj.getDate())) {
+            years--;
+        }
+        return years < 0 ? 0 : years;
+    };
 
     if (!student) {
         return (
@@ -167,7 +192,50 @@ const StudentProfile = () => {
         </div>
     );
 
-    const tabRenderers = { personal: renderPersonal, academic: renderAcademic, contact: renderContact, address: renderAddress, bank: renderBank };
+    const renderAcademicHistory = () => {
+        // Dummy data for academic history
+        const historyData = [
+            { id: 1, academicYear: '2023-2024', class: student.class || 'VI', section: student.section || 'A', status: 'Studied' },
+            { id: 2, academicYear: '2022-2023', class: 'V', section: 'A', status: 'Studied' },
+            { id: 3, academicYear: '2021-2022', class: 'IV', section: 'B', status: 'Studied' },
+        ];
+
+        return (
+            <div className="sp-section">
+                <div className="sp-section-title"><BookIcon /> Academic History</div>
+                <div className="card table-card" style={{ marginTop: '16px' }}>
+                    <div className="table-wrap">
+                        <table className="students-table">
+                            <thead>
+                                <tr>
+                                    <th>Academic Year</th>
+                                    <th>Class</th>
+                                    <th>Section</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {historyData.map((row) => (
+                                    <tr key={row.id}>
+                                        <td>{row.academicYear}</td>
+                                        <td>{row.class}</td>
+                                        <td>{row.section}</td>
+                                        <td>
+                                            <span className={`status-badge ${row.status === 'Studied' ? 'status-active' : (row.status === 'Left' ? 'status-inactive' : '')}`} style={row.status === 'Rejoined' ? { background: '#fff5e6', color: '#ff9f43' } : {}}>
+                                                {row.status}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const tabRenderers = { personal: renderPersonal, academic: renderAcademic, 'academic-history': renderAcademicHistory, contact: renderContact, address: renderAddress, bank: renderBank };
 
 
     return (
@@ -215,24 +283,34 @@ const StudentProfile = () => {
                                         </div>
                                     )}
                                 </div>
-                                <h2 className="sp-student-name">{student.name}</h2>
-                                <span className="sp-admission-badge">{student.admissionNo || student.id}</span>
+                                <h2 className="sp-student-name" style={{ marginBottom: 16 }}>{student.name}</h2>
                                 <div className="sp-quick-stats">
                                     <div className="sp-stat-item">
-                                        <span className="sp-stat-label">Class</span>
-                                        <span className="sp-stat-value">{student.class || student.className || '—'}</span>
+                                        <span className="sp-stat-label">Admission No.</span>
+                                        <span className="sp-stat-value">{student.admissionNo || student.id}</span>
                                     </div>
                                     <div className="sp-stat-item">
-                                        <span className="sp-stat-label">Section</span>
-                                        <span className="sp-stat-value">{student.section || '—'}</span>
+                                        <span className="sp-stat-label">Admission Date</span>
+                                        <span className="sp-stat-value">{student.admissionDate || '—'}</span>
                                     </div>
                                     <div className="sp-stat-item">
-                                        <span className="sp-stat-label">Roll No</span>
-                                        <span className="sp-stat-value">{student.rollNo || '—'}</span>
+                                        <span className="sp-stat-label">Current Class</span>
+                                        <span className="sp-stat-value">{student.class || student.className || '—'} {student.section && `(${student.section})`}</span>
                                     </div>
                                     <div className="sp-stat-item">
-                                        <span className="sp-stat-label">Gender</span>
-                                        <span className="sp-stat-value">{student.gender || '—'}</span>
+                                        <span className="sp-stat-label">Years in School</span>
+                                        <span className="sp-stat-value">{calculateYearsInSchool(student.admissionDate)}</span>
+                                    </div>
+                                    <div className="sp-stat-item" style={{ gridColumn: 'span 2', background: 'transparent' }}>
+                                        <span className="status-badge" style={{
+                                            background: student.status === 'Left' ? 'var(--ft-badge-inactive)' : 'var(--ft-badge-active)',
+                                            color: student.status === 'Left' ? 'var(--ft-badge-inactive-text)' : 'var(--ft-badge-active-text)',
+                                            padding: '6px 20px',
+                                            fontSize: '14px',
+                                            width: '100%'
+                                        }}>
+                                            Status: {student.status || 'Active'}
+                                        </span>
                                     </div>
                                 </div>
                             </div>

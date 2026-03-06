@@ -137,7 +137,7 @@ const scrollToId = (e, id) => {
 };
 
 // API base URL for unauthenticated landing page fetch
-const API_BASE_URL = import.meta.env?.VITE_API_URL || 'http://localhost:8000/api/v1';
+const API_BASE_URL = import.meta.env?.VITE_API_URL || 'https://ourschoolerp-m9y9k.ondigitalocean.app/api/v1';
 
 const LandingPage = () => {
     const [mobileOpen, setMobileOpen] = useState(false);

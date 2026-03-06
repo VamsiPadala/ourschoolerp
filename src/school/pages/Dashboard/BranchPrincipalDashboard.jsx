@@ -1,187 +1,165 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import '../../pages/Reports/Reports.css';
+import { BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import './Dashboard.css';
+import './RolesDashboard.css';
 
-const kpiData = [
-    { label: 'Student Attendance', value: '95.4%', change: '+1.8%', up: true, color: '#28c76f', bg: '#e8faf1', icon: '✅' },
-    { label: 'Staff Attendance', value: '97.6%', change: '+0.4%', up: true, color: '#3d5ee1', bg: '#eef1fd', icon: '👩‍🏫' },
-    { label: 'Active Classes', value: '42', change: '0', up: true, color: '#ff9f43', bg: '#fff5e6', icon: '🏫' },
-    { label: 'Upcoming Events', value: '3', change: '+1', up: true, color: '#7367f0', bg: '#efedfd', icon: '📅' },
-    { label: 'Avg Score (Exam)', value: '76.2%', change: '+2.3%', up: true, color: '#00cfe8', bg: '#e0f9fc', icon: '📊' },
-    { label: 'Homework Pending', value: '18', change: '-5', up: true, color: '#ea5455', bg: '#fce8e8', icon: '📚' },
-    { label: 'Complaints', value: '2', change: '-3', up: true, color: '#ff6b6b', bg: '#fff0f0', icon: '🚨' },
-    { label: 'Pass Rate (Exams)', value: '88%', change: '+3%', up: true, color: '#6c757d', bg: '#f0f0f0', icon: '🏆' },
+const kpiCards = [
+    { label: 'Branch Students', value: '520', sub: 'North Campus', icon: '👨‍🎓', color: '#3d5ee1', bg: '#eef1fd' },
+    { label: 'Teachers', value: '34', sub: '32 Active Today', icon: '👩‍🏫', color: '#28c76f', bg: '#e8faf1' },
+    { label: 'Attendance', value: '91.8%', sub: 'Today', icon: '✅', color: '#ff9f43', bg: '#fff5e6' },
+    { label: 'Fee Collection', value: '88%', sub: 'This Month', icon: '💰', color: '#7367f0', bg: '#efedfd' },
+    { label: 'Avg Exam Score', value: '78.4%', sub: 'Last Term', icon: '📊', color: '#00cfe8', bg: '#e0f9fc' },
+    { label: 'Open Complaints', value: '3', sub: 'Pending Review', icon: '📝', color: '#ea5455', bg: '#fce8e8' },
 ];
 
 const weeklyAttendance = [
-    { name: 'Mon', students: 1180, staff: 82 }, { name: 'Tue', students: 1205, staff: 85 },
-    { name: 'Wed', students: 1120, staff: 80 }, { name: 'Thu', students: 1190, staff: 84 },
-    { name: 'Fri', students: 1150, staff: 79 }, { name: 'Sat', students: 1080, staff: 70 },
+    { day: 'Mon', pct: 92 }, { day: 'Tue', pct: 94 }, { day: 'Wed', pct: 89 },
+    { day: 'Thu', pct: 93 }, { day: 'Fri', pct: 91 }, { day: 'Sat', pct: 82 },
 ];
 
-const gradeDistribution = [
-    { name: 'A+ (90-100)', value: 220, color: '#28c76f' },
-    { name: 'A (80-89)', value: 340, color: '#3d5ee1' },
-    { name: 'B (70-79)', value: 280, color: '#ff9f43' },
-    { name: 'C (60-69)', value: 180, color: '#00cfe8' },
-    { name: 'D (50-59)', value: 130, color: '#7367f0' },
-    { name: 'F (<50)', value: 98, color: '#ea5455' },
+const classPassRate = [
+    { class: 'VI', pass: 96 }, { class: 'VII', pass: 92 }, { class: 'VIII', pass: 88 },
+    { class: 'IX', pass: 85 }, { class: 'X', pass: 82 }, { class: 'XI', pass: 80 }, { class: 'XII', pass: 84 },
 ];
 
-const subjectPassRates = [
-    { subject: 'Maths', pass: 78 }, { subject: 'Science', pass: 82 },
-    { subject: 'English', pass: 91 }, { subject: 'Social', pass: 85 },
-    { subject: 'Computer', pass: 95 }, { subject: 'Hindi', pass: 88 },
+const genderData = [
+    { name: 'Male', value: 285, color: '#3d5ee1' },
+    { name: 'Female', value: 235, color: '#ff6b9d' },
 ];
 
-const genderPie = [
-    { name: 'Male', value: 672, color: '#3d5ee1' },
-    { name: 'Female', value: 578, color: '#ff6b9d' },
+const notices = [
+    { text: 'Branch Review Meeting – Mar 6', color: '#3d5ee1', date: 'Mar 04' },
+    { text: 'Science Exhibition – Mar 12', color: '#28c76f', date: 'Mar 04' },
+    { text: 'Parent-Teacher Meet – Mar 10', color: '#ff9f43', date: 'Mar 03' },
+    { text: 'Exam Timetable Released', color: '#ea5455', date: 'Mar 02' },
 ];
 
-const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-        return (
-            <div className="rpt-tooltip">
-                <p className="rpt-tooltip-label">{label}</p>
-                {payload.map((p, i) => (
-                    <p key={i} style={{ color: p.color, margin: '2px 0', fontSize: 13 }}>
-                        {p.name}: <strong>{p.value}</strong>
-                    </p>
-                ))}
+const topStudents = [
+    { name: 'Anjali Sharma', class: 'XII-A', score: 97.4, avatar: '👩‍🎓', bg: '#eef1fd', color: '#3d5ee1' },
+    { name: 'Rohit Menon', class: 'X-B', score: 95.8, avatar: '👨‍🎓', bg: '#e8faf1', color: '#28c76f' },
+    { name: 'Fatima Sheikh', class: 'XI-A', score: 94.2, avatar: '👩‍🎓', bg: '#fff5e6', color: '#ff9f43' },
+    { name: 'Aditya Kumar', class: 'X-A', score: 93.5, avatar: '👨‍🎓', bg: '#efedfd', color: '#7367f0' },
+];
+
+const BranchPrincipalDashboard = () => (
+    <div className="dashboard-page">
+        <div className="page-header">
+            <div className="page-title">
+                <h4>Branch Principal Dashboard</h4>
+                <nav className="breadcrumb"><span>Dashboard</span> / <span className="current">Branch Principal Dashboard</span></nav>
             </div>
-        );
-    }
-    return null;
-};
+            <div className="page-header-actions">
+                <div className="rdb-branch-badge">🏫 <strong>North Campus</strong></div>
+                <button className="btn btn-primary">📊 View Reports</button>
+            </div>
+        </div>
 
-const BranchPrincipalDashboard = () => {
-    const [activePeriod, setActivePeriod] = useState('This Week');
-
-    return (
-        <div className="rpt-page">
-            <div className="rpt-page-header">
-                <div>
-                    <h4 className="rpt-page-title">Branch Principal Dashboard</h4>
-                    <nav className="rpt-breadcrumb">
-                        <Link to="/school/dashboard">Home</Link>
-                        <span> / </span>
-                        <span className="rpt-breadcrumb-current">Branch Principal (Read-Only)</span>
-                    </nav>
+        <div className="rdb-kpi-grid">
+            {kpiCards.map((k, i) => (
+                <div key={i} className="rdb-kpi-card dashboard-card">
+                    <div className="rdb-kpi-icon" style={{ background: k.bg, color: k.color }}>{k.icon}</div>
+                    <div className="rdb-kpi-info">
+                        <p className="rdb-kpi-label">{k.label}</p>
+                        <h3 className="rdb-kpi-value" style={{ color: k.color }}>{k.value}</h3>
+                        <span className="rdb-kpi-sub">{k.sub}</span>
+                    </div>
                 </div>
-                <div className="rpt-header-actions">
-                    {['This Week', 'This Month', 'This Year'].map(p => (
-                        <button key={p} className={`rpt-period-btn ${activePeriod === p ? 'active' : ''}`} onClick={() => setActivePeriod(p)}>{p}</button>
+            ))}
+        </div>
+
+        <div className="dashboard-row" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 16 }}>
+            <div className="dashboard-card">
+                <div className="card-header"><h5>Weekly Attendance (%)</h5></div>
+                <div className="card-body" style={{ paddingTop: 0 }}>
+                    <ResponsiveContainer width="100%" height={220}>
+                        <AreaChart data={weeklyAttendance} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                            <defs>
+                                <linearGradient id="gAtnd" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#3d5ee1" stopOpacity={0.2} />
+                                    <stop offset="95%" stopColor="#3d5ee1" stopOpacity={0} />
+                                </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                            <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 12 }} />
+                            <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 12 }} domain={[70, 100]} />
+                            <Tooltip formatter={(v) => [`${v}%`, 'Attendance']} />
+                            <Area type="monotone" dataKey="pct" name="Attendance %" stroke="#3d5ee1" fill="url(#gAtnd)" strokeWidth={2.5} dot={{ r: 4, fill: '#3d5ee1' }} />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                </div>
+            </div>
+            <div className="dashboard-card">
+                <div className="card-header"><h5>Student Ratio</h5></div>
+                <div className="card-body" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 0 }}>
+                    <ResponsiveContainer width="100%" height={160}>
+                        <PieChart>
+                            <Pie isAnimationActive={false} data={genderData} cx="50%" cy="50%" innerRadius={45} outerRadius={72} paddingAngle={3} dataKey="value">
+                                {genderData.map((e, i) => <Cell key={i} fill={e.color} />)}
+                            </Pie>
+                            <Tooltip formatter={(v) => [`${v} students`, '']} />
+                        </PieChart>
+                    </ResponsiveContainer>
+                    {genderData.map((g, i) => (
+                        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5, width: '100%' }}>
+                            <span className="rdb-dot" style={{ background: g.color }} />
+                            <span style={{ flex: 1, fontSize: 13 }}>{g.name}</span>
+                            <strong>{g.value}</strong>
+                        </div>
                     ))}
                 </div>
             </div>
-
-            <div className="rpt-kpi-grid">
-                {kpiData.map((kpi, i) => (
-                    <div key={i} className="rpt-kpi-card">
-                        <div className="rpt-kpi-icon" style={{ background: kpi.bg, color: kpi.color }}><span>{kpi.icon}</span></div>
-                        <div className="rpt-kpi-info">
-                            <p className="rpt-kpi-label">{kpi.label}</p>
-                            <h3 className="rpt-kpi-value">{kpi.value}</h3>
-                            <span className={`rpt-kpi-change ${kpi.up ? 'up' : 'down'}`}>{kpi.up ? '▲' : '▼'} {kpi.change}<span className="rpt-kpi-vs"> vs last week</span></span>
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            {/* Weekly Attendance Chart */}
-            <div className="rpt-card">
-                <div className="rpt-card-header">
-                    <h5 className="rpt-card-title">Weekly Attendance (Students vs Staff)</h5>
-                    <div className="rpt-legend-row" style={{ marginTop: 0 }}>
-                        <div className="rpt-lgnd"><span style={{ background: '#3d5ee1' }}></span> Students</div>
-                        <div className="rpt-lgnd"><span style={{ background: '#ff9f43' }}></span> Staff</div>
-                    </div>
+            <div className="dashboard-card">
+                <div className="card-header"><h5>Notice Board</h5></div>
+                <div className="card-body" style={{ paddingTop: 8 }}>
+                    <ul className="rdb-notice-list">
+                        {notices.map((n, i) => (
+                            <li key={i} className="rdb-notice-item">
+                                <span className="rdb-notice-dot" style={{ background: n.color }} />
+                                <div className="rdb-notice-content">
+                                    <p className="rdb-notice-title">{n.text}</p>
+                                    <span className="rdb-notice-date">{n.date}</span>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
-                <div className="rpt-chart-body">
-                    <ResponsiveContainer width="100%" height={240}>
-                        <BarChart data={weeklyAttendance} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 12 }} dy={10} />
-                            <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 12 }} />
-                            <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f8f9fa' }} />
-                            <Bar dataKey="students" fill="#3d5ee1" radius={[4, 4, 0, 0]} barSize={22} name="Students" />
-                            <Bar dataKey="staff" fill="#ff9f43" radius={[4, 4, 0, 0]} barSize={22} name="Staff" />
+            </div>
+        </div>
+
+        <div className="dashboard-row" style={{ display: 'grid', gridTemplateColumns: '2fr 1.5fr', gap: 16 }}>
+            <div className="dashboard-card">
+                <div className="card-header"><h5>Class-wise Pass Rate (%)</h5></div>
+                <div className="card-body" style={{ paddingTop: 0 }}>
+                    <ResponsiveContainer width="100%" height={200}>
+                        <BarChart data={classPassRate} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                            <XAxis dataKey="class" axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 12 }} />
+                            <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 12 }} domain={[70, 100]} />
+                            <Tooltip formatter={(v) => [`${v}%`, 'Pass Rate']} />
+                            <Bar dataKey="pass" name="Pass Rate" fill="#28c76f" radius={[4, 4, 0, 0]} barSize={28} />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
             </div>
-
-            {/* Row: Grade Distribution + Gender + Subject Pass Rates */}
-            <div className="rpt-row rpt-row-3">
-                <div className="rpt-card">
-                    <div className="rpt-card-header"><h5 className="rpt-card-title">Grade Distribution</h5></div>
-                    <div className="rpt-chart-body rpt-chart-center">
-                        <ResponsiveContainer width="100%" height={160}>
-                            <PieChart>
-                                <Pie isAnimationActive={false} data={gradeDistribution} cx="50%" cy="50%" innerRadius={40} outerRadius={65} dataKey="value" label={({ percent }) => `${(percent * 100).toFixed(0)}%`} labelLine={false}>
-                                    {gradeDistribution.map((e, i) => <Cell key={i} fill={e.color} />)}
-                                </Pie>
-                                <Tooltip formatter={(v, n) => [v + ' students', n]} />
-                            </PieChart>
-                        </ResponsiveContainer>
-                        <div className="rpt-exam-legend" style={{ padding: '8px', gap: '4px 8px' }}>
-                            {gradeDistribution.map((item, i) => (
-                                <div key={i} className="rpt-exam-legend-item" style={{ fontSize: '11px' }}>
-                                    <span className="rpt-pie-dot" style={{ background: item.color, width: '8px', height: '8px' }}></span>
-                                    <span>{item.name.split(' ')[0]}</span>
-                                    <strong>{item.value}</strong>
-                                </div>
-                            ))}
+            <div className="dashboard-card">
+                <div className="card-header"><h5>Top Students</h5></div>
+                <div className="card-body" style={{ paddingTop: 8 }}>
+                    {topStudents.map((s, i) => (
+                        <div key={i} className="rdb-staff-item" style={{ marginBottom: 8 }}>
+                            <div className="rdb-staff-avatar" style={{ background: s.bg, color: s.color }}>{s.avatar}</div>
+                            <div className="rdb-staff-meta">
+                                <div className="rdb-staff-name">{s.name}</div>
+                                <div className="rdb-staff-dept">{s.class}</div>
+                            </div>
+                            <span style={{ fontSize: 13, fontWeight: 700, color: '#ff9f43' }}>⭐ {s.score}%</span>
                         </div>
-                    </div>
-                </div>
-
-                <div className="rpt-card">
-                    <div className="rpt-card-header"><h5 className="rpt-card-title">Student Gender Ratio</h5></div>
-                    <div className="rpt-chart-body rpt-chart-center">
-                        <ResponsiveContainer width="100%" height={160}>
-                            <PieChart>
-                                <Pie isAnimationActive={false} data={genderPie} cx="50%" cy="50%" innerRadius={50} outerRadius={75} paddingAngle={3} dataKey="value">
-                                    {genderPie.map((e, i) => <Cell key={i} fill={e.color} />)}
-                                </Pie>
-                                <Tooltip formatter={(v) => [v + ' students', '']} />
-                            </PieChart>
-                        </ResponsiveContainer>
-                        <div className="rpt-pie-legend">
-                            {genderPie.map((g, i) => (
-                                <div key={i} className="rpt-pie-legend-item">
-                                    <span className="rpt-pie-dot" style={{ background: g.color }}></span>
-                                    <span className="rpt-pie-name">{g.name}</span>
-                                    <strong className="rpt-pie-val">{g.value}</strong>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-
-                <div className="rpt-card">
-                    <div className="rpt-card-header"><h5 className="rpt-card-title">Subject Pass Rates</h5></div>
-                    <div className="rpt-chart-body">
-                        <div className="rpt-subject-table">
-                            {subjectPassRates.map((s, i) => (
-                                <div key={i} className="rpt-subject-row" style={{ gridTemplateColumns: '100px 1fr 60px' }}>
-                                    <span style={{ fontWeight: 600, fontSize: 13 }}>{s.subject}</span>
-                                    <div className="rpt-bar-wrap">
-                                        <div className="rpt-bar-fill" style={{ width: `${s.pass}%`, background: s.pass >= 90 ? '#28c76f' : s.pass >= 80 ? '#3d5ee1' : '#ff9f43' }}></div>
-                                    </div>
-                                    <span className="rpt-score">{s.pass}%</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                    ))}
                 </div>
             </div>
-
-            <footer className="rpt-footer"><p>© 2025 MindWhile School ERP — Branch Principal Dashboard (Read-Only)</p></footer>
         </div>
-    );
-};
+
+        <footer className="dashboard-footer"><p>Copyright © 2024 MindWhile. All rights reserved.</p></footer>
+    </div>
+);
 
 export default BranchPrincipalDashboard;

@@ -1,62 +1,65 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import '../../pages/Reports/Reports.css';
+import {
+    BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, AreaChart, Area,
+    XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+} from 'recharts';
+import './Dashboard.css';
+import './RolesDashboard.css';
 
-const kpiData = [
-    { label: 'Total Revenue (Annual)', value: '₹52,40,000', change: '+14.5%', up: true, color: '#28c76f', bg: '#e8faf1', icon: '💰' },
-    { label: 'Total Expenses', value: '₹18,20,000', change: '-4.2%', up: false, color: '#ea5455', bg: '#fce8e8', icon: '📉' },
-    { label: 'Net Profit', value: '₹34,20,000', change: '+22.1%', up: true, color: '#3d5ee1', bg: '#eef1fd', icon: '📈' },
-    { label: 'Pending Dues', value: '₹3,84,500', change: '-8.5%', up: false, color: '#ff9f43', bg: '#fff5e6', icon: '⚠️' },
-    { label: 'Fee Collected Today', value: '₹34,200', change: '+18%', up: true, color: '#00cfe8', bg: '#e0f9fc', icon: '💳' },
-    { label: 'Monthly Payroll', value: '₹8,45,000', change: '+1.2%', up: false, color: '#7367f0', bg: '#efedfd', icon: '👔' },
-    { label: 'Pending Invoices', value: '11', change: '-3', up: true, color: '#ff6b6b', bg: '#fff0f0', icon: '🧾' },
-    { label: 'Income Heads', value: '8', change: '0', up: true, color: '#6c757d', bg: '#f0f0f0', icon: '📋' },
+// ── Data ─────────────────────────────────────────────────────────────
+const kpiCards = [
+    { label: 'Total Income', value: '₹5.41L', sub: 'This Year', icon: '📈', color: '#28c76f', bg: '#e8faf1' },
+    { label: 'Total Expense', value: '₹1.38L', sub: 'This Year', icon: '📉', color: '#ea5455', bg: '#fce8e8' },
+    { label: 'Fee Collected', value: '₹4.82L', sub: 'This Month', icon: '💰', color: '#3d5ee1', bg: '#eef1fd' },
+    { label: 'Fee Pending', value: '₹86,300', sub: 'Outstanding', icon: '⚠️', color: '#ff9f43', bg: '#fff5e6' },
+    { label: 'Transactions', value: '1,482', sub: 'Processed', icon: '🔄', color: '#00cfe8', bg: '#e0f9fc' },
 ];
 
-const incomeExpenseData = [
-    { month: 'Apr', income: 410000, expense: 95000 }, { month: 'May', income: 420000, expense: 102000 },
-    { month: 'Jun', income: 395000, expense: 110000 }, { month: 'Jul', income: 450000, expense: 98000 },
-    { month: 'Aug', income: 480000, expense: 115000 }, { month: 'Sep', income: 430000, expense: 108000 },
-    { month: 'Oct', income: 510000, expense: 130000 }, { month: 'Nov', income: 400000, expense: 120000 },
-    { month: 'Dec', income: 375000, expense: 140000 }, { month: 'Jan', income: 470000, expense: 112000 },
-    { month: 'Feb', income: 505000, expense: 123450 }, { month: 'Mar', income: 530000, expense: 128000 },
+const incomeVsExpense = [
+    { month: 'Apr', income: 410000, expense: 95000 },
+    { month: 'May', income: 420000, expense: 102000 },
+    { month: 'Jun', income: 395000, expense: 110000 },
+    { month: 'Jul', income: 450000, expense: 98000 },
+    { month: 'Aug', income: 480000, expense: 115000 },
+    { month: 'Sep', income: 430000, expense: 108000 },
+    { month: 'Oct', income: 510000, expense: 130000 },
+    { month: 'Nov', income: 400000, expense: 120000 },
+    { month: 'Dec', income: 375000, expense: 140000 },
+    { month: 'Jan', income: 470000, expense: 112000 },
+    { month: 'Feb', income: 505000, expense: 123450 },
 ];
 
-const feeCollectionMonthly = [
-    { month: 'Apr', collected: 320000, due: 80000 }, { month: 'May', collected: 350000, due: 70000 },
-    { month: 'Jun', collected: 300000, due: 95000 }, { month: 'Jul', collected: 420000, due: 60000 },
-    { month: 'Aug', collected: 460000, due: 50000 }, { month: 'Sep', collected: 390000, due: 85000 },
+const feeByClass = [
+    { class: 'I-III', collected: 155000, due: 28000 },
+    { class: 'IV-VI', collected: 182000, due: 22000 },
+    { class: 'VII-IX', collected: 210000, due: 18000 },
+    { class: 'X', collected: 145000, due: 12000 },
+    { class: 'XI-XII', collected: 110000, due: 6300 },
 ];
 
 const expenseBreakdown = [
-    { name: 'Payroll', value: 845000, color: '#3d5ee1' },
-    { name: 'Maintenance', value: 240000, color: '#ff9f43' },
-    { name: 'Utilities', value: 185000, color: '#28c76f' },
-    { name: 'Supplies', value: 230000, color: '#00cfe8' },
-    { name: 'Others', value: 320000, color: '#ea5455' },
-];
-
-const incomeExpensePie = [
-    { name: 'Income', value: 5240000, color: '#28c76f' },
-    { name: 'Expense', value: 1820000, color: '#ea5455' },
+    { name: 'Salaries', value: 68000, color: '#3d5ee1' },
+    { name: 'Utilities', value: 18000, color: '#ff9f43' },
+    { name: 'Maintenance', value: 12000, color: '#28c76f' },
+    { name: 'Supplies', value: 8000, color: '#00cfe8' },
+    { name: 'Other', value: 17450, color: '#7367f0' },
 ];
 
 const recentTransactions = [
-    { name: 'Tuition Fee - Class X', amount: '+₹12,000', type: 'credit', time: '10:42 AM', student: 'Riya Sharma' },
-    { name: 'Electricity Bill', amount: '-₹8,500', type: 'debit', time: '09:15 AM', student: 'Admin' },
-    { name: 'Lab Fee - Class XI', amount: '+₹4,500', type: 'credit', time: 'Yesterday', student: 'Arjun Mehta' },
-    { name: 'Staff Payroll', amount: '-₹84,500', type: 'debit', time: 'Yesterday', student: 'Admin' },
-    { name: 'Annual Fee - Class VII', amount: '+₹18,000', type: 'credit', time: '2 days ago', student: 'Priya Nair' },
+    { ref: 'TXN-2025-001', student: 'Arjun Sharma', type: 'Fee – Tuition', amount: 8000, method: 'Cash', status: 'Collected' },
+    { ref: 'TXN-2025-002', student: 'Priya Nair', type: 'Fee – Transport', amount: 3200, method: 'Bank', status: 'Collected' },
+    { ref: 'TXN-2025-003', student: 'Karan Singh', type: 'Fee – Hostel', amount: 12000, method: 'UPI', status: 'Collected' },
+    { ref: 'TXN-2025-004', student: 'Meena Pillai', type: 'Fee – Tuition', amount: 8000, method: 'Cash', status: 'Pending' },
+    { ref: 'TXN-2025-005', student: 'Rohit Verma', type: 'Fee – Library', amount: 1500, method: 'Online', status: 'Collected' },
 ];
 
 const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
+    if (active && payload?.length) {
         return (
-            <div className="rpt-tooltip">
-                <p className="rpt-tooltip-label">{label}</p>
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 8, padding: '10px 14px', fontSize: 13 }}>
+                <p style={{ fontWeight: 700, marginBottom: 4 }}>{label}</p>
                 {payload.map((p, i) => (
-                    <p key={i} style={{ color: p.color, margin: '2px 0', fontSize: 13 }}>
+                    <p key={i} style={{ color: p.color, margin: '2px 0' }}>
                         {p.name}: <strong>₹{p.value.toLocaleString()}</strong>
                     </p>
                 ))}
@@ -67,164 +70,153 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const AccountantDashboard = () => {
-    const [activePeriod, setActivePeriod] = useState('This Year');
+    const [period, setPeriod] = useState('11M');
 
     return (
-        <div className="rpt-page">
-            <div className="rpt-page-header">
-                <div>
-                    <h4 className="rpt-page-title">Accountant Dashboard</h4>
-                    <nav className="rpt-breadcrumb">
-                        <Link to="/school/dashboard">Home</Link>
-                        <span> / </span>
-                        <span className="rpt-breadcrumb-current">Finance Management</span>
+        <div className="dashboard-page">
+            {/* Header */}
+            <div className="page-header">
+                <div className="page-title">
+                    <h4>Accountant Dashboard</h4>
+                    <nav className="breadcrumb">
+                        <span>Dashboard</span> / <span className="current">Accountant Dashboard</span>
                     </nav>
                 </div>
-                <div className="rpt-header-actions">
-                    {['This Week', 'This Month', 'This Year'].map(p => (
-                        <button key={p} className={`rpt-period-btn ${activePeriod === p ? 'active' : ''}`} onClick={() => setActivePeriod(p)}>{p}</button>
-                    ))}
-                    <button className="rpt-export-btn"><span>⬇️</span> Export</button>
+                <div className="page-header-actions">
+                    <div className="period-toggle">
+                        {['3M', '6M', '11M'].map(p => (
+                            <button key={p} className={`period-btn ${period === p ? 'active' : ''}`} onClick={() => setPeriod(p)}>{p}</button>
+                        ))}
+                    </div>
+                    <button className="btn btn-primary">📊 Generate Report</button>
                 </div>
             </div>
 
-            <div className="rpt-kpi-grid">
-                {kpiData.map((kpi, i) => (
-                    <div key={i} className="rpt-kpi-card">
-                        <div className="rpt-kpi-icon" style={{ background: kpi.bg, color: kpi.color }}><span>{kpi.icon}</span></div>
-                        <div className="rpt-kpi-info">
-                            <p className="rpt-kpi-label">{kpi.label}</p>
-                            <h3 className="rpt-kpi-value">{kpi.value}</h3>
-                            <span className={`rpt-kpi-change ${kpi.up ? 'up' : 'down'}`}>{kpi.up ? '▲' : '▼'} {kpi.change}<span className="rpt-kpi-vs"> vs last month</span></span>
+            {/* KPI Grid */}
+            <div className="rdb-kpi-grid">
+                {kpiCards.map((k, i) => (
+                    <div key={i} className="rdb-kpi-card dashboard-card">
+                        <div className="rdb-kpi-icon" style={{ background: k.bg, color: k.color }}>{k.icon}</div>
+                        <div className="rdb-kpi-info">
+                            <p className="rdb-kpi-label">{k.label}</p>
+                            <h3 className="rdb-kpi-value" style={{ color: k.color }}>{k.value}</h3>
+                            <span className="rdb-kpi-sub">{k.sub}</span>
                         </div>
                     </div>
                 ))}
             </div>
 
-            {/* Income vs Expense Area Chart */}
-            <div className="rpt-card">
-                <div className="rpt-card-header">
-                    <h5 className="rpt-card-title">Yearly Income vs Expense</h5>
-                    <select className="rpt-select"><option>2024-25</option><option>2023-24</option></select>
-                </div>
-                <div className="rpt-chart-body">
-                    <ResponsiveContainer width="100%" height={240}>
-                        <AreaChart data={incomeExpenseData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-                            <defs>
-                                <linearGradient id="ac-inc" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#28c76f" stopOpacity={0.25} />
-                                    <stop offset="95%" stopColor="#28c76f" stopOpacity={0} />
-                                </linearGradient>
-                                <linearGradient id="ac-exp" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#ea5455" stopOpacity={0.25} />
-                                    <stop offset="95%" stopColor="#ea5455" stopOpacity={0} />
-                                </linearGradient>
-                            </defs>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                            <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 12 }} dy={10} />
-                            <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 12 }} />
-                            <Tooltip content={<CustomTooltip />} />
-                            <Area type="monotone" dataKey="income" stroke="#28c76f" strokeWidth={2.5} fill="url(#ac-inc)" name="Income" />
-                            <Area type="monotone" dataKey="expense" stroke="#ea5455" strokeWidth={2.5} fill="url(#ac-exp)" name="Expense" />
-                        </AreaChart>
-                    </ResponsiveContainer>
-                </div>
-            </div>
-
-            {/* Row: Fee Bar Chart + Expense Pie + IE Pie */}
-            <div className="rpt-row rpt-row-3">
-                <div className="rpt-card">
-                    <div className="rpt-card-header"><h5 className="rpt-card-title">Monthly Fee Collection</h5></div>
-                    <div className="rpt-chart-body">
-                        <ResponsiveContainer width="100%" height={200}>
-                            <BarChart data={feeCollectionMonthly} margin={{ top: 10, right: 5, left: -25, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 11 }} dy={10} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 11 }} />
-                                <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f8f9fa' }} />
-                                <Bar dataKey="collected" fill="#28c76f" radius={[4, 4, 0, 0]} barSize={14} name="Collected" />
-                                <Bar dataKey="due" fill="#ea5455" radius={[4, 4, 0, 0]} barSize={14} name="Pending" />
+            {/* Row: Income vs Expense + Expense Breakdown */}
+            <div className="dashboard-row" style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 16 }}>
+                <div className="dashboard-card">
+                    <div className="card-header">
+                        <h5>Income vs Expense (Monthly)</h5>
+                        <div className="rdb-legend-row">
+                            <span className="rdb-dot" style={{ background: '#28c76f' }} />Income
+                            <span className="rdb-dot" style={{ background: '#ea5455' }} />Expense
+                        </div>
+                    </div>
+                    <div className="card-body" style={{ paddingTop: 0 }}>
+                        <ResponsiveContainer width="100%" height={250}>
+                            <BarChart data={incomeVsExpense} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 12 }} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 11 }} tickFormatter={v => `₹${(v / 1000).toFixed(0)}k`} />
+                                <Tooltip content={<CustomTooltip />} />
+                                <Bar dataKey="income" name="Income" fill="#28c76f" radius={[4, 4, 0, 0]} barSize={16} />
+                                <Bar dataKey="expense" name="Expense" fill="#ea5455" radius={[4, 4, 0, 0]} barSize={16} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
 
-                <div className="rpt-card">
-                    <div className="rpt-card-header"><h5 className="rpt-card-title">Expense Breakdown</h5></div>
-                    <div className="rpt-chart-body rpt-chart-center">
-                        <ResponsiveContainer width="100%" height={150}>
+                <div className="dashboard-card">
+                    <div className="card-header"><h5>Expense Breakdown</h5></div>
+                    <div className="card-body" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 0 }}>
+                        <ResponsiveContainer width="100%" height={180}>
                             <PieChart>
-                                <Pie isAnimationActive={false} data={expenseBreakdown} cx="50%" cy="50%" innerRadius={40} outerRadius={65} dataKey="value" label={({ percent }) => `${(percent * 100).toFixed(0)}%`} labelLine={false}>
+                                <Pie isAnimationActive={false} data={expenseBreakdown} cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value" paddingAngle={3}>
                                     {expenseBreakdown.map((e, i) => <Cell key={i} fill={e.color} />)}
                                 </Pie>
-                                <Tooltip formatter={(v) => `₹${v.toLocaleString()}`} />
+                                <Tooltip formatter={(v) => [`₹${v.toLocaleString()}`, '']} />
                             </PieChart>
                         </ResponsiveContainer>
-                        <div className="rpt-exam-legend" style={{ padding: '6px', gap: '4px' }}>
-                            {expenseBreakdown.map((item, i) => (
-                                <div key={i} className="rpt-exam-legend-item" style={{ fontSize: '11px' }}>
-                                    <span className="rpt-pie-dot" style={{ background: item.color, width: '8px', height: '8px' }}></span>
-                                    <span>{item.name}</span>
-                                    <strong>₹{(item.value / 1000).toFixed(0)}K</strong>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-
-                <div className="rpt-card">
-                    <div className="rpt-card-header"><h5 className="rpt-card-title">Income vs Expense</h5></div>
-                    <div className="rpt-chart-body rpt-chart-center">
-                        <ResponsiveContainer width="100%" height={150}>
-                            <PieChart>
-                                <Pie isAnimationActive={false} data={incomeExpensePie} cx="50%" cy="50%" innerRadius={45} outerRadius={70} dataKey="value" stroke="none">
-                                    {incomeExpensePie.map((e, i) => <Cell key={i} fill={e.color} />)}
-                                </Pie>
-                                <Tooltip formatter={(v) => `₹${(v / 100000).toFixed(1)}L`} />
-                            </PieChart>
-                        </ResponsiveContainer>
-                        <div className="rpt-pie-legend" style={{ gap: '6px 12px' }}>
-                            {incomeExpensePie.map((item, i) => (
-                                <div key={i} className="rpt-pie-legend-item">
-                                    <span className="rpt-pie-dot" style={{ background: item.color }}></span>
-                                    <span>{item.name}</span>
-                                    <strong>₹{(item.value / 100000).toFixed(1)}L</strong>
-                                </div>
-                            ))}
-                        </div>
+                        {expenseBreakdown.map((item, i) => (
+                            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5, width: '100%' }}>
+                                <span className="rdb-dot" style={{ background: item.color }} />
+                                <span style={{ flex: 1, fontSize: 13 }}>{item.name}</span>
+                                <strong style={{ fontSize: 13 }}>₹{item.value.toLocaleString()}</strong>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
 
-            {/* Recent Transactions Table */}
-            <div className="rpt-table-card">
-                <div className="rpt-table-header">
-                    <h5 className="rpt-table-title">Recent Transactions</h5>
-                    <div className="rpt-table-actions">
-                        <button className="rpt-btn-outline">📄 PDF</button>
-                        <button className="rpt-btn-outline">📊 Excel</button>
-                        <Link to="/school/finance/all-transactions" className="rpt-btn-outline">View All →</Link>
+            {/* Row: Class-wise Fee + Recent Transactions */}
+            <div className="dashboard-row" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 16 }}>
+                <div className="dashboard-card">
+                    <div className="card-header"><h5>Class-wise Fee Status</h5></div>
+                    <div className="card-body" style={{ paddingTop: 8 }}>
+                        {feeByClass.map((c, i) => {
+                            const pct = Math.round(c.collected / (c.collected + c.due) * 100);
+                            return (
+                                <div key={i} className="rdb-fee-row">
+                                    <div className="rdb-fee-meta">
+                                        <span className="rdb-fee-class">{c.class}</span>
+                                        <span className="rdb-fee-pct" style={{ color: pct >= 85 ? '#28c76f' : '#ff9f43' }}>{pct}%</span>
+                                    </div>
+                                    <div className="rdb-fee-bar-bg">
+                                        <div className="rdb-fee-bar-fill" style={{ width: `${pct}%`, background: pct >= 85 ? '#28c76f' : '#ff9f43' }} />
+                                    </div>
+                                    <div className="rdb-fee-nums">
+                                        <span style={{ color: '#28c76f', fontSize: 12 }}>₹{(c.collected / 1000).toFixed(0)}k</span>
+                                        <span style={{ color: '#ea5455', fontSize: 12 }}>₹{(c.due / 1000).toFixed(0)}k due</span>
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
-                <div className="rpt-table-wrap">
-                    <table className="rpt-table">
-                        <thead><tr><th>Description</th><th>Person</th><th>Amount</th><th>Time</th><th>Type</th></tr></thead>
-                        <tbody>
-                            {recentTransactions.map((t, i) => (
-                                <tr key={i}>
-                                    <td style={{ fontWeight: 600 }}>{t.name}</td>
-                                    <td>{t.student}</td>
-                                    <td><strong style={{ color: t.type === 'credit' ? '#28c76f' : '#ea5455' }}>{t.amount}</strong></td>
-                                    <td style={{ color: '#8c90a4' }}>{t.time}</td>
-                                    <td><span className={`rpt-badge ${t.type === 'credit' ? 'rpt-badge-green' : 'rpt-badge-red'}`}>{t.type === 'credit' ? 'Credit' : 'Debit'}</span></td>
+
+                <div className="dashboard-card">
+                    <div className="card-header">
+                        <h5>Recent Transactions</h5>
+                        <a href="#" className="view-all">View All →</a>
+                    </div>
+                    <div style={{ overflowX: 'auto' }}>
+                        <table className="rdb-table">
+                            <thead>
+                                <tr>
+                                    <th>Ref No</th>
+                                    <th>Student</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Method</th>
+                                    <th>Status</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {recentTransactions.map((t, i) => (
+                                    <tr key={i}>
+                                        <td><span className="rdb-badge badge-blue" style={{ fontSize: 10 }}>{t.ref}</span></td>
+                                        <td><strong>{t.student}</strong></td>
+                                        <td style={{ fontSize: 12 }}>{t.type}</td>
+                                        <td><strong>₹{t.amount.toLocaleString()}</strong></td>
+                                        <td style={{ fontSize: 12 }}>{t.method}</td>
+                                        <td>
+                                            <span className={`rdb-badge ${t.status === 'Collected' ? 'badge-green' : 'badge-orange'}`}>{t.status}</span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <footer className="rpt-footer"><p>© 2025 MindWhile School ERP — Accountant Dashboard</p></footer>
+            <footer className="dashboard-footer">
+                <p>Copyright © 2024 MindWhile. All rights reserved.</p>
+            </footer>
         </div>
     );
 };

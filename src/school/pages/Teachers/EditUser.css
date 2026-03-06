@@ -1,6 +1,6 @@
 .edit-user-page-container {
     padding: 20px;
-    background-color: #f4f7fa;
+    background-color: var(--bg-main);
     min-height: 100vh;
 }
 
@@ -15,9 +15,9 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    border: none;
-    background-color: white;
-    color: #5b626b;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-card);
+    color: var(--text-primary);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: all 0.2s;
@@ -29,9 +29,10 @@
 }
 
 .edit-user-card {
-    background-color: white;
+    background-color: var(--bg-card);
     border-radius: 4px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
     overflow: hidden;
 }
 
@@ -39,23 +40,23 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #eaf2fa;
+    background-color: var(--bg-main);
     padding: 12px 20px;
-    border-bottom: 1px solid #dbe6f0;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .header-left {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #333;
+    color: var(--text-primary);
 }
 
 .header-left h3 {
     margin: 0;
     font-size: 16px;
     font-weight: 500;
-    color: #555;
+    color: var(--text-secondary);
 }
 
 .header-right {
@@ -87,7 +88,7 @@
 .form-group label {
     font-size: 12px;
     font-weight: 500;
-    color: #6c757d;
+    color: var(--text-secondary);
     margin-bottom: 8px;
 }
 
@@ -99,12 +100,12 @@
 .form-group input[type="email"],
 .form-group select {
     padding: 8px 12px;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     font-size: 13px;
-    color: #495057;
+    color: var(--text-primary);
     outline: none;
-    background-color: #fff;
+    background-color: var(--input-bg);
 }
 
 .form-group input:focus,
@@ -116,9 +117,9 @@
 /* File Browse Button logic */
 .file-browse-input {
     display: flex;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
-    background-color: #f8f9fa;
+    background-color: var(--input-bg);
     position: relative;
     align-items: stretch;
 }

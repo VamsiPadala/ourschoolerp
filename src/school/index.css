@@ -160,7 +160,7 @@
   /* Progress bar - 8px height matching Preskool */
   .progress-thick {
     height: 8px;
-    background-color: #F3F4F6;
+    background-color: var(--bg-main);
     border-radius: 9999px;
     overflow: hidden;
   }
@@ -178,12 +178,12 @@
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
-  background: #F3F4F6;
+  background: var(--bg-main);
   border-radius: 3px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #D1D5DB;
+  background: var(--border-color);
   border-radius: 3px;
 }
 

@@ -2,390 +2,178 @@ import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AcademicsContext } from '../../../context/AcademicsContext';
 import {
-    IconPlus,
-    IconEdit,
-    IconTrash,
-    IconHome,
-    IconClipboardList,
-    IconDeviceDesktop,
     IconSearch,
-    IconCalendar,
-    IconCopy,
-    IconFileText,
-    IconTable,
-    IconFile as IconPdf,
-    IconPrinter,
-    IconEye,
-    IconPencil,
-    IconSelector,
+    IconPlus,
     IconFilter,
     IconChevronDown,
-    IconStar,
-    IconUsers
+    IconEye,
+    IconPencil,
+    IconTrash
 } from '@tabler/icons-react';
+import { motion } from 'framer-motion';
+import '../Transport/ManageStudentTransport.css';
+import '../FrontOffice/VisitorBook.css';
 import './Academics.css';
 
 const Homework = () => {
-    const { classes, sections, subjects, homework, deleteHomework } = useContext(AcademicsContext);
+    const { homework, deleteHomework } = useContext(AcademicsContext);
     const navigate = useNavigate();
 
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedRows, setSelectedRows] = useState([]);
-    const [viewingHomework, setViewingHomework] = useState(null);
-
-    // Filter States
-    const [showFilterMenu, setShowFilterMenu] = useState(false);
-    const [filters, setFilters] = useState({ class: '', section: '', status: '' });
-    const [tempFilters, setTempFilters] = useState({ class: '', section: '', status: '' });
-    const [visibleColumns, setVisibleColumns] = useState({
-        id: true,
-        class: true,
-        section: true,
-        subject: true,
-        homeworkDate: true,
-        submissionDate: true,
-        evaluationDate: true,
-        status: true
-    });
+    const [entries, setEntries] = useState(10);
 
     const filteredHomework = homework.filter(h => {
-        const matchesSearch = h.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            h.class.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            h.section.toLowerCase().includes(searchTerm.toLowerCase());
+        const title = h.homework || '';
+        const subject = h.subjectName || '';
+        const className = h.className || '';
+        const search = searchTerm.toLowerCase();
 
-        const matchesClass = !filters.class || h.class === filters.class;
-        const matchesSection = !filters.section || h.section === filters.section;
-        const matchesStatus = !filters.status || (h.academicStatus || 'Active') === filters.status;
-
-        return matchesSearch && matchesClass && matchesSection && matchesStatus;
+        return title.toLowerCase().includes(search) ||
+            subject.toLowerCase().includes(search) ||
+            className.toLowerCase().includes(search);
     });
 
-    const toggleColumnVisibility = (column) => {
-        setVisibleColumns(prev => ({ ...prev, [column]: !prev[column] }));
+    const displayHomework = filteredHomework.slice(0, entries);
+
+    const containerVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } }
     };
 
-    const handleApplyFilters = () => {
-        setFilters(tempFilters);
-        setShowFilterMenu(false);
-    };
-
-    const handleResetFilters = () => {
-        const reset = { class: '', section: '', status: '' };
-        setTempFilters(reset);
-        setFilters(reset);
-        setShowFilterMenu(false);
-    };
-
-    const handleSelectAll = (e) => {
-        if (e.target.checked) {
-            setSelectedRows(filteredHomework.map(hw => hw.id));
-        } else {
-            setSelectedRows([]);
-        }
-    };
-
-    const toggleSelectRow = (id) => {
-        setSelectedRows(prev =>
-            prev.includes(id) ? prev.filter(rowId => rowId !== id) : [...prev, id]
-        );
-    };
-
-    const handleCopy = () => {
-        const text = filteredHomework.map(hw => `${hw.id}\t${hw.class}\t${hw.section}\t${hw.subject}\t${hw.homeworkDate}`).join('\n');
-        navigator.clipboard.writeText(text);
-        alert('Table data copied to clipboard!');
-    };
-
-    const handleExportCSV = () => {
-        const headers = ['ID', 'Class', 'Section', 'Subject', 'Homework Date', 'Submission Date', 'Status'];
-        const csvContent = "data:text/csv;charset=utf-8,"
-            + headers.join(",") + "\n"
-            + filteredHomework.map(hw => `${hw.id},"${hw.class}","${hw.section}","${hw.subject}",${hw.homeworkDate},${hw.submissionDate},${hw.academicStatus || 'Active'}`).join("\n");
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "homework_assignments.csv");
-        document.body.appendChild(link);
-        link.click();
-    };
-
-    const handleExportExcel = () => {
-        alert('Export to Excel functionality not yet implemented.');
-    };
-
-    const handleExportPDF = () => {
-        alert('Export to PDF functionality not yet implemented.');
-    };
-
-    const handlePrint = () => {
-        window.print();
+    const tableRowVariants = {
+        hidden: { opacity: 0, x: -10 },
+        visible: { opacity: 1, x: 0, transition: { duration: 0.2 } }
     };
 
     return (
-        <div className="academics-page" style={{ padding: '28px 20px', minHeight: '100vh' }}>
-            <div style={{ maxWidth: 'none', width: '100%' }}>
-                {/* Page Header */}
-                <div className="page-header">
-                    <div className="page-title">
-                        <h4>Homework</h4>
-                        <nav className="breadcrumb">
-                            <span>Dashboard</span> / <span>Academics</span> / <span className="current">Homework</span>
-                        </nav>
+        <div className="student-list-page transport-page visitor-book-page w-full">
+            <div className="page-header">
+                <div className="page-title">
+                    <h4>Homework & Assignments</h4>
+                    <nav className="breadcrumb">
+                        <span className="breadcrumb-link">Study Center</span>
+                        <span className="breadcrumb-separator">/</span>
+                        <span className="current">Homework & Assignments</span>
+                    </nav>
+                </div>
+                <div className="page-header-actions">
+                    <button
+                        className="btn btn-primary flex items-center gap-2"
+                        style={{
+                            background: 'linear-gradient(135deg, #3d5ee1 0%, #6e8efb 100%)',
+                            color: 'white',
+                            border: 'none',
+                            boxShadow: '0 4px 12px rgba(61, 94, 225, 0.2)'
+                        }}
+                        onClick={() => navigate('/school/study/assignments/add')}
+                    >
+                        <IconPlus size={18} /> Add Homework
+                    </button>
+                </div>
+            </div>
+
+            <div className="card shadow-soft border-0 overflow-hidden fade-in">
+                <div className="premium-header-banner">
+                    <h4 className="mb-0">Assignments List</h4>
+                </div>
+
+                <div className="table-toolbar-premium">
+                    <div className="search-pill-wrapper flex-1 max-w-sm">
+                        <IconSearch size={18} className="search-icon-pill" />
+                        <input
+                            type="text"
+                            placeholder="Search assignments..."
+                            className="search-input-pill"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
                     </div>
-                    <div className="page-header-actions">
-                        <button
-                            onClick={() => navigate('/school/academics')}
-                            className="btn btn-primary"
-                        >
-                            <IconHome size={18} />
-                            Back to Academics
-                        </button>
-                        <button
-                            onClick={() => navigate('/school/academics/homework/add')}
-                            className="btn btn-primary"
-                        >
-                            <IconPlus size={18} />
-                            New Homework
-                        </button>
+
+                    <div className="export-button-group">
+                        <button className="export-btn">Copy</button>
+                        <button className="export-btn">CSV</button>
+                        <button className="export-btn">Excel</button>
+                        <button className="export-btn">PDF</button>
+                        <button className="export-btn">Print</button>
+                        <div className="filter-dropdown-btn">
+                            <IconFilter size={16} />
+                            <span>Filter</span>
+                            <IconChevronDown size={14} />
+                        </div>
+                    </div>
+                </div>
+                {/* Header Area */}
+                <div className="flex justify-between items-center p-6 border-b border-slate-100 bg-white">
+                    <div>
+                        <h5 className="text-xl font-bold text-slate-800 m-0">All Assignments</h5>
+                        <p className="text-sm text-slate-500 mt-1">Manage and view all deployed homework</p>
                     </div>
                 </div>
 
-                {/* Table Card */}
-                <div className="card soft-card fade-in">
-                    {/* Toolbar */}
-                    <div className="table-toolbar-wrapper">
-                        <div className="toolbar-search">
-                            <IconSearch size={16} />
-                            <input
-                                type="text"
-                                placeholder="Search by class, section or subject..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="search-input-field"
-                            />
-                        </div>
-                        <div className="toolbar-actions flex items-center gap-2">
-                            <div className="relative inline-block text-left h-full">
-                                <button
-                                    onClick={() => setShowFilterMenu(!showFilterMenu)}
-                                    className={`export-mini-btn !flex-row gap-2 h-full ${showFilterMenu ? 'active' : ''}`}
-                                >
-                                    <IconFilter size={16} /> Filter <IconChevronDown size={14} className={`transition-transform duration-200 ${showFilterMenu ? 'rotate-180' : ''}`} />
-                                </button>
 
-                                {showFilterMenu && (
-                                    <div className="filter-menu fade-in">
-                                        <div className="filter-header">
-                                            <h3>Filter</h3>
-                                        </div>
-                                        <div className="filter-body">
-                                            <div className="filter-section">
-                                                <span className="filter-section-label">Show Columns</span>
-                                                <div className="column-checkboxes">
-                                                    {Object.keys(visibleColumns).map(col => (
-                                                        <label key={col} className="checkbox-label">
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={visibleColumns[col]}
-                                                                onChange={() => toggleColumnVisibility(col)}
-                                                            />
-                                                            <span>{col === 'homeworkDate' ? 'Homework Date' : col === 'submissionDate' ? 'Submission Date' : col === 'evaluationDate' ? 'Evaluation Date' : col.charAt(0).toUpperCase() + col.slice(1)}</span>
-                                                        </label>
-                                                    ))}
-                                                </div>
-                                            </div>
 
-                                            <div className="filter-group">
-                                                <div className="filter-item">
-                                                    <label>Class</label>
-                                                    <select
-                                                        className="filter-select"
-                                                        value={tempFilters.class}
-                                                        onChange={(e) => setTempFilters({ ...tempFilters, class: e.target.value })}
-                                                    >
-                                                        <option value="">All Classes</option>
-                                                        <option value="One">One</option>
-                                                        <option value="Two">Two</option>
-                                                        <option value="Three">Three</option>
-                                                    </select>
-                                                </div>
-                                                <div className="filter-item">
-                                                    <label>Section</label>
-                                                    <select
-                                                        className="filter-select"
-                                                        value={tempFilters.section}
-                                                        onChange={(e) => setTempFilters({ ...tempFilters, section: e.target.value })}
-                                                    >
-                                                        <option value="">All Sections</option>
-                                                        <option value="A">A</option>
-                                                        <option value="B">B</option>
-                                                        <option value="C">C</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div className="filter-group-vertical">
-                                                <label>Status</label>
-                                                <select
-                                                    className="filter-select"
-                                                    value={tempFilters.status}
-                                                    onChange={(e) => setTempFilters({ ...tempFilters, status: e.target.value })}
-                                                >
-                                                    <option value="">Select Status</option>
-                                                    <option value="Active">Active</option>
-                                                    <option value="Completed">Completed</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div className="filter-footer">
-                                            <button className="btn-reset" onClick={handleResetFilters}>Reset</button>
-                                            <button className="btn-apply" onClick={handleApplyFilters}>Apply</button>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                            <button onClick={handleCopy} className="export-mini-btn">
-                                Copy
-                            </button>
-                            <button onClick={handleExportCSV} className="export-mini-btn">
-                                CSV
-                            </button>
-                            <button onClick={handleExportExcel} className="export-mini-btn">
-                                Excel
-                            </button>
-                            <button onClick={handleExportPDF} className="export-mini-btn">
-                                PDF
-                            </button>
-                            <button onClick={handlePrint} className="export-mini-btn">
-                                Print
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Table Stats */}
-                    <div className="table-stats">
-                        <span><strong>{filteredHomework.length}</strong> assignments {selectedRows.length > 0 && <strong>| {selectedRows.length} selected</strong>}</span>
-                    </div>
-
-                    <table className="premium-table">
+                {/* Table */}
+                <div className="table-wrap px-0">
+                    <table className="premium-table-v2">
                         <thead>
                             <tr>
-                                <th className="w-12">
-                                    <input
-                                        type="checkbox"
-                                        className="premium-checkbox"
-                                        onChange={handleSelectAll}
-                                        checked={filteredHomework.length > 0 && selectedRows.length === filteredHomework.length}
-                                    />
-                                </th>
-                                {visibleColumns.id && (
-                                    <th>
-                                        <div className="flex items-center gap-2">
-                                            ID <IconSelector size={14} className="opacity-50" />
-                                        </div>
-                                    </th>
-                                )}
-                                {visibleColumns.class && (
-                                    <th>
-                                        <div className="flex items-center gap-2">
-                                            Class <IconSelector size={14} className="opacity-50" />
-                                        </div>
-                                    </th>
-                                )}
-                                {visibleColumns.section && (
-                                    <th>
-                                        <div className="flex items-center gap-2">
-                                            Section <IconSelector size={14} className="opacity-50" />
-                                        </div>
-                                    </th>
-                                )}
-                                {visibleColumns.subject && (
-                                    <th>
-                                        <div className="flex items-center gap-2">
-                                            Subject <IconSelector size={14} className="opacity-50" />
-                                        </div>
-                                    </th>
-                                )}
-                                {visibleColumns.homeworkDate && (
-                                    <th>
-                                        <div className="flex items-center gap-2">
-                                            Homework Date <IconSelector size={14} className="opacity-50" />
-                                        </div>
-                                    </th>
-                                )}
-                                {visibleColumns.submissionDate && (
-                                    <th>
-                                        <div className="flex items-center gap-2">
-                                            Submission Date <IconSelector size={14} className="opacity-50" />
-                                        </div>
-                                    </th>
-                                )}
-                                {visibleColumns.evaluationDate && (
-                                    <th>
-                                        <div className="flex items-center gap-2">
-                                            Evaluation Date <IconSelector size={14} className="opacity-50" />
-                                        </div>
-                                    </th>
-                                )}
-                                {visibleColumns.status && (
-                                    <th className="text-center">Status</th>
-                                )}
-                                <th className="text-center">Actions</th>
+                                <th>Title</th>
+                                <th>Class & Section</th>
+                                <th>Subject</th>
+                                <th>Due Date</th>
+                                <th>Assigned By</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredHomework.length > 0 ? (
-                                filteredHomework.map((h) => (
-                                    <tr key={h.id}>
+                            {displayHomework.length > 0 ? (
+                                displayHomework.map((hw, index) => (
+                                    <tr key={hw.id} className="table-row-v2">
                                         <td>
-                                            <input
-                                                type="checkbox"
-                                                className="premium-checkbox"
-                                                checked={selectedRows.includes(h.id)}
-                                                onChange={() => toggleSelectRow(h.id)}
-                                            />
+                                            <div className="font-medium text-slate-700">{hw.homework}</div>
                                         </td>
-                                        {visibleColumns.id && <td>{h.id}</td>}
-                                        {visibleColumns.class && <td>{h.class}</td>}
-                                        {visibleColumns.section && <td>{h.section}</td>}
-                                        {visibleColumns.subject && (
-                                            <td>
-                                                <span className="font-semibold text-gray-800">{h.subject}</span>
-                                            </td>
-                                        )}
-                                        {visibleColumns.homeworkDate && <td>{h.homeworkDate}</td>}
-                                        {visibleColumns.submissionDate && <td>{h.submissionDate}</td>}
-                                        {visibleColumns.evaluationDate && <td>{h.evaluationDate || '-'}</td>}
-                                        {visibleColumns.status && (
-                                            <td className="text-center">
-                                                <span className={h.academicStatus === 'Completed' ? "status-badge-active" : "status-badge-inactive"}>
-                                                    {h.academicStatus || 'Active'}
-                                                </span>
-                                            </td>
-                                        )}
                                         <td>
-                                            <div className="flex justify-center gap-3">
+                                            <div className="text-slate-600 text-xs font-semibold">
+                                                {hw.className} - {hw.sectionName}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div className="font-bold text-slate-700">{hw.subjectName}</div>
+                                        </td>
+                                        <td>
+                                            <div className="text-slate-600 text-xs font-medium">{hw.date}</div>
+                                        </td>
+                                        <td>
+                                            <div className="text-slate-500 text-sm">Amit Sharma</div>
+                                        </td>
+                                        <td>
+                                            <div className="flex justify-center gap-2">
                                                 <button
-                                                    onClick={() => setViewingHomework(h)}
-                                                    className="action-icon-btn btn-action-view"
+                                                    className="flex items-center justify-center transition-all hover:scale-110"
+                                                    style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#ecfdf5', color: '#10b981', border: 'none' }}
+                                                    title="View Submissions"
                                                 >
-                                                    <IconEye size={18} stroke={2.5} />
+                                                    <IconEye size={18} stroke={2} />
                                                 </button>
                                                 <button
-                                                    onClick={() => navigate(`/school/academics/homework/edit/${h.id}`)}
-                                                    className="action-icon-btn btn-action-edit"
+                                                    className="flex items-center justify-center transition-all hover:scale-110"
+                                                    style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#eff6ff', color: '#3b82f6', border: 'none' }}
+                                                    title="Edit"
+                                                    onClick={() => navigate(`/school/study/assignments/edit/${hw.id}`)}
                                                 >
-                                                    <IconPencil size={18} stroke={2.5} />
+                                                    <IconPencil size={18} stroke={2} />
                                                 </button>
                                                 <button
+                                                    className="flex items-center justify-center transition-all hover:scale-110"
+                                                    style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#fff7ed', color: '#f97316', border: 'none' }}
+                                                    title="Delete"
                                                     onClick={() => {
                                                         if (window.confirm('Are you sure you want to delete this homework?')) {
-                                                            deleteHomework(h.id);
+                                                            deleteHomework(hw.id);
                                                         }
                                                     }}
-                                                    className="action-icon-btn btn-action-delete"
                                                 >
-                                                    <IconTrash size={18} stroke={2.5} />
+                                                    <IconTrash size={18} stroke={2} />
                                                 </button>
                                             </div>
                                         </td>
@@ -393,10 +181,10 @@ const Homework = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={Object.values(visibleColumns).filter(v => v).length + 2} className="p-20 text-center text-gray-400 italic">
-                                        <div className="flex flex-col items-center gap-4">
-                                            <IconUsers size={48} className="text-gray-200" />
-                                            No homework found matching your search.
+                                    <td colSpan="6" className="px-6 py-12 text-center text-slate-500 bg-slate-50/50">
+                                        <div className="flex flex-col items-center justify-center gap-3">
+                                            <IconSearch size={40} className="text-slate-300" />
+                                            <p className="text-[15px] font-medium">No homework assignments found</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -404,82 +192,16 @@ const Homework = () => {
                         </tbody>
                     </table>
                 </div>
-            </div>
 
-            {/* View Modal - Premium Refactor */}
-            {viewingHomework && (
-                <div className="fixed inset-0 z-[1000] flex justify-center items-center bg-black/40 backdrop-blur-sm p-6 font-sans" onClick={() => setViewingHomework(null)}>
-                    <div className="max-w-xl w-full bg-white p-8 md:p-12 rounded-[2rem] shadow-2xl text-center border border-slate-200 relative animate-in fade-in zoom-in duration-300" onClick={e => e.stopPropagation()}>
-                        <button
-                            onClick={() => setViewingHomework(null)}
-                            className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition-colors"
-                        >
-                            ✕
-                        </button>
-
-                        <div className="mb-8 flex justify-center text-blue-500">
-                            <div className="p-5 bg-blue-50 rounded-3xl">
-                                <IconStar size={64} stroke={1.5} />
-                            </div>
-                        </div>
-
-                        <h1 className="text-3xl font-black text-slate-800 mb-2">
-                            Homework Details
-                        </h1>
-                        <p className="text-slate-500 mb-10 font-medium">
-                            Details for homework <span className="text-blue-600 font-bold">#{viewingHomework.id}</span>
-                        </p>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 text-left">
-                            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Class & Section</span>
-                                <span className="text-slate-700 font-bold">{viewingHomework.class} ({viewingHomework.section})</span>
-                            </div>
-                            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Subject</span>
-                                <span className="text-slate-700 font-bold">{viewingHomework.subject}</span>
-                            </div>
-                            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Homework Date</span>
-                                <span className="text-slate-700 font-bold">{viewingHomework.homeworkDate}</span>
-                            </div>
-                            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Submission Date</span>
-                                <span className="text-slate-700 font-bold">{viewingHomework.submissionDate}</span>
-                            </div>
-                            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Evaluation Date</span>
-                                <span className="text-slate-700 font-bold">{viewingHomework.evaluationDate || 'Not Evaluated'}</span>
-                            </div>
-                            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Status</span>
-                                <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-bold ${viewingHomework.academicStatus === 'Completed' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
-                                    {viewingHomework.academicStatus || 'Active'}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <button
-                                onClick={() => {
-                                    setViewingHomework(null);
-                                    navigate(`/school/academics/homework/edit/${viewingHomework.id}`);
-                                }}
-                                className="flex items-center justify-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold transition-all shadow-lg shadow-blue-200 hover:scale-[1.02] active:scale-[0.98]"
-                            >
-                                <IconPencil size={20} stroke={2.5} />
-                                Edit Homework
-                            </button>
-                            <button
-                                onClick={() => setViewingHomework(null)}
-                                className="flex items-center justify-center gap-2 px-8 py-4 bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 rounded-2xl font-bold transition-all shadow-sm active:scale-[0.98]"
-                            >
-                                Close
-                            </button>
-                        </div>
+                <div className="p-6 flex items-center justify-between text-[13px] text-gray-500 border-t border-slate-100 bg-slate-50/30">
+                    <span>Showing 1 to {filteredHomework.length} of {filteredHomework.length} entries</span>
+                    <div className="flex items-center gap-2">
+                        <button className="export-btn" disabled style={{ padding: '8px 20px' }}>Previous</button>
+                        <button className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-600 text-white font-bold shadow-lg shadow-blue-200">1</button>
+                        <button className="export-btn" disabled style={{ padding: '8px 20px' }}>Next</button>
                     </div>
                 </div>
-            )}
+            </div>
         </div>
     );
 };

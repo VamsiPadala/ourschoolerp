@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IconUsers, IconDeviceDesktop, IconArrowLeft } from '@tabler/icons-react';
+import { IconUsers, IconDeviceDesktop, IconArrowLeft, IconPhoto } from '@tabler/icons-react';
 import './EditUser.css'; // Reusing EditUser styles
 
 export default function AddUser() {
@@ -22,8 +22,11 @@ export default function AddUser() {
         role: '',
         rfid: '',
         username: '',
-        password: ''
+        password: '',
+        status: true
     });
+
+    const [previewUrl, setPreviewUrl] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -33,7 +36,15 @@ export default function AddUser() {
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
-            setFormData(prev => ({ ...prev, photo: file, photoName: file.name }));
+            setFormData(prev => ({ ...prev, photoName: file.name }));
+
+            // Create preview URL
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewUrl(reader.result);
+                setFormData(prev => ({ ...prev, photo: reader.result })); // Store base64 for localStorage persistence
+            };
+            reader.readAsDataURL(file);
         }
     };
 
@@ -43,7 +54,24 @@ export default function AddUser() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Simulate save and go back
+
+        // Get existing users from localStorage or use defaults
+        const existingUsers = JSON.parse(localStorage.getItem('school_users')) || [
+            { id: 1, photo: null, name: 'DRIVER', phone: '', role: 'Driver', status: true },
+            { id: 2, photo: null, name: 'Attender', phone: '', role: 'Attender', status: true },
+            { id: 3, photo: null, name: 'PRASANNA', phone: '', role: 'Accountant', status: true },
+            { id: 4, photo: null, name: 'Nithya', phone: '00000000', role: 'Receptionist', status: true },
+        ];
+
+        const newUser = {
+            ...formData,
+            id: Date.now(), // Unique ID
+        };
+
+        const updatedUsers = [...existingUsers, newUser];
+        localStorage.setItem('school_users', JSON.stringify(updatedUsers));
+
+        // Go back to the user list
         navigate('/school/teachers/user');
     };
 
@@ -82,12 +110,12 @@ export default function AddUser() {
                         <div className="form-group row-line">
                             <label>Date of birth <span>*</span></label>
                             <input
-                                type="text"
+                                type="date"
                                 name="dob"
                                 value={formData.dob}
                                 onChange={handleChange}
-                                placeholder="DD-MM-YYYY"
                                 required
+                                className="custom-date-picker"
                             />
                         </div>
                         <div className="form-group row-line">
@@ -141,40 +169,48 @@ export default function AddUser() {
                         <div className="form-group row-line">
                             <label>Joining date <span>*</span></label>
                             <input
-                                type="text"
+                                type="date"
                                 name="joiningDate"
                                 value={formData.joiningDate}
                                 onChange={handleChange}
-                                placeholder="DD-MM-YYYY"
                                 required
+                                className="custom-date-picker"
                             />
                         </div>
 
                         {/* Row 3 */}
                         <div className="form-group row-line">
                             <label>Photo</label>
-                            <div className="file-browse-input">
-                                <input
-                                    type="text"
-                                    readOnly
-                                    className="file-text"
-                                    value={formData.photoName}
-                                    placeholder="No file selected"
-                                />
-                                <input
-                                    type="file"
-                                    ref={fileInputRef}
-                                    onChange={handleFileChange}
-                                    style={{ display: 'none' }}
-                                />
-                                <button type="button" className="btn-file-browse" onClick={triggerFileSelect}>
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                        <polyline points="17 8 12 3 7 8"></polyline>
-                                        <line x1="12" y1="3" x2="12" y2="15"></line>
-                                    </svg>
-                                    FILE BROWSE
-                                </button>
+                            <div className="file-upload-wrapper">
+                                <div className="file-browse-input">
+                                    <input
+                                        type="text"
+                                        readOnly
+                                        className="file-text"
+                                        value={formData.photoName}
+                                        placeholder="No file selected"
+                                    />
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        onChange={handleFileChange}
+                                        accept="image/*"
+                                        style={{ display: 'none' }}
+                                    />
+                                    <button type="button" className="btn-file-browse" onClick={triggerFileSelect}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="17 8 12 3 7 8"></polyline>
+                                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                                        </svg>
+                                        FILE BROWSE
+                                    </button>
+                                </div>
+                                {previewUrl && (
+                                    <div className="image-preview-container" style={{ marginTop: '10px' }}>
+                                        <img src={previewUrl} alt="Preview" style={{ width: '80px', height: '80px', borderRadius: '8px', objectFit: 'cover', border: '1px solid var(--border-color)' }} />
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div className="form-group row-line">
@@ -207,7 +243,7 @@ export default function AddUser() {
                             />
                         </div>
 
-                        {/* Row 4 (For Password & Button aligned similarly) */}
+                        {/* Row 4 */}
                         <div className="form-group row-line">
                             <label>Password <span>*</span></label>
                             <input
@@ -220,7 +256,7 @@ export default function AddUser() {
                         </div>
                         <div className="form-group row-line" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'flex-start' }}>
                             <div className="form-submit-row" style={{ marginTop: 0 }}>
-                                <button type="submit" className="btn-update-user" style={{ backgroundColor: '#2ca4f5' }}>Add User</button>
+                                <button type="submit" className="btn-update-user">Add User</button>
                             </div>
                         </div>
                     </div>

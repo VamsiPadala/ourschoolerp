@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import {
     IconPlus, IconSearch, IconEdit, IconTrash,
-    IconWallet, IconTag, IconNotes
+    IconWallet, IconTag, IconNotes, IconChevronDown,
+    IconCopy, IconFileSpreadsheet, IconFileTypeCsv, IconFileTypePdf
 } from '@tabler/icons-react';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
 import './Accounts.css';
 
 const IncomeHeads = () => {
     const [searchTerm, setSearchTerm] = useState('');
+    const [recordsPerPage, setRecordsPerPage] = useState(10);
     const [showAddModal, setShowAddModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [editingId, setEditingId] = useState(null);
@@ -71,6 +76,46 @@ const IncomeHeads = () => {
         setShowAddModal(false);
     };
 
+    const handleCopy = () => {
+        const text = filteredData.map(item => `${item.name}\t${item.description}`).join('\n');
+        navigator.clipboard.writeText(`Name\tDescription\n${text}`);
+        alert('Table data copied to clipboard!');
+    };
+
+    const handleExportCSV = () => {
+        const headers = ['Name', 'Description'];
+        const rows = filteredData.map(item => [item.name, item.description]);
+        const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'income-heads.csv';
+        link.click();
+    };
+
+    const handleExportExcel = () => {
+        const headers = ['Name', 'Description'];
+        const rows = filteredData.map(item => [item.name, item.description]);
+        const wsData = [headers, ...rows];
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'IncomeHeads');
+        XLSX.writeFile(wb, 'income-heads.xlsx');
+    };
+
+    const handleExportPDF = () => {
+        const doc = new jsPDF();
+        doc.text('Income Heads Report', 14, 15);
+        autoTable(doc, {
+            head: [['Name', 'Description']],
+            body: filteredData.map(item => [item.name, item.description]),
+            startY: 20,
+            theme: 'grid',
+            headStyles: { fillColor: [61, 94, 225] }
+        });
+        doc.save('income-heads.pdf');
+    };
+
     return (
         <div className="heads-page">
             {/* Page Header */}
@@ -93,7 +138,7 @@ const IncomeHeads = () => {
             {showAddModal && (
                 <div className="modal-overlay">
                     <div className="modal-content add-income-modal">
-                        <div className="modal-header">
+                        <div className="modal-header" style={{ background: '#3d5ee1' }}>
                             <h3>{isEditing ? 'Edit Income Head' : 'Add Income Head'}</h3>
                             <button className="close-btn" onClick={() => setShowAddModal(false)}>
                                 <IconPlus size={20} style={{ transform: 'rotate(45deg)' }} />
@@ -122,7 +167,7 @@ const IncomeHeads = () => {
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn-cancel" onClick={() => setShowAddModal(false)}>Cancel</button>
-                                <button type="submit" className="btn-submit" style={{ background: '#7367f0' }}>
+                                <button type="submit" className="btn-submit" style={{ background: '#3d5ee1' }}>
                                     {isEditing ? 'Save Changes' : 'Save'}
                                 </button>
                             </div>
@@ -147,7 +192,26 @@ const IncomeHeads = () => {
             {/* Table Card */}
             <div className="heads-table-card">
                 <div className="heads-table-header">
-                    <h5>Master Income Heads</h5>
+                    <div className="table-header-left">
+                        <div className="export-actions">
+                            <button className="export-action-btn" onClick={handleCopy} title="Copy to Clipboard">
+                                <IconCopy size={16} />
+                                <span>Copy</span>
+                            </button>
+                            <button className="export-action-btn" onClick={handleExportExcel} title="Export to Excel">
+                                <IconFileSpreadsheet size={16} />
+                                <span>Excel</span>
+                            </button>
+                            <button className="export-action-btn" onClick={handleExportCSV} title="Export to CSV">
+                                <IconFileTypeCsv size={16} />
+                                <span>CSV</span>
+                            </button>
+                            <button className="export-action-btn" onClick={handleExportPDF} title="Export to PDF">
+                                <IconFileTypePdf size={16} />
+                                <span>PDF</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div className="heads-table-body">
                     <div className="table-container">

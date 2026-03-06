@@ -33,7 +33,7 @@ const EditHomework = () => {
             setForm(found);
         } else {
             console.error('Homework not found!');
-            navigate('/school/academics/homework');
+            navigate('/school/study/assignments');
         }
     }, [id, homework, navigate]);
 
@@ -49,7 +49,7 @@ const EditHomework = () => {
             sectionName: selectedSection,
             subjectName: selectedSubject
         });
-        navigate('/school/academics/homework');
+        navigate('/school/study/assignments');
     };
 
     return (
@@ -63,7 +63,7 @@ const EditHomework = () => {
                     <div className="academics-breadcrumb-right">
                         <Link to="/school/dashboard"><IconHome size={14} /> Dashboard</Link>
                         <span>/</span>
-                        <Link to="/school/academics/homework">Homework</Link>
+                        <Link to="/school/study/assignments">Assignments</Link>
                         <span>/</span>
                         <span className="text-gray-400">Edit Homework</span>
                     </div>
@@ -171,7 +171,7 @@ const EditHomework = () => {
                         <div className="mt-12 flex justify-center gap-4">
                             <button
                                 type="button"
-                                onClick={() => navigate('/school/academics/homework')}
+                                onClick={() => navigate('/school/study/assignments')}
                                 className="px-8 py-4 font-medium text-gray-400 hover:text-gray-600 transition-all"
                             >
                                 Cancel

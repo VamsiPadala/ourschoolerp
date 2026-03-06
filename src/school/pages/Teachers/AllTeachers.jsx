@@ -360,7 +360,7 @@ const AllTeachers = ({ initialView = 'grid' }) => {
     };
 
     return (
-        <div className="page-wrapper">
+        <div className="teachers-page-container">
             {showLoginModal && <LoginDetailsModal />}
 
             {view !== 'add' && view !== 'edit' && (
@@ -420,14 +420,14 @@ const AllTeachers = ({ initialView = 'grid' }) => {
                     {/* Filters */}
                     <div className="filter-container">
                         <div className="filter-left">
-                            <div className="search-box">
-                                <IconSearch size={18} />
-                                <input
-                                    type="text"
-                                    placeholder="Search by name, ID, or email..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
+                            <div className="title-section">
+                                <h3 className="teachers-grid-title" style={{
+                                    margin: 0,
+                                    fontSize: '18px',
+                                    fontWeight: 700,
+                                    color: 'var(--text-primary)',
+                                    letterSpacing: '-0.01em'
+                                }}>{view === 'grid' ? 'Teachers Grid' : 'Teachers List'}</h3>
                             </div>
                         </div>
                         <div className="filter-right" style={{ display: 'flex', gap: '8px', width: 'auto' }}>
@@ -567,7 +567,7 @@ const AllTeachers = ({ initialView = 'grid' }) => {
                             <table className="teachers-table">
                                 <thead>
                                     <tr>
-                                        <th><input type="checkbox" /></th>
+                                        <th>SNO</th>
                                         {visibleColumns.id && <th>Teacher ID</th>}
                                         {visibleColumns.name && <th>Name</th>}
                                         {visibleColumns.class && <th>Class</th>}
@@ -580,9 +580,9 @@ const AllTeachers = ({ initialView = 'grid' }) => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {currentTeachers.map(teacher => (
+                                    {currentTeachers.map((teacher, index) => (
                                         <tr key={teacher.id}>
-                                            <td><input type="checkbox" /></td>
+                                            <td>{indexOfFirstItem + index + 1}</td>
                                             {visibleColumns.id && (
                                                 <td>
                                                     <span className="teacher-id-link" onClick={() => navigate(`/school/teachers/details/${teacher.id}`)}>

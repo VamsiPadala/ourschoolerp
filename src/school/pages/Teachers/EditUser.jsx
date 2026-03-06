@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IconUsers, IconDeviceDesktop, IconArrowLeft } from '@tabler/icons-react';
 import './EditUser.css';
@@ -6,31 +6,76 @@ import './EditUser.css';
 export default function EditUser() {
     const navigate = useNavigate();
     const { id } = useParams();
+    const fileInputRef = useRef(null);
 
-    // Initialize state with default values or values based on ID
+    // Initialize state
     const [formData, setFormData] = useState({
-        name: 'DRIVER',
-        dob: '1991-02-27',
+        name: '',
+        dob: '',
         gender: 'Male',
         religion: '',
-        email: 'driver123@gmail.com',
+        email: '',
         phone: '',
         address: '',
-        joiningDate: '2025-04-29',
+        joiningDate: '',
         photo: '',
-        role: 'Driver',
+        photoName: '',
+        role: '',
         rfid: '',
-        username: 'driver123'
+        username: '',
+        status: true
     });
+
+    const [previewUrl, setPreviewUrl] = useState(null);
+
+    // Load user data on mount
+    useEffect(() => {
+        const storedUsers = localStorage.getItem('school_users');
+        if (storedUsers) {
+            const users = JSON.parse(storedUsers);
+            const user = users.find(u => u.id.toString() === id.toString());
+            if (user) {
+                setFormData(user);
+                if (user.photo) {
+                    setPreviewUrl(user.photo);
+                }
+            }
+        }
+    }, [id]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    const handleFileChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setFormData(prev => ({ ...prev, photoName: file.name }));
+
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewUrl(reader.result);
+                setFormData(prev => ({ ...prev, photo: reader.result }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const triggerFileSelect = () => {
+        fileInputRef.current.click();
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Simulate save and go back
+
+        const storedUsers = localStorage.getItem('school_users');
+        if (storedUsers) {
+            const users = JSON.parse(storedUsers);
+            const updatedUsers = users.map(u => u.id.toString() === id.toString() ? formData : u);
+            localStorage.setItem('school_users', JSON.stringify(updatedUsers));
+        }
+
         navigate('/school/teachers/user');
     };
 
@@ -69,12 +114,12 @@ export default function EditUser() {
                         <div className="form-group row-line">
                             <label>Date of birth <span>*</span></label>
                             <input
-                                type="text"
+                                type="date"
                                 name="dob"
                                 value={formData.dob}
                                 onChange={handleChange}
-                                placeholder="DD-MM-YYYY"
                                 required
+                                className="custom-date-picker"
                             />
                         </div>
                         <div className="form-group row-line">
@@ -127,32 +172,48 @@ export default function EditUser() {
                         <div className="form-group row-line">
                             <label>Joining date <span>*</span></label>
                             <input
-                                type="text"
+                                type="date"
                                 name="joiningDate"
                                 value={formData.joiningDate}
                                 onChange={handleChange}
-                                placeholder="DD-MM-YYYY"
                                 required
+                                className="custom-date-picker"
                             />
                         </div>
 
                         {/* Row 3 */}
                         <div className="form-group row-line">
                             <label>Photo</label>
-                            <div className="file-browse-input">
-                                <input
-                                    type="text"
-                                    readOnly
-                                    className="file-text"
-                                />
-                                <button type="button" className="btn-file-browse">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                        <polyline points="17 8 12 3 7 8"></polyline>
-                                        <line x1="12" y1="3" x2="12" y2="15"></line>
-                                    </svg>
-                                    FILE BROWSE
-                                </button>
+                            <div className="file-upload-wrapper">
+                                <div className="file-browse-input">
+                                    <input
+                                        type="text"
+                                        readOnly
+                                        className="file-text"
+                                        value={formData.photoName || ''}
+                                        placeholder="No file selected"
+                                    />
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        onChange={handleFileChange}
+                                        accept="image/*"
+                                        style={{ display: 'none' }}
+                                    />
+                                    <button type="button" className="btn-file-browse" onClick={triggerFileSelect}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="17 8 12 3 7 8"></polyline>
+                                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                                        </svg>
+                                        FILE BROWSE
+                                    </button>
+                                </div>
+                                {previewUrl && (
+                                    <div className="image-preview-container" style={{ marginTop: '10px' }}>
+                                        <img src={previewUrl} alt="Preview" style={{ width: '80px', height: '80px', borderRadius: '8px', objectFit: 'cover', border: '1px solid #ddd' }} />
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div className="form-group row-line">

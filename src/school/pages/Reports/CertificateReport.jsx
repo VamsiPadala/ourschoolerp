@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import ExportToolbar from './ExportToolbar';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import './Reports.css';
 import { IconPrinter, IconX, IconCertificate, IconPlus } from '@tabler/icons-react';
 
@@ -259,6 +260,48 @@ const CertificateReport = () => {
                     <button className="rpt-search-btn" style={{ background: '#28c76f' }} onClick={() => setShowNewModal(true)}>
                         <IconPlus size={18} /> New Certificate
                     </button>
+                </div>
+            </div>
+
+            {/* Certificate Analytics */}
+            <div className="rpt-row rpt-row-2" style={{ marginBottom: '20px' }}>
+                <div className="rpt-card">
+                    <div className="rpt-card-header"><h5 className="rpt-card-title">Certificates by Type</h5></div>
+                    <div className="rpt-chart-body">
+                        <ResponsiveContainer width="100%" height={180}>
+                            <BarChart data={[
+                                { type: 'Study', count: 150 },
+                                { type: 'Transfer', count: 45 },
+                                { type: 'Promotion', count: 200 },
+                                { type: 'Sports', count: 35 }
+                            ]}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                                <XAxis dataKey="type" axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
+                                <Tooltip />
+                                <Bar dataKey="count" fill="#7367f0" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+                <div className="rpt-card">
+                    <div className="rpt-card-header"><h5 className="rpt-card-title">Class-wise Issuance</h5></div>
+                    <div className="rpt-chart-body">
+                        <ResponsiveContainer width="100%" height={180}>
+                            <BarChart data={[
+                                { class: 'IX', count: 40 },
+                                { class: 'X', count: 65 },
+                                { class: 'XI', count: 30 },
+                                { class: 'XII', count: 55 }
+                            ]}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                                <XAxis dataKey="class" axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
+                                <Tooltip />
+                                <Bar dataKey="count" fill="#28c76f" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
                 </div>
             </div>
 

@@ -18,6 +18,7 @@ import FeesCarryForward from './pages/Finance/FeesCarryForward';
 import AssignFees from './pages/Finance/AssignFees';
 import AssignFeesNew from './pages/Finance/AssignFeesNew';
 import AssignFeesEdit from './pages/Finance/AssignFeesEdit';
+import EditFee from './pages/Finance/EditFee';
 import FeeGroups from './pages/Finance/FeeGroups';
 import FeesDiscount from './pages/Finance/FeesDiscount';
 import FeeTypes from './pages/Finance/FeeTypes';
@@ -62,9 +63,12 @@ import { AcademicsProvider } from './context/AcademicsContext';
 import ReportsDashboard from './pages/Reports/ReportsDashboard';
 import StudentReport from './pages/Reports/StudentReport';
 import ProgressReport from './pages/Reports/ProgressReport';
+import HallTicketReport from './pages/Reports/HallTicketReport';
+import ExamScheduleReport from './pages/Reports/ExamScheduleReport';
 import FeesReport from './pages/Reports/FeesReport';
 import AttendanceReport from './pages/Reports/AttendanceReport';
 import SalaryReport from './pages/Reports/SalaryReport';
+import ExaminationReport from './pages/Reports/ExaminationReport';
 import ReportPlaceholder from './pages/Reports/ReportPlaceholder';
 
 import HumanResourceDashboard from './pages/HumanResource/HumanResourceDashboard';
@@ -123,6 +127,7 @@ function App() {
                 <Route path="school/finance/assign-fees" element={<AssignFees />} />
                 <Route path="school/finance/assign-fees/new" element={<AssignFeesNew />} />
                 <Route path="school/finance/assign-fees/edit/:studentId" element={<AssignFeesEdit />} />
+                <Route path="school/finance/edit-fee" element={<EditFee />} />
                 <Route path="school/finance/fee-groups" element={<FeeGroups />} />
                 <Route path="school/finance/fees-discount" element={<FeesDiscount />} />
                 <Route path="school/finance/fee-types" element={<FeeTypes />} />
@@ -188,14 +193,18 @@ function App() {
                 <Route path="school/hr/leave-types" element={<LeaveTypes />} />
 
                 {/* Reports & Analytics Routes */}
-                <Route path="school/reports" element={<ReportsDashboard />} />
-                <Route path="school/reports/student" element={<StudentReport />} />
-                <Route path="school/reports/progress-report" element={<ProgressReport />} />
-                <Route path="school/reports/fees" element={<FeesReport />} />
-                <Route path="school/reports/attendance" element={<AttendanceReport />} />
-                <Route path="school/reports/salary" element={<SalaryReport />} />
-                {/* Catch-all for all other report links */}
-                <Route path="school/reports/:reportType" element={<ReportPlaceholder />} />
+                <Route path="school/reports">
+                  <Route index element={<ReportsDashboard />} />
+                  <Route path="student" element={<StudentReport />} />
+                  <Route path="progress-report" element={<ProgressReport />} />
+                  <Route path="hall-ticket" element={<HallTicketReport />} />
+                  <Route path="exam-schedule" element={<ExamScheduleReport />} />
+                  <Route path="fees" element={<FeesReport />} />
+                  <Route path="attendance" element={<AttendanceReport />} />
+                  <Route path="salary" element={<SalaryReport />} />
+                  <Route path="examinations" element={<ExaminationReport />} />
+                  <Route path=":reportType" element={<ReportPlaceholder />} />
+                </Route>
 
                 {/* Book Sales Routes */}
                 <Route path="school/book-sales" element={<BookSalesDashboard />} />

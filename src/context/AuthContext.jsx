@@ -24,8 +24,15 @@ export const AuthProvider = ({ children }) => {
       const savedToken = localStorage.getItem('auth_token');
       const savedUser = localStorage.getItem('auth_user');
       if (savedToken && savedUser) {
-        // Demo mode: accept any non-empty token (no JWT verification needed)
-        setUser(JSON.parse(savedUser));
+        const payload = decodeJwtPayload(savedToken);
+        // Check token expiry
+        if (payload && typeof payload.exp === 'number' && payload.exp * 1000 > Date.now()) {
+          setUser(JSON.parse(savedUser));
+        } else {
+          // Token expired — clear
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('auth_user');
+        }
       }
     } catch {
       localStorage.removeItem('auth_token');
@@ -61,8 +68,8 @@ export const AuthProvider = ({ children }) => {
         logout,
         getToken
       }}>
-      {children}
-    </AuthContext.Provider>);
+          {children}
+        </AuthContext.Provider>);
 
 };
 

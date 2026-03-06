@@ -36,18 +36,11 @@ try {
 // in localStorage under key `menu_access_{role}`.
 // ────────────────────────────────────────────────
 const PATH_TO_PERMISSION_ID = {
+    // Dashboard
     '/school/dashboard': 'dashboard_overview',
     '/school/teacher-dashboard': 'dashboard_overview',
     '/school/student-dashboard': 'dashboard_overview',
     '/school/parent-dashboard': 'dashboard_overview',
-    '/school/hostel-dashboard': 'dashboard_overview',
-    '/school/transport-dashboard': 'dashboard_overview',
-    '/school/library-dashboard': 'dashboard_overview',
-    '/school/branch-admin-dashboard': 'dashboard_overview',
-    '/school/branch-principal-dashboard': 'dashboard_overview',
-    '/school/principal-dashboard': 'dashboard_overview',
-    '/school/accountant-dashboard': 'dashboard_overview',
-    '/school/receptionist-dashboard': 'dashboard_overview',
 
     // Finance & Fees
     '/school/finance/collect-fees': 'fee_collect',
@@ -56,6 +49,7 @@ const PATH_TO_PERMISSION_ID = {
     '/school/finance/online-transactions': 'fee_reports',
     '/school/finance/fees-carry-forward': 'fee_structure',
     '/school/finance/assign-fees': 'fee_structure',
+    '/school/finance/edit-fee': 'fee_structure',
     '/school/finance/fees-master': 'fee_structure',
     '/school/finance/fee-groups': 'fee_structure',
     '/school/finance/fees-discount': 'fee_structure',
@@ -134,6 +128,9 @@ const PATH_TO_PERMISSION_ID = {
     '/transport/tracking': 'transport',
 
     // Hostel
+    '/school/hostel': 'hostel',
+    '/school/hostel/category': 'hostel',
+    '/school/hostel/manage': 'hostel',
     '/hostel/allocation': 'hostel',
     '/hostel/rooms': 'hostel',
     '/hostel/room-types': 'hostel',
@@ -201,9 +198,10 @@ const PATH_TO_PERMISSION_ID = {
     '/school/certificates/generate': 'transfer_cert',
 
     // Front Office
-    '/front-office/visitors': 'visitor_log',
-    '/front-office/complaints': 'visitor_log',
-    '/front-office/postal': 'visitor_log',
+    '/school/front-office/visitors': 'visitor_log',
+    '/school/front-office/complaints': 'visitor_log',
+    '/school/front-office/postal': 'visitor_log',
+    '/school/front-office/admission-enquiry': 'visitor_log',
 
     // Book Sales
     '/school/book-sales': 'inventory',
@@ -248,17 +246,17 @@ const menuData = [
                 title: 'Dashboard',
                 icon: IconLayoutDashboard,
                 subItems: [
-                    { title: 'Admin Dashboard', path: '/school/dashboard' },
-                    { title: 'Branch Admin Dashboard', path: '/school/branch-admin-dashboard' },
-                    { title: 'Branch Principal Dashboard', path: '/school/branch-principal-dashboard' },
-                    { title: 'Principal Dashboard', path: '/school/principal-dashboard' },
-                    { title: 'Teacher Dashboard', path: '/school/teacher-dashboard' },
-                    { title: 'Accountant Dashboard', path: '/school/accountant-dashboard' },
-                    { title: 'Receptionist Dashboard', path: '/school/receptionist-dashboard' },
-                    { title: 'Student Dashboard', path: '/school/student-dashboard' },
-                    { title: 'Hostel Dashboard', path: '/school/hostel-dashboard' },
-                    { title: 'Transport Dashboard', path: '/school/transport-dashboard' },
-                    { title: 'Library Dashboard', path: '/school/library-dashboard' }
+                    { title: '🏫 Admin Dashboard', path: '/school/dashboard' },
+                    { title: '👩‍🏫 Teacher Dashboard', path: '/school/teacher-dashboard' },
+                    { title: '👨‍🎓 Student Dashboard', path: '/school/student-dashboard' },
+                    { title: '🏢 Branch Admin Dashboard', path: '/school/branch-admin-dashboard' },
+                    { title: '🎓 Branch Principal Dashboard', path: '/school/branch-principal-dashboard' },
+                    { title: '🏛️ Principal Dashboard', path: '/school/principal-dashboard' },
+                    { title: '💰 Accountant Dashboard', path: '/school/accountant-dashboard' },
+                    { title: '🛎️ Receptionist Dashboard', path: '/school/receptionist-dashboard' },
+                    { title: '📚 Library Dashboard', path: '/school/library-dashboard' },
+                    { title: '🛏️ Hostel Dashboard', path: '/school/hostel' },
+                    { title: '🚌 Transport Dashboard', path: '/school/transport' },
                 ]
             }
         ]
@@ -272,6 +270,7 @@ const menuData = [
                 subItems: [
                     { title: 'Fee Type', path: '/school/finance/fee-types' },
                     { title: 'Assign Fee', path: '/school/finance/assign-fees' },
+                    { title: 'Edit Fee', path: '/school/finance/edit-fee' },
                     { title: 'Collect Fee', path: '/school/finance/collect-fees' },
                     { title: 'Search Due Fee', path: '/school/finance/search-due-fees' },
                     { title: 'All Transactions', path: '/school/finance/all-transactions' },
@@ -313,6 +312,7 @@ const menuData = [
                     { title: 'Behavior Records', path: '/school/behavior-records' },
                     { title: 'Student Categories', path: '/school/student-categories' },
                     { title: 'Disabled Students', path: '/school/disabled-students' },
+                    { title: 'Siblings Data', path: '/school/siblings-data' },
                     { title: 'Bulk Edit', path: '/school/bulk-edit' }
                 ]
             },
@@ -346,9 +346,10 @@ const menuData = [
                 title: 'Front Office',
                 icon: IconBuilding,
                 subItems: [
-                    { title: 'Visitor Book', path: '/front-office/visitors' },
-                    { title: 'Complaints', path: '/front-office/complaints' },
-                    { title: 'Postal Records', path: '/front-office/postal' }
+                    { title: 'Visitor Book', path: '/school/front-office/visitors' },
+                    { title: 'Complaints', path: '/school/front-office/complaints' },
+                    { title: 'Postal Records', path: '/school/front-office/postal' },
+                    { title: 'Admission Enquiry', path: '/school/front-office/admission-enquiry' }
                 ]
             },
             {
@@ -377,9 +378,8 @@ const menuData = [
                 title: 'Study Center',
                 icon: IconBook,
                 subItems: [
-                    { title: 'Manage Resources', path: '/study/resources' },
-                    { title: 'Assignments', path: '/study/assignments' },
-                    { title: 'Live Classes', path: '/study/live-classes' }
+                    { title: 'Manage Study Materials', path: '/school/study/resources' },
+                    { title: 'Homework & Assignments', path: '/school/study/assignments' }
                 ]
             },
             {
@@ -445,10 +445,12 @@ const menuData = [
                 title: 'Hostel',
                 icon: IconBed,
                 subItems: [
+                    { title: 'Hostel Dashboard', path: '/school/hostel' },
+                    { title: 'Hostel Category', path: '/school/hostel/category' },
+                    { title: 'Manage Hostels', path: '/school/hostel/manage' },
                     { title: 'Student Allocation', path: '/school/hostel/allocation' },
                     { title: 'Manage Rooms', path: '/school/hostel/rooms' },
                     { title: 'Room Types', path: '/school/hostel/room-types' },
-                    { title: 'Manage Hostels', path: '/school/hostel/manage' },
                     { title: 'Permissions', path: '/school/hostel/permissions' }
                 ]
             },
@@ -456,7 +458,12 @@ const menuData = [
                 title: 'Reports & Analytics',
                 icon: IconReportAnalytics,
                 subItems: [
-                    { title: '📊 Dashboard', path: '/school/reports' }
+                    { title: '📊 Dashboard', path: '/school/reports' },
+                    { title: '👨‍🎓 Student Report', path: '/school/reports/student' },
+                    { title: '🏫 Class Strength', path: '/school/reports/class-strength' },
+                    { title: '🎓 Admission Report', path: '/school/reports/admissions' },
+                    { title: '📉 Left Students', path: '/school/reports/left-students' },
+                    { title: '📈 Student Movement', path: '/school/reports/student-movement' }
                 ]
             },
             {

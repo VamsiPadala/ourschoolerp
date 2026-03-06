@@ -1,66 +1,57 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import '../Reports/Reports.css';
+import { BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useNavigate } from 'react-router-dom';
+import '../Dashboard/Dashboard.css';
+import '../Dashboard/RolesDashboard.css';
 
-// ── Dummy Data ──────────────────────────────────────────────────────────────
-const kpiData = [
-    { label: 'Total Vehicles', value: '18', change: '+2', up: true, color: '#3d5ee1', bg: '#eef1fd', icon: '🚌' },
-    { label: 'Active Routes', value: '12', change: '+1', up: true, color: '#28c76f', bg: '#e8faf1', icon: '🗺️' },
-    { label: 'Students Transported', value: '640', change: '+30', up: true, color: '#ff9f43', bg: '#fff5e6', icon: '👨‍🎓' },
-    { label: 'Drivers', value: '18', change: '0', up: true, color: '#7367f0', bg: '#efedfd', icon: '🚗' },
-    { label: 'On-Time Rate', value: '94.2%', change: '+1.5%', up: true, color: '#00cfe8', bg: '#e0f9fc', icon: '⏱️' },
-    { label: 'Monthly Revenue', value: '₹3,20,000', change: '+5.8%', up: true, color: '#28c76f', bg: '#e8faf1', icon: '💰' },
-    { label: 'Active Alerts', value: '2', change: '-3', up: true, color: '#ea5455', bg: '#fce8e8', icon: '⚠️' },
-    { label: 'Fuel Cost (Month)', value: '₹85,000', change: '+3.2%', up: false, color: '#6c757d', bg: '#f0f0f0', icon: '⛽' },
+// ── Data ─────────────────────────────────────────────────────────────
+const kpiCards = [
+    { label: 'Total Vehicles', value: '12', sub: '10 Active Today', icon: '🚌', color: '#3d5ee1', bg: '#eef1fd' },
+    { label: 'Total Routes', value: '8', sub: 'All Operational', icon: '🗺️', color: '#28c76f', bg: '#e8faf1' },
+    { label: 'Students Using', value: '420', sub: 'Transport Users', icon: '👨‍🎓', color: '#ff9f43', bg: '#fff5e6' },
+    { label: 'On Time Today', value: '92%', sub: 'Arrival Rate', icon: '⏱️', color: '#7367f0', bg: '#efedfd' },
+    { label: 'Fuel Cost', value: '₹42,000', sub: 'This Month', icon: '⛽', color: '#00cfe8', bg: '#e0f9fc' },
+    { label: 'Maintenance', value: '2', sub: 'Vehicles in Service', icon: '🔧', color: '#ea5455', bg: '#fce8e8' },
 ];
 
-const monthlyRouteData = [
-    { month: 'Apr', trips: 340, onTime: 318 }, { month: 'May', trips: 360, onTime: 342 },
-    { month: 'Jun', trips: 325, onTime: 305 }, { month: 'Jul', trips: 380, onTime: 360 },
-    { month: 'Aug', trips: 400, onTime: 382 }, { month: 'Sep', trips: 375, onTime: 355 },
-    { month: 'Oct', trips: 420, onTime: 400 }, { month: 'Nov', trips: 390, onTime: 368 },
-    { month: 'Dec', trips: 350, onTime: 330 }, { month: 'Jan', trips: 410, onTime: 390 },
-    { month: 'Feb', trips: 415, onTime: 392 }, { month: 'Mar', trips: 430, onTime: 405 },
+const monthlyFuel = [
+    { month: 'Oct', cost: 38000 },
+    { month: 'Nov', cost: 41000 },
+    { month: 'Dec', cost: 35000 },
+    { month: 'Jan', cost: 44000 },
+    { month: 'Feb', cost: 42000 },
 ];
 
-const vehicleTypePie = [
-    { name: 'Large Bus (50+)', value: 8, color: '#3d5ee1' },
-    { name: 'Mini Bus (30-50)', value: 6, color: '#28c76f' },
-    { name: 'Van (10-30)', value: 4, color: '#ff9f43' },
+const routeData = [
+    { route: 'R-1 North', students: 65, km: 18 },
+    { route: 'R-2 South', students: 58, km: 15 },
+    { route: 'R-3 East', students: 72, km: 22 },
+    { route: 'R-4 West', students: 50, km: 14 },
+    { route: 'R-5 Central', students: 80, km: 10 },
 ];
 
-const routeStudentsPie = [
-    { name: 'Route A (North)', value: 140, color: '#3d5ee1' },
-    { name: 'Route B (South)', value: 120, color: '#28c76f' },
-    { name: 'Route C (East)', value: 180, color: '#ff9f43' },
-    { name: 'Route D (West)', value: 110, color: '#7367f0' },
-    { name: 'Route E (CBD)', value: 90, color: '#00cfe8' },
+const vehicleTypes = [
+    { name: 'AC Bus', value: 4, color: '#3d5ee1' },
+    { name: 'Non-AC Bus', value: 6, color: '#28c76f' },
+    { name: 'Mini Van', value: 2, color: '#ff9f43' },
 ];
 
-const fuelData = [
-    { month: 'Apr', cost: 72000 }, { month: 'May', cost: 75000 }, { month: 'Jun', cost: 68000 },
-    { month: 'Jul', cost: 80000 }, { month: 'Aug', cost: 83000 }, { month: 'Sep', cost: 78000 },
-    { month: 'Oct', cost: 88000 }, { month: 'Nov', cost: 82000 }, { month: 'Dec', cost: 76000 },
-    { month: 'Jan', cost: 84000 }, { month: 'Feb', cost: 85000 }, { month: 'Mar', cost: 89000 },
-];
-
-const liveRoutes = [
-    { route: 'Route A', vehicle: 'KA-01-AB-1234', driver: 'Ramesh Kumar', students: 42, status: 'on-time', eta: '08:25 AM' },
-    { route: 'Route B', vehicle: 'KA-02-CD-5678', driver: 'Suresh Babu', students: 38, status: 'delayed', eta: '08:55 AM' },
-    { route: 'Route C', vehicle: 'KA-03-EF-9012', driver: 'Mahesh Reddy', students: 45, status: 'on-time', eta: '08:15 AM' },
-    { route: 'Route D', vehicle: 'KA-04-GH-3456', driver: 'Dinesh Singh', students: 35, status: 'on-time', eta: '08:30 AM' },
-    { route: 'Route E', vehicle: 'KA-05-IJ-7890', driver: 'Pradeep Nair', students: 28, status: 'completed', eta: 'Done' },
+const vehicles = [
+    { id: 'TN-01-AB-1234', type: 'AC Bus', driver: 'Rajan Kumar', route: 'R-3 East', students: 72, status: 'On Route' },
+    { id: 'TN-01-CD-5678', type: 'Non-AC Bus', driver: 'Suresh Pillai', route: 'R-1 North', students: 65, status: 'On Route' },
+    { id: 'TN-01-EF-9012', type: 'Non-AC Bus', driver: 'Muthu Raj', route: 'R-5 Central', students: 80, status: 'Arrived' },
+    { id: 'TN-01-GH-3456', type: 'Mini Van', driver: 'Kiran Dev', route: 'R-2 South', students: 24, status: 'Maintenance' },
+    { id: 'TN-01-IJ-7890', type: 'AC Bus', driver: 'Arjun Nair', route: 'R-4 West', students: 50, status: 'Arrived' },
 ];
 
 const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
+    if (active && payload?.length) {
         return (
-            <div className="rpt-tooltip">
-                <p className="rpt-tooltip-label">{label}</p>
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 8, padding: '10px 14px', fontSize: 13 }}>
+                <p style={{ fontWeight: 700, marginBottom: 4 }}>{label}</p>
                 {payload.map((p, i) => (
-                    <p key={i} style={{ color: p.color, margin: '2px 0', fontSize: 13 }}>
-                        {p.name}: <strong>{typeof p.value === 'number' && p.value > 10000 ? `₹${p.value.toLocaleString()}` : p.value}</strong>
+                    <p key={i} style={{ color: p.color, margin: '2px 0' }}>
+                        {p.name}: <strong>{typeof p.value === 'number' && p.value > 1000 ? `₹${p.value.toLocaleString()}` : p.value}</strong>
                     </p>
                 ))}
             </div>
@@ -70,155 +61,123 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const TransportDashboard = () => {
-    const [activePeriod, setActivePeriod] = useState('This Year');
-
+    const navigate = useNavigate();
     return (
-        <div className="rpt-page">
-            <div className="rpt-page-header">
-                <div>
-                    <h4 className="rpt-page-title">Transport Dashboard</h4>
-                    <nav className="rpt-breadcrumb">
-                        <Link to="/school/dashboard">Home</Link>
-                        <span> / </span>
-                        <span className="rpt-breadcrumb-current">Transport Management</span>
-                    </nav>
+        <div className="dashboard-page">
+            <div className="page-header">
+                <div className="page-title">
+                    <h4>Transport Dashboard</h4>
+                    <nav className="breadcrumb"><span>Dashboard</span> / <span className="current">Transport Dashboard</span></nav>
                 </div>
-                <div className="rpt-header-actions">
-                    {['Today', 'This Month', 'This Year'].map(p => (
-                        <button key={p} className={`rpt-period-btn ${activePeriod === p ? 'active' : ''}`} onClick={() => setActivePeriod(p)}>{p}</button>
-                    ))}
-                    <button className="rpt-export-btn"><span>📍</span> Live Track</button>
+                <div className="page-header-actions">
+                    <button className="btn btn-outline" onClick={() => navigate('/school/transport/vehicles')}>🚌 Manage Vehicles</button>
+                    <button className="btn btn-primary" onClick={() => navigate('/school/transport/routes')}>🗺️ Manage Routes</button>
                 </div>
             </div>
 
-            <div className="rpt-kpi-grid">
-                {kpiData.map((kpi, i) => (
-                    <div key={i} className="rpt-kpi-card">
-                        <div className="rpt-kpi-icon" style={{ background: kpi.bg, color: kpi.color }}><span>{kpi.icon}</span></div>
-                        <div className="rpt-kpi-info">
-                            <p className="rpt-kpi-label">{kpi.label}</p>
-                            <h3 className="rpt-kpi-value">{kpi.value}</h3>
-                            <span className={`rpt-kpi-change ${kpi.up ? 'up' : 'down'}`}>{kpi.up ? '▲' : '▼'} {kpi.change}<span className="rpt-kpi-vs"> vs last month</span></span>
+            {/* KPI Grid */}
+            <div className="rdb-kpi-grid">
+                {kpiCards.map((k, i) => (
+                    <div key={i} className="rdb-kpi-card dashboard-card">
+                        <div className="rdb-kpi-icon" style={{ background: k.bg, color: k.color }}>{k.icon}</div>
+                        <div className="rdb-kpi-info">
+                            <p className="rdb-kpi-label">{k.label}</p>
+                            <h3 className="rdb-kpi-value" style={{ color: k.color }}>{k.value}</h3>
+                            <span className="rdb-kpi-sub">{k.sub}</span>
                         </div>
                     </div>
                 ))}
             </div>
 
-            {/* Trips: Total vs On-Time */}
-            <div className="rpt-card">
-                <div className="rpt-card-header">
-                    <h5 className="rpt-card-title">Monthly Trips: Total vs On-Time</h5>
-                    <div className="rpt-legend-row" style={{ marginTop: 0 }}>
-                        <div className="rpt-lgnd"><span style={{ background: '#3d5ee1' }}></span> Total Trips</div>
-                        <div className="rpt-lgnd"><span style={{ background: '#28c76f' }}></span> On-Time</div>
+            {/* Row: Route students + Fleet types + Fuel costs */}
+            <div className="dashboard-row" style={{ display: 'grid', gridTemplateColumns: '3fr 2fr 2fr', gap: 16 }}>
+                <div className="dashboard-card">
+                    <div className="card-header"><h5>Route-wise Student Count</h5></div>
+                    <div className="card-body" style={{ paddingTop: 0 }}>
+                        <ResponsiveContainer width="100%" height={220}>
+                            <BarChart data={routeData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                                <XAxis dataKey="route" axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 12 }} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 12 }} />
+                                <Tooltip content={<CustomTooltip />} />
+                                <Bar dataKey="students" name="Students" fill="#3d5ee1" radius={[6, 6, 0, 0]} barSize={30} />
+                            </BarChart>
+                        </ResponsiveContainer>
                     </div>
                 </div>
-                <div className="rpt-chart-body">
-                    <ResponsiveContainer width="100%" height={240}>
-                        <BarChart data={monthlyRouteData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                            <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 12 }} dy={10} />
-                            <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 12 }} />
-                            <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f8f9fa' }} />
-                            <Bar dataKey="trips" fill="#3d5ee1" radius={[4, 4, 0, 0]} barSize={22} name="Total Trips" />
-                            <Bar dataKey="onTime" fill="#28c76f" radius={[4, 4, 0, 0]} barSize={22} name="On-Time" />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
-            </div>
 
-            {/* Pie Charts Row */}
-            <div className="rpt-row rpt-row-3">
-                <div className="rpt-card">
-                    <div className="rpt-card-header"><h5 className="rpt-card-title">Vehicle Type Distribution</h5></div>
-                    <div className="rpt-chart-body rpt-chart-center">
-                        <ResponsiveContainer width="100%" height={160}>
+                <div className="dashboard-card">
+                    <div className="card-header"><h5>Fleet Breakdown</h5></div>
+                    <div className="card-body" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 0 }}>
+                        <ResponsiveContainer width="100%" height={180}>
                             <PieChart>
-                                <Pie isAnimationActive={false} data={vehicleTypePie} cx="50%" cy="50%" innerRadius={45} outerRadius={70} dataKey="value" paddingAngle={3} stroke="none">
-                                    {vehicleTypePie.map((e, i) => <Cell key={i} fill={e.color} />)}
+                                <Pie isAnimationActive={false} data={vehicleTypes} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3} dataKey="value">
+                                    {vehicleTypes.map((e, i) => <Cell key={i} fill={e.color} />)}
                                 </Pie>
-                                <Tooltip formatter={(v) => [v + ' vehicles', '']} />
+                                <Tooltip formatter={(v) => [`${v} vehicles`, '']} />
                             </PieChart>
                         </ResponsiveContainer>
-                        <div className="rpt-pie-legend">
-                            {vehicleTypePie.map((item, i) => (
-                                <div key={i} className="rpt-pie-legend-item">
-                                    <span className="rpt-pie-dot" style={{ background: item.color }}></span>
-                                    <span style={{ fontSize: '12px' }}>{item.name}</span>
-                                    <strong>{item.value}</strong>
-                                </div>
-                            ))}
-                        </div>
+                        {vehicleTypes.map((item, i) => (
+                            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, width: '100%' }}>
+                                <span className="rdb-dot" style={{ background: item.color }} />
+                                <span style={{ flex: 1, fontSize: 13 }}>{item.name}</span>
+                                <strong>{item.value}</strong>
+                            </div>
+                        ))}
                     </div>
                 </div>
 
-                <div className="rpt-card">
-                    <div className="rpt-card-header"><h5 className="rpt-card-title">Students per Route</h5></div>
-                    <div className="rpt-chart-body rpt-chart-center">
-                        <ResponsiveContainer width="100%" height={160}>
-                            <PieChart>
-                                <Pie isAnimationActive={false} data={routeStudentsPie} cx="50%" cy="50%" innerRadius={40} outerRadius={65} dataKey="value" label={({ percent }) => `${(percent * 100).toFixed(0)}%`} labelLine={false}>
-                                    {routeStudentsPie.map((e, i) => <Cell key={i} fill={e.color} />)}
-                                </Pie>
-                                <Tooltip formatter={(v) => [v + ' students', '']} />
-                            </PieChart>
-                        </ResponsiveContainer>
-                        <div className="rpt-exam-legend" style={{ padding: '4px', gap: '3px 6px' }}>
-                            {routeStudentsPie.map((item, i) => (
-                                <div key={i} className="rpt-exam-legend-item" style={{ fontSize: '11px' }}>
-                                    <span className="rpt-pie-dot" style={{ background: item.color, width: '8px', height: '8px' }}></span>
-                                    <span>{item.name}</span>
-                                    <strong>{item.value}</strong>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-
-                <div className="rpt-card">
-                    <div className="rpt-card-header"><h5 className="rpt-card-title">Monthly Fuel Costs</h5></div>
-                    <div className="rpt-chart-body">
-                        <ResponsiveContainer width="100%" height={200}>
-                            <AreaChart data={fuelData} margin={{ top: 10, right: 5, left: -25, bottom: 0 }}>
+                <div className="dashboard-card">
+                    <div className="card-header"><h5>Monthly Fuel Cost (₹)</h5></div>
+                    <div className="card-body" style={{ paddingTop: 0 }}>
+                        <ResponsiveContainer width="100%" height={220}>
+                            <AreaChart data={monthlyFuel} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                 <defs>
-                                    <linearGradient id="tr-fuel" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#ea5455" stopOpacity={0.25} />
-                                        <stop offset="95%" stopColor="#ea5455" stopOpacity={0} />
+                                    <linearGradient id="gFuel" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#00cfe8" stopOpacity={0.25} />
+                                        <stop offset="95%" stopColor="#00cfe8" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 10 }} dy={10} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 11 }} />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 12 }} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6e6b7b', fontSize: 11 }} tickFormatter={v => `₹${(v / 1000).toFixed(0)}k`} />
                                 <Tooltip content={<CustomTooltip />} />
-                                <Area type="monotone" dataKey="cost" stroke="#ea5455" strokeWidth={2.5} fill="url(#tr-fuel)" name="Fuel Cost (₹)" />
+                                <Area type="monotone" dataKey="cost" name="Fuel Cost" stroke="#00cfe8" fill="url(#gFuel)" strokeWidth={2.5} dot={{ r: 4, fill: '#00cfe8' }} />
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
             </div>
 
-            {/* Live Route Status Table */}
-            <div className="rpt-table-card">
-                <div className="rpt-table-header">
-                    <h5 className="rpt-table-title">Live Route Status</h5>
-                    <div className="rpt-table-actions">
-                        <Link to="/school/transport/tracking" className="rpt-btn-outline">🗺️ Live Map →</Link>
-                    </div>
+            {/* Vehicle Status Table */}
+            <div className="dashboard-card dashboard-row">
+                <div className="card-header">
+                    <h5>Vehicle Status – Today</h5>
+                    <a href="#" className="view-all" onClick={() => navigate('/school/transport/vehicles')}>Manage →</a>
                 </div>
-                <div className="rpt-table-wrap">
-                    <table className="rpt-table">
-                        <thead><tr><th>Route</th><th>Vehicle No.</th><th>Driver</th><th>Students</th><th>ETA</th><th>Status</th></tr></thead>
+                <div style={{ overflowX: 'auto' }}>
+                    <table className="rdb-table">
+                        <thead>
+                            <tr>
+                                <th>Vehicle No</th>
+                                <th>Type</th>
+                                <th>Driver</th>
+                                <th>Route</th>
+                                <th>Students</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
                         <tbody>
-                            {liveRoutes.map((r, i) => (
+                            {vehicles.map((v, i) => (
                                 <tr key={i}>
-                                    <td><strong>{r.route}</strong></td>
-                                    <td style={{ fontFamily: 'monospace', fontSize: 13 }}>{r.vehicle}</td>
-                                    <td>{r.driver}</td>
-                                    <td>{r.students}</td>
-                                    <td style={{ color: '#8c90a4' }}>{r.eta}</td>
+                                    <td><strong style={{ color: '#3d5ee1' }}>{v.id}</strong></td>
+                                    <td>{v.type}</td>
+                                    <td>{v.driver}</td>
+                                    <td><span className="rdb-badge badge-blue">{v.route}</span></td>
+                                    <td>{v.students}</td>
                                     <td>
-                                        <span className={`rpt-badge ${r.status === 'on-time' ? 'rpt-badge-green' : r.status === 'delayed' ? 'rpt-badge-red' : 'rpt-badge-blue'}`}>
-                                            {r.status === 'on-time' ? '✓ On-Time' : r.status === 'delayed' ? '⚠ Delayed' : '✓ Done'}
+                                        <span className={`rdb-badge ${v.status === 'On Route' ? 'badge-orange' : v.status === 'Arrived' ? 'badge-green' : 'badge-red'}`}>
+                                            {v.status === 'On Route' ? '🟡 ' : v.status === 'Arrived' ? '🟢 ' : '🔴 '}{v.status}
                                         </span>
                                     </td>
                                 </tr>
@@ -228,7 +187,7 @@ const TransportDashboard = () => {
                 </div>
             </div>
 
-            <footer className="rpt-footer"><p>© 2025 MindWhile School ERP — Transport Dashboard</p></footer>
+            <footer className="dashboard-footer"><p>Copyright © 2024 MindWhile. All rights reserved.</p></footer>
         </div>
     );
 };

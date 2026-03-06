@@ -61,22 +61,34 @@ const ManageRooms = () => {
                 </button>
             </div>
 
-            <div className="accounts-card">
-                <div className="card-header">
-                    <h5>Room List</h5>
-                </div>
-                <div className="card-body">
-                    <div className="filters-row">
-                        <div className="search-box">
-                            <IconSearch size={18} />
+            <div className="card shadow-soft border-0 mt-6" style={{ background: 'var(--bg-card)', borderRadius: '15px', overflow: 'hidden', border: '1px solid var(--border-color)' }}>
+                <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 25px', background: 'var(--bg-card)', gap: '20px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '40px', flex: 1 }}>
+                        <h5 className="mb-0" style={{ color: 'var(--text-primary)', fontWeight: '700', whiteSpace: 'nowrap' }}>Room List</h5>
+                        <div className="search-box-pill" style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '50px', padding: '0 20px', display: 'flex', alignItems: 'center', gap: '12px', height: '42px', width: '360px', transition: 'all 0.3s ease', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
+                            <IconSearch size={22} color="var(--text-secondary)" style={{ opacity: 0.7 }} />
                             <input
                                 type="text"
                                 placeholder="Search by room number or hostel..."
+                                style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    color: 'var(--text-primary)',
+                                    fontSize: '14px',
+                                    outline: 'none',
+                                    padding: '0',
+                                    height: '100%',
+                                    width: '100%',
+                                    boxShadow: 'none'
+                                }}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                     </div>
+                </div>
+
+                <div className="card-body p-0">
 
                     <div className="table-container">
                         <table className="data-table">

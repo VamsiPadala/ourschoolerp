@@ -138,22 +138,34 @@ const LibraryMembers = () => {
                 </button>
             </div>
 
-            <div className="accounts-card no-print">
-                <div className="card-header">
-                    <h5>Member Directory</h5>
-                </div>
-                <div className="card-body">
-                    <div className="filters-row">
-                        <div className="search-box">
-                            <IconSearch size={18} />
+            <div className="card shadow-soft border-0 mt-6 no-print" style={{ background: 'var(--bg-card)', borderRadius: '15px', overflow: 'hidden', border: '1px solid var(--border-color)' }}>
+                <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 25px', background: 'var(--bg-card)', gap: '20px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '40px', flex: 1 }}>
+                        <h5 className="mb-0" style={{ color: 'var(--text-primary)', fontWeight: '700', whiteSpace: 'nowrap' }}>Member Directory</h5>
+                        <div className="search-box-pill" style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: '50px', padding: '0 20px', display: 'flex', alignItems: 'center', gap: '12px', height: '42px', width: '360px', transition: 'all 0.3s ease', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
+                            <IconSearch size={22} color="var(--text-secondary)" style={{ opacity: 0.7 }} />
                             <input
                                 type="text"
                                 placeholder="Search by member ID or name..."
+                                style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    color: 'var(--text-primary)',
+                                    fontSize: '14px',
+                                    outline: 'none',
+                                    padding: '0',
+                                    height: '100%',
+                                    width: '100%',
+                                    boxShadow: 'none'
+                                }}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                     </div>
+                </div>
+
+                <div className="card-body p-0">
 
                     <div className="table-container">
                         <table className="data-table">
@@ -212,14 +224,14 @@ const LibraryMembers = () => {
                                 <IconPlus size={20} style={{ transform: 'rotate(45deg)' }} />
                             </button>
                         </div>
-                        <div className="modal-body id-card-container id-card-print-body" style={{ padding: '20px', background: '#f8f9fa' }}>
+                        <div className="modal-body id-card-container id-card-print-body" style={{ padding: '20px', background: 'var(--bg-main)' }}>
                             <div className="id-card" style={{
-                                background: '#fff',
-                                border: '1px solid #e0e0e0',
+                                background: 'var(--bg-card)',
+                                border: '1px solid var(--border-color)',
                                 borderRadius: '10px',
                                 padding: '0',
                                 overflow: 'hidden',
-                                boxShadow: '0 4px 15px rgba(0,0,0,0.05)',
+                                boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
                                 textAlign: 'center'
                             }}>
                                 <div className="id-card-header" style={{ background: '#2b3a67', color: '#fff', padding: '15px 10px' }}>
@@ -228,35 +240,35 @@ const LibraryMembers = () => {
                                 <div className="id-card-body" style={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                     <div className="id-photo-wrapper" style={{ marginBottom: '15px' }}>
                                         {selectedMemberIdCard.photo ? (
-                                            <img src={selectedMemberIdCard.photo} alt="Student" style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '50%', border: '3px solid #f0f0f0' }} />
+                                            <img src={selectedMemberIdCard.photo} alt="Student" style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '50%', border: '3px solid var(--border-color)' }} />
                                         ) : (
-                                            <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: '#e9ecef', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#adb5bd', border: '3px solid #f0f0f0' }}>
+                                            <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: 'var(--bg-main)', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', border: '3px solid var(--border-color)' }}>
                                                 <IconUserPlus size={40} />
                                             </div>
                                         )}
                                     </div>
-                                    <div className="id-details" style={{ display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left', background: '#f8f9fa', padding: '15px', borderRadius: '8px', width: '100%' }}>
+                                    <div className="id-details" style={{ display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left', background: 'var(--bg-main)', padding: '15px', borderRadius: '8px', width: '100%' }}>
                                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <span style={{ color: '#6c757d', fontSize: '0.85rem' }}>Name:</span>
-                                            <span style={{ fontWeight: '600', color: '#2b3a67' }}>{selectedMemberIdCard.name}</span>
+                                            <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Name:</span>
+                                            <span style={{ fontWeight: '600', color: 'var(--text-primary)' }}>{selectedMemberIdCard.name}</span>
                                         </div>
                                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <span style={{ color: '#6c757d', fontSize: '0.85rem' }}>Member ID:</span>
-                                            <span style={{ fontWeight: '600', color: '#2b3a67' }}>{selectedMemberIdCard.library_generated_id}</span>
+                                            <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Member ID:</span>
+                                            <span style={{ fontWeight: '600', color: 'var(--text-primary)' }}>{selectedMemberIdCard.library_generated_id}</span>
                                         </div>
                                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <span style={{ color: '#6c757d', fontSize: '0.85rem' }}>Type:</span>
-                                            <span style={{ fontWeight: '600', color: '#2b3a67' }}>{selectedMemberIdCard.type}</span>
+                                            <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Type:</span>
+                                            <span style={{ fontWeight: '600', color: 'var(--text-primary)' }}>{selectedMemberIdCard.type}</span>
                                         </div>
                                         {selectedMemberIdCard.type === 'Student' ? (
                                             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                <span style={{ color: '#6c757d', fontSize: '0.85rem' }}>Class & Sec:</span>
-                                                <span style={{ fontWeight: '600', color: '#2b3a67' }}>{`${selectedMemberIdCard.class || '-'} - ${selectedMemberIdCard.section || '-'}`}</span>
+                                                <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Class & Sec:</span>
+                                                <span style={{ fontWeight: '600', color: 'var(--text-primary)' }}>{`${selectedMemberIdCard.class || '-'} - ${selectedMemberIdCard.section || '-'}`}</span>
                                             </div>
                                         ) : (
                                             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                <span style={{ color: '#6c757d', fontSize: '0.85rem' }}>Department:</span>
-                                                <span style={{ fontWeight: '600', color: '#2b3a67' }}>{selectedMemberIdCard.department || '-'}</span>
+                                                <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Department:</span>
+                                                <span style={{ fontWeight: '600', color: 'var(--text-primary)' }}>{selectedMemberIdCard.department || '-'}</span>
                                             </div>
                                         )}
                                     </div>

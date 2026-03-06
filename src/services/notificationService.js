@@ -3,7 +3,7 @@
  * Handles all API calls related to notification settings
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://ourschoolerp-m9y9k.ondigitalocean.app/api/v1';
 
 /**
  * Fetch all notification settings

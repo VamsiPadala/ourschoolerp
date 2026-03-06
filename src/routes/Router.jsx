@@ -3,6 +3,7 @@
 import { lazy } from 'react';
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 import Loadable from '../layouts/full/shared/loadable/Loadable';
+import DashboardRedirect from './DashboardRedirect';
 import ErrorElement from '../components/common/ErrorElement';
 import RoleGuard from '../guards/RoleGuard';
 import AuthGuard from '../guards/AuthGuard';
@@ -28,6 +29,7 @@ const BranchPrincipalDashboard = Loadable(lazy(() => import('../school/pages/Das
 const PrincipalDashboard = Loadable(lazy(() => import('../school/pages/Dashboard/PrincipalDashboard')));
 const AccountantDashboard = Loadable(lazy(() => import('../school/pages/Dashboard/AccountantDashboard')));
 const ReceptionistDashboard = Loadable(lazy(() => import('../school/pages/Dashboard/ReceptionistDashboard')));
+const LibraryDashboard = Loadable(lazy(() => import('../school/pages/Dashboard/LibraryDashboard')));
 
 // Teachers Pages
 const AllTeachers = Loadable(lazy(() => import('../school/pages/Teachers/AllTeachers')));
@@ -83,6 +85,7 @@ const BehaviorRecords = Loadable(lazy(() => import('../school/pages/StudentInfor
 const AddBehaviorRecordPage = Loadable(lazy(() => import('../school/pages/StudentInformation/AddBehaviorRecordPage')));
 const DisabledStudents = Loadable(lazy(() => import('../school/pages/StudentInformation/DisabledStudents')));
 const BulkEdit = Loadable(lazy(() => import('../school/pages/StudentInformation/BulkEdit')));
+const SiblingsData = Loadable(lazy(() => import('../school/pages/StudentInformation/SiblingsData')));
 
 // Finance Pages
 const SearchDueFees = Loadable(lazy(() => import('../school/pages/Finance/SearchDueFees')));
@@ -92,11 +95,13 @@ const FeesCarryForward = Loadable(lazy(() => import('../school/pages/Finance/Fee
 const AssignFees = Loadable(lazy(() => import('../school/pages/Finance/AssignFees')));
 const AssignFeesEdit = Loadable(lazy(() => import('../school/pages/Finance/AssignFeesEdit')));
 const AssignFeesEditGlobal = Loadable(lazy(() => import('../school/pages/Finance/AssignFeesEditGlobal')));
+const EditFee = Loadable(lazy(() => import('../school/pages/Finance/EditFee')));
 const FeesDiscount = Loadable(lazy(() => import('../school/pages/Finance/FeesDiscount')));
 const FeeTypes = Loadable(lazy(() => import('../school/pages/Finance/FeeTypes')));
 const FeePermissions = Loadable(lazy(() => import('../school/pages/Finance/FeePermissions')));
 const FeeReport = Loadable(lazy(() => import('../school/pages/Finance/FeeReport')));
 const CollectFeeIndividual = Loadable(lazy(() => import('../school/pages/Finance/CollectFeeIndividual')));
+const StudentTransactionHistory = Loadable(lazy(() => import('../school/pages/Finance/StudentTransactionHistory')));
 
 // Accounts Pages
 const Income = Loadable(lazy(() => import('../school/pages/Accounts/Income')));
@@ -128,6 +133,17 @@ const EditRoute = Loadable(lazy(() => import('../school/pages/Transport/EditRout
 const LiveTracking = Loadable(lazy(() => import('../school/pages/Transport/LiveTracking')));
 const ManageStudentTransport = Loadable(lazy(() => import('../school/pages/Transport/ManageStudentTransport.jsx')));
 const TransportDashboard = Loadable(lazy(() => import('../school/pages/Transport/TransportDashboard.jsx')));
+
+// Study Center Pages
+const ManageResources = Loadable(lazy(() => import('../school/pages/StudyCenter/ManageResources.jsx')));
+
+// Front Office Pages
+const VisitorBook = Loadable(lazy(() => import('../school/pages/FrontOffice/VisitorBook')));
+const Complaints = Loadable(lazy(() => import('../school/pages/FrontOffice/Complaints')));
+const PostalRecords = Loadable(lazy(() => import('../school/pages/FrontOffice/PostalRecords')));
+const PostalSend = Loadable(lazy(() => import('../school/pages/FrontOffice/PostalSend')));
+const PostalReceive = Loadable(lazy(() => import('../school/pages/FrontOffice/PostalReceive')));
+const AdmissionEnquiry = Loadable(lazy(() => import('../school/pages/FrontOffice/AdmissionEnquiry')));
 
 // Human Resource / Payroll
 const HumanResourceDashboard = Loadable(lazy(() => import('../school/pages/HumanResource/HumanResourceDashboard')));
@@ -168,7 +184,6 @@ const SidebarMenu = Loadable(lazy(() => import('../school/pages/SystemSettings/S
 const SystemUpdate = Loadable(lazy(() => import('../school/pages/SystemSettings/SystemUpdate')));
 
 // Library Pages
-const LibraryDashboard = Loadable(lazy(() => import('../school/pages/Library/LibraryDashboard')));
 const IssueReturnBook = Loadable(lazy(() => import('../school/pages/Library/IssueReturnBook')));
 const IssueNewBook = Loadable(lazy(() => import('../school/pages/Library/IssueNewBook')));
 const ManageBooks = Loadable(lazy(() => import('../school/pages/Library/ManageBooks')));
@@ -181,6 +196,7 @@ const HostelAllocation = Loadable(lazy(() => import('../school/pages/Hostel/Stud
 const ManageRooms = Loadable(lazy(() => import('../school/pages/Hostel/ManageRooms')));
 const RoomTypes = Loadable(lazy(() => import('../school/pages/Hostel/RoomTypes')));
 const ManageHostels = Loadable(lazy(() => import('../school/pages/Hostel/ManageHostels')));
+const HostelCategory = Loadable(lazy(() => import('../school/pages/Hostel/HostelCategory')));
 const HostelPermissions = Loadable(lazy(() => import('../school/pages/Hostel/Permissions')));
 
 // Super Admin Dashboards
@@ -250,6 +266,7 @@ const HostelReport = Loadable(lazy(() => import('../school/pages/Reports/HostelR
 const TransportReport = Loadable(lazy(() => import('../school/pages/Reports/TransportReport')));
 const CertificateReport = Loadable(lazy(() => import('../school/pages/Reports/CertificateReport')));
 const ReportPlaceholder = Loadable(lazy(() => import('../school/pages/Reports/ReportPlaceholder')));
+const ExaminationReport = Loadable(lazy(() => import('../school/pages/Reports/ExaminationReport')));
 
 // Certificates Pages
 const CertificateTemplates = Loadable(lazy(() => import('../school/pages/Certificates/CertificateTemplates')));
@@ -288,21 +305,19 @@ const Router = [
     element: <AuthGuard><SchoolAdminLayout /></AuthGuard>,
     errorElement: <ErrorElement />,
     children: [
-      { index: true, element: <Navigate to="dashboard" replace /> },
+      { index: true, element: <DashboardRedirect /> },
       { path: 'dashboard', element: <SchoolDashboard /> },
       { path: 'teacher-dashboard', element: <TeacherDashboard /> },
-
-      // Student Routes
-      { path: 'students', element: <Students /> },
-      { path: 'student-dashboard', element: <StudentDashboard /> },
-      { path: 'hostel-dashboard', element: <HostelDashboard /> },
-      { path: 'transport-dashboard', element: <TransportDashboard /> },
-      { path: 'library-dashboard', element: <LibraryDashboard /> },
       { path: 'branch-admin-dashboard', element: <BranchAdminDashboard /> },
       { path: 'branch-principal-dashboard', element: <BranchPrincipalDashboard /> },
       { path: 'principal-dashboard', element: <PrincipalDashboard /> },
       { path: 'accountant-dashboard', element: <AccountantDashboard /> },
       { path: 'receptionist-dashboard', element: <ReceptionistDashboard /> },
+      { path: 'library-dashboard', element: <LibraryDashboard /> },
+
+      // Student Routes
+      { path: 'students', element: <Students /> },
+      { path: 'student-dashboard', element: <StudentDashboard /> },
 
       // Student Information Routes (flat)
       { path: 'student-list', element: <StudentList /> },
@@ -318,6 +333,7 @@ const Router = [
       { path: 'behavior-records/add', element: <AddBehaviorRecordPage /> },
       { path: 'disabled-students', element: <DisabledStudents /> },
       { path: 'bulk-edit', element: <BulkEdit /> },
+      { path: 'siblings-data', element: <SiblingsData /> },
       { path: 'quick-admission', element: <QuickStudentAdmissionList /> },
       { path: 'quick-admission/add', element: <QuickStudentAdmissionForm /> },
       { path: 'quick-admission/:id', element: <QuickStudentAdmissionForm /> },
@@ -347,9 +363,6 @@ const Router = [
           { path: 'manage-periods/edit/:id', element: <EditPeriod /> },
           { path: 'class-timetable', element: <ClassTimetable /> },
           { path: 'promote-students', element: <PromoteStudents /> },
-          { path: 'homework', element: <Homework /> },
-          { path: 'homework/add', element: <AddHomework /> },
-          { path: 'homework/edit/:id', element: <EditHomework /> },
         ],
       },
 
@@ -365,11 +378,13 @@ const Router = [
           { path: 'assign-fees', element: <AssignFees /> },
           { path: 'assign-fees/edit', element: <AssignFeesEditGlobal /> },
           { path: 'assign-fees/edit/:studentId', element: <AssignFeesEdit /> },
+          { path: 'edit-fee', element: <EditFee /> },
           { path: 'fees-discount', element: <FeesDiscount /> },
           { path: 'fee-types', element: <FeeTypes /> },
           { path: 'fee-types/:id', element: <FeeTypes /> },
           { path: 'fee-permissions', element: <FeePermissions /> },
           { path: 'collect-fees/:studentId', element: <CollectFeeIndividual /> },
+          { path: 'transaction-history/:studentId', element: <StudentTransactionHistory /> },
         ],
       },
 
@@ -420,11 +435,32 @@ const Router = [
       { path: 'transport/student-transport/add', element: <ManageStudentTransport /> },
       { path: 'transport/student-transport/edit/:id', element: <ManageStudentTransport /> },
 
+      // Study Center Routes
+      {
+        path: 'study',
+        children: [
+          { path: 'resources', element: <ManageResources /> },
+          { path: 'assignments', element: <Homework /> },
+          { path: 'assignments/add', element: <AddHomework /> },
+          { path: 'assignments/edit/:id', element: <EditHomework /> },
+        ]
+      },
+
+      // Front Office Routes
+      { path: 'front-office/visitors', element: <VisitorBook /> },
+      { path: 'front-office/complaints', element: <Complaints /> },
+      { path: 'front-office/postal', element: <PostalRecords /> },
+      { path: 'front-office/postal-send', element: <PostalSend /> },
+      { path: 'front-office/postal-receive', element: <PostalReceive /> },
+      { path: 'front-office/admission-enquiry', element: <AdmissionEnquiry /> },
+
       // Hostel Routes
+      { path: 'hostel', element: <HostelDashboard /> },
       { path: 'hostel/allocation', element: <HostelAllocation /> },
       { path: 'hostel/rooms', element: <ManageRooms /> },
       { path: 'hostel/room-types', element: <RoomTypes /> },
       { path: 'hostel/manage', element: <ManageHostels /> },
+      { path: 'hostel/category', element: <HostelCategory /> },
       { path: 'hostel/permissions', element: <HostelPermissions /> },
 
       // Teachers Routes
@@ -562,6 +598,7 @@ const Router = [
           { path: 'hostel', element: <HostelReport /> },
           { path: 'transport', element: <TransportReport /> },
           { path: 'certificate', element: <CertificateReport /> },
+          { path: 'examinations', element: <ExaminationReport /> },
           { path: ':reportType', element: <ReportPlaceholder /> },
         ],
       },
