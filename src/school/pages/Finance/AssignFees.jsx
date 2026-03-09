@@ -31,7 +31,6 @@ const AssignFees = () => {
     const [selectedIds, setSelectedIds] = useState(new Set());
     const [studentFeeMap, setStudentFeeMap] = useState({});
     const [searchQuery, setSearchQuery] = useState('');
-    const [concessions, setConcessions] = useState({});
 
     const enabledFees = useMemo(() =>
         feeRows
@@ -61,10 +60,8 @@ const AssignFees = () => {
 
     const getTotal = useCallback(sid => {
         const map = studentFeeMap[sid] || {};
-        const feesTotal = enabledFees.reduce((s, f) => s + (map[f.name] ? f.amount : 0), 0);
-        const conc = concessions[sid] || 0;
-        return Math.max(0, feesTotal - conc);
-    }, [studentFeeMap, enabledFees, concessions]);
+        return enabledFees.reduce((s, f) => s + (map[f.name] ? f.amount : 0), 0);
+    }, [studentFeeMap, enabledFees]);
 
     const grandTotal = useMemo(() => {
         let t = 0; selectedIds.forEach(id => { t += getTotal(id); }); return t;
@@ -249,7 +246,6 @@ const AssignFees = () => {
                                     </th>
                                     <th>Student Identity</th>
                                     <th>Billing Strategy Coverage</th>
-                                    <th>Fee Concession</th>
                                     <th>Allocated Amount</th>
                                 </tr>
                             </thead>
@@ -266,16 +262,9 @@ const AssignFees = () => {
                                         <td>
                                             <div className="student-profile">
                                                 <img src={`https://i.pravatar.cc/150?u=${student.id}`} alt="" style={{ width: 44, height: 44, borderRadius: 12 }} />
-                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                                <div>
                                                     <div className="student-info-name">{student.name}</div>
-                                                    <div className="student-info-id" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                        {student.admissionNo || student.id}
-                                                        {student.isStaffChild && (
-                                                            <span style={{ fontSize: '10px', fontWeight: 600, color: '#0284c7', backgroundColor: '#e0f2fe', padding: '2px 6px', borderRadius: '4px', width: 'fit-content', border: '1px solid #bae6fd', lineHeight: 1 }}>
-                                                                Teacher's Ward
-                                                            </span>
-                                                        )}
-                                                    </div>
+                                                    <div className="student-info-id">{student.admissionNo || student.id}</div>
                                                 </div>
                                             </div>
                                         </td>
@@ -290,20 +279,6 @@ const AssignFees = () => {
                                                         {f.name} (₹{f.amount})
                                                     </span>
                                                 ))}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div style={{ position: 'relative', width: 140 }}>
-                                                <IconCurrencyRupee size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
-                                                <input
-                                                    type="number"
-                                                    value={concessions[student.id] || ''}
-                                                    onChange={(e) => setConcessions(prev => ({ ...prev, [student.id]: Number(e.target.value) }))}
-                                                    className="af-input"
-                                                    style={{ paddingLeft: '2.5rem', width: '100%', paddingRight: '0.5rem', borderColor: '#fcd34d', backgroundColor: '#fef3c7' }}
-                                                    min="0"
-                                                    placeholder="0"
-                                                />
                                             </div>
                                         </td>
                                         <td>

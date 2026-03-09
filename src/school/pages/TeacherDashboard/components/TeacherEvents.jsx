@@ -1,48 +1,36 @@
-import React from 'react';
-import { Trash2, Users, Calendar, Clock } from 'lucide-react';
+import React, { useState } from 'react';
+import { IconCalendarEvent, IconClock, IconMapPin } from '@tabler/icons-react';
+
+const EVENTS = [
+    { title: 'Vacation Meeting', date: '07 July 2024', time: '09:10 AM – 10:50 AM', color: '#3D5EE1', bg: '#eef2ff' },
+    { title: 'Parents–Teacher Meet', date: '15 July 2024', time: '09:10 AM – 10:50 AM', color: '#10b981', bg: '#d1fae5' },
+    { title: 'Staff Meeting', date: '10 July 2024', time: '09:10 AM – 10:50 AM', color: '#f59e0b', bg: '#fef3c7' },
+    { title: 'Admission Camp', date: '12 July 2024', time: '09:10 AM – 10:50 AM', color: '#ec4899', bg: '#fce7f3' },
+    { title: 'Science Exhibition', date: '20 July 2024', time: '10:00 AM – 01:00 PM', color: '#8b5cf6', bg: '#ede9fe' },
+];
 
 const TeacherEvents = () => {
-    const events = [
-        { title: 'Vacation Meeting', date: '07 July 2024 - 07 July 2024', time: '09:10 AM - 10:50 PM', borderColor: '#EF4444', bgColor: 'rgba(239, 68, 68, 0.06)', icon: Trash2, iconColor: '#EF4444' },
-        { title: 'Parents, Teacher Meet', date: '15 July 2024', time: '09:10 AM - 10:50 PM', borderColor: '#F97316', bgColor: 'rgba(249, 115, 22, 0.06)', icon: Users, iconColor: '#F97316' },
-        { title: 'Staff Meeting', date: '10 July 2024', time: '09:10 AM - 10:50 PM', borderColor: '#3D5EE1', bgColor: 'rgba(61, 94, 225, 0.06)', icon: Users, iconColor: '#3D5EE1' },
-    ];
-
     return (
         <div>
-            <h5 className="text-base font-semibold mb-4" style={{ color: '#333333' }}>Upcoming Events</h5>
-            <div className="space-y-4">
-                {events.map((event, index) => {
-                    const IconComponent = event.icon;
-                    return (
-                        <div
-                            key={index}
-                            className="rounded-lg p-4"
-                            style={{
-                                backgroundColor: event.bgColor,
-                                borderLeft: `4px solid ${event.borderColor}`
-                            }}
-                        >
-                            <div className="flex items-start gap-3">
-                                <span
-                                    className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-                                    style={{ backgroundColor: 'white' }}
-                                >
-                                    <IconComponent size={18} style={{ color: event.iconColor }} />
-                                </span>
-                                <div className="flex-1 min-w-0">
-                                    <h6 className="text-sm font-semibold mb-1 truncate" style={{ color: '#333333' }}>{event.title}</h6>
-                                    <p className="text-xs mb-1 flex items-center gap-1" style={{ color: '#888888' }}>
-                                        <Calendar size={12} />{event.date}
-                                    </p>
-                                    <p className="text-xs flex items-center gap-1" style={{ color: '#888888' }}>
-                                        <Clock size={12} />{event.time}
-                                    </p>
-                                </div>
-                            </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                <h4 style={{ fontWeight: 700, fontSize: 15, color: '#1e1b4b', margin: 0 }}>Upcoming Events</h4>
+                <a href="#" style={{ fontSize: 12, color: '#3D5EE1', fontWeight: 600, textDecoration: 'none' }}>View All</a>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {EVENTS.map((ev, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '12px 14px', borderRadius: 12, background: ev.bg, border: `1px solid ${ev.color}22` }}>
+                        <div style={{ width: 36, height: 36, borderRadius: 10, background: ev.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            <IconCalendarEvent size={18} color="white" />
                         </div>
-                    );
-                })}
+                        <div style={{ minWidth: 0 }}>
+                            <div style={{ fontWeight: 700, fontSize: 13, color: '#1e1b4b', marginBottom: 2 }}>{ev.title}</div>
+                            <div style={{ fontSize: 11, color: '#6b7280', display: 'flex', alignItems: 'center', gap: 4 }}>
+                                <IconClock size={11} /> {ev.time}
+                            </div>
+                            <div style={{ fontSize: 11, color: '#9ca3af', marginTop: 2 }}>{ev.date}</div>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     );

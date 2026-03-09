@@ -6,6 +6,8 @@ import {
     ChartBarIcon, MaximizeIcon, MenuIcon, SearchIcon,
     UserIcon, SettingsIcon, LogoutIcon, ChevronDownIcon, SunIcon
 } from '../../assets/icons';
+import { useBranch } from '../../../context/BranchContext';
+import { useAuth } from '../../../context/AuthContext';
 import './Layout.css';
 
 // Custom icons for Add Menu
@@ -55,11 +57,30 @@ const Header = ({ toggleSidebar }) => {
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
     const [showAddDropdown, setShowAddDropdown] = useState(false);
     const [showYearDropdown, setShowYearDropdown] = useState(false);
+    const [showBranchDropdown, setShowBranchDropdown] = useState(false);
     const [selectedYear, setSelectedYear] = useState('2024 / 2025');
+
+    // Branch context
+    const { branches, activeBranch, setActiveBranch, fetchBranches } = useBranch();
+    useEffect(() => { fetchBranches(); }, []);
+
+    // Auth context — real user data
+    const { user, roles, logout } = useAuth();
+    const displayName = user?.full_name || user?.first_name
+        ? `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim()
+        : user?.username || 'User';
+    const displayRole = roles?.[0]
+        ? roles[0].replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+        : 'Administrator';
+    // Generate initials avatar
+    const initials = displayName.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+    const avatarColors = ['#3D5EE1', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
+    const avatarBg = avatarColors[(displayName.charCodeAt(0) || 0) % avatarColors.length];
 
     const profileRef = useRef(null);
     const addRef = useRef(null);
     const yearRef = useRef(null);
+    const branchRef = useRef(null);
     const navigate = useNavigate();
 
     const academicYears = [
@@ -88,6 +109,9 @@ const Header = ({ toggleSidebar }) => {
             if (yearRef.current && !yearRef.current.contains(event.target)) {
                 setShowYearDropdown(false);
             }
+            if (branchRef.current && !branchRef.current.contains(event.target)) {
+                setShowBranchDropdown(false);
+            }
         };
 
         document.addEventListener('mousedown', handleClickOutside);
@@ -97,7 +121,11 @@ const Header = ({ toggleSidebar }) => {
     const handleLogout = () => {
         localStorage.removeItem('auth_token');
         localStorage.removeItem('auth_user');
-        navigate('/auth/login', { replace: true });
+        localStorage.removeItem('active_branch');
+        localStorage.removeItem('active_branch_id');
+        localStorage.removeItem('tenant_id');
+        logout();
+        navigate('/auth/auth2/login', { replace: true });
     };
 
     const toggleFullscreen = () => {
@@ -126,6 +154,45 @@ const Header = ({ toggleSidebar }) => {
             </div>
 
             <div className="header-right">
+
+                {/* Branch Switcher Dropdown */}
+                <div className="academic-dropdown-container" ref={branchRef} style={{ position: 'relative' }}>
+                    <button
+                        className="academic-year-badge"
+                        onClick={() => setShowBranchDropdown(!showBranchDropdown)}
+                        style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+                    >
+                        <span style={{ fontSize: 14 }}>🏫</span>
+                        <span>{activeBranch?.name || 'Select Branch'}</span>
+                        <ChevronDownIcon size={14} color="var(--bodytext)" style={{ transition: 'transform 0.2s', transform: showBranchDropdown ? 'rotate(180deg)' : 'none' }} />
+                    </button>
+
+                    {showBranchDropdown && (
+                        <div className="academic-dropdown" style={{ minWidth: 220, zIndex: 9999 }}>
+                            <div style={{ padding: '8px 16px 4px', fontSize: 10, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Campuses</div>
+                            {branches.map((b) => (
+                                <div
+                                    key={b.id}
+                                    className={`academic-dropdown-item ${activeBranch?.id === b.id ? 'active' : ''}`}
+                                    onClick={() => { setActiveBranch(b); setShowBranchDropdown(false); }}
+                                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                                >
+                                    <span>{b.name}</span>
+                                    {activeBranch?.id === b.id && <span style={{ fontSize: 11, fontWeight: 700, color: '#3D5EE1' }}>✓</span>}
+                                </div>
+                            ))}
+                            <div style={{ borderTop: '1px solid #f1f5f9', margin: '4px 0' }} />
+                            <div
+                                className="academic-dropdown-item"
+                                onClick={() => { navigate('/school/settings/branches'); setShowBranchDropdown(false); }}
+                                style={{ color: '#3D5EE1', fontWeight: 700, fontSize: 12 }}
+                            >
+                                + Manage Branches
+                            </div>
+                        </div>
+                    )}
+                </div>
+
                 {/* Academic Year Dropdown */}
                 <div className="academic-dropdown-container" ref={yearRef}>
                     <button
@@ -222,12 +289,15 @@ const Header = ({ toggleSidebar }) => {
                     <div
                         className="user-profile-btn"
                         onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+                        title={displayName}
                     >
-                        <img
-                            src="https://randomuser.me/api/portraits/men/75.jpg"
-                            alt="User"
-                            className="header-user-avatar"
-                        />
+                        {user?.avatar ? (
+                            <img src={user.avatar} alt={displayName} className="header-user-avatar" />
+                        ) : (
+                            <div style={{ width: 38, height: 38, borderRadius: 8, background: avatarBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, color: 'white', letterSpacing: 0.5 }}>
+                                {initials}
+                            </div>
+                        )}
                     </div>
 
                     {/* Dropdown Menu */}
@@ -235,16 +305,18 @@ const Header = ({ toggleSidebar }) => {
                         <div className="profile-dropdown">
                             <div className="dropdown-header">
                                 <div className="dropdown-avatar-container">
-                                    <img
-                                        src="https://randomuser.me/api/portraits/men/75.jpg"
-                                        alt="User"
-                                        className="dropdown-avatar"
-                                    />
+                                    {user?.avatar ? (
+                                        <img src={user.avatar} alt={displayName} className="dropdown-avatar" />
+                                    ) : (
+                                        <div style={{ width: 48, height: 48, borderRadius: '50%', background: avatarBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 800, color: 'white' }}>
+                                            {initials}
+                                        </div>
+                                    )}
                                     <span className="online-indicator"></span>
                                 </div>
                                 <div className="dropdown-user-info">
-                                    <span className="dropdown-user-name">Kevin Larry</span>
-                                    <span className="dropdown-user-role">Administrator</span>
+                                    <span className="dropdown-user-name">{displayName}</span>
+                                    <span className="dropdown-user-role">{displayRole}</span>
                                 </div>
                             </div>
 

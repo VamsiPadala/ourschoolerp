@@ -7,6 +7,7 @@ import { useTheme } from 'src/components/provider/theme-provider';
 import { AMLogo, AMMenu, AMMenuItem, AMSidebar, AMSubmenu } from 'tailwind-sidebar';
 import 'tailwind-sidebar/styles.css';
 import { useState, useEffect } from 'react';
+import { useAuth } from 'src/context/AuthContext';
 
 const quotes = [
   { text: "Education is the most powerful weapon which you can use to change the world.", author: "Nelson Mandela" },
@@ -20,31 +21,47 @@ const renderSidebarItems = (
   items,
   currentPath,
   onClose,
+  hasPermission,
+  isBranchScope,
   isSubItem = false) => {
   return items.map((item) => {
+    // Permission check
+    if (item.permission && !hasPermission(item.permission)) {
+      return null;
+    }
+
+    // Branch scope check (optional but useful)
+    if (item.branchOnly && !isBranchScope) {
+      return null;
+    }
+
     const isSelected = currentPath === item?.url;
     const IconComp = item.icon || null;
 
     const iconElement = IconComp ?
       <Icon icon={IconComp} height={21} width={21} /> :
-
       <Icon icon={'ri:checkbox-blank-circle-line'} height={9} width={9} />;
-
 
     // Heading
     if (item.heading) {
+      // Hide heading if all children are hidden
+      const visibleChildren = item.children?.filter(child => !child.permission || hasPermission(child.permission));
+      if (item.children && visibleChildren.length === 0) return null;
+
       return (
         <div className="mb-1" key={item.heading}>
           <AMMenu
             subHeading={item.heading}
             ClassName="hide-menu leading-21 text-sidebar-foreground font-bold uppercase text-xs dark:text-sidebar-foreground" />
-
-        </div>);
-
+        </div>
+      );
     }
 
     // Submenu
     if (item.children?.length) {
+      const visibleChildren = item.children.filter(child => !child.permission || hasPermission(child.permission));
+      if (visibleChildren.length === 0) return null;
+
       const isChildActive = (children) => {
         return children.some(child => {
           if (child.url && child.url === currentPath) return true;
@@ -62,7 +79,7 @@ const renderSidebarItems = (
             title={item.name}
             ClassName="mt-0.5 text-sidebar-foreground dark:text-sidebar-foreground"
           >
-            {renderSidebarItems(item.children, currentPath, onClose, true)}
+            {renderSidebarItems(visibleChildren, currentPath, onClose, hasPermission, isBranchScope, true)}
           </AMSubmenu>
         </div>
       );
@@ -73,38 +90,38 @@ const renderSidebarItems = (
 
     const itemClassNames = isSubItem ?
       `mt-0.5 text-sidebar-foreground dark:text-sidebar-foreground !hover:bg-transparent ${isSelected ? '!bg-transparent !text-primary' : ''}` :
-
       `mt-0.5 text-sidebar-foreground dark:text-sidebar-foreground`;
 
     return (
-      <div onClick={onClose}>
-        <AMMenuItem
-          key={item.id}
-          icon={iconElement}
-          isSelected={isSelected}
-          link={item.url || undefined}
-          target={linkTarget}
-          badge={!!item.isPro}
-          badgeColor="bg-lightsecondary"
-          badgeTextColor="text-secondary"
-          disabled={item.disabled}
-          badgeContent={item.isPro ? 'Pro' : undefined}
-          component={Link}
-          className={`${itemClassNames}`}>
-
-          <span className="truncate flex-1">{item.title || item.name}</span>
-        </AMMenuItem>
-      </div>);
-
-  });
+      <AMMenuItem
+        key={item.id}
+        icon={iconElement}
+        isSelected={isSelected}
+        link={item.url || undefined}
+        target={linkTarget}
+        badge={!!item.isPro}
+        badgeColor="bg-lightsecondary"
+        badgeTextColor="text-secondary"
+        disabled={item.disabled}
+        badgeContent={item.isPro ? 'Pro' : undefined}
+        component={Link}
+        onClick={onClose}
+        className={`${itemClassNames}`}>
+        <span className="truncate flex-1">{item.title || item.name}</span>
+      </AMMenuItem>
+    );
+  }).filter(Boolean); // Remove null items
 };
 
 const SidebarLayout = ({ onClose, collapsed = false }) => {
   const location = useLocation();
   const pathname = location.pathname;
   const { theme } = useTheme();
+  const { hasPermission, user } = useAuth();
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [fade, setFade] = useState(true);
+
+  const isBranchScope = !!user?.branch_id;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -177,7 +194,9 @@ const SidebarLayout = ({ onClose, collapsed = false }) => {
                     ...(section.children || [])],
 
                   pathname,
-                  onClose
+                  onClose,
+                  hasPermission,
+                  isBranchScope
                 )}
               </div>
             )}

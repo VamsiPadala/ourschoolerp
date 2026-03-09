@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, LineChart, Line } from 'recharts';
 import './Reports.css';
 
 // ── Dummy Data ───────────────────────────────────────────────────────────────
@@ -118,76 +117,6 @@ const ProgressReport = () => {
                         />
                     </div>
                     <button className="rpt-search-btn">🔍 Search</button>
-                </div>
-            </div>
-
-            {/* Analytical Graphs */}
-            <div className="rpt-row rpt-row-3" style={{ marginBottom: '20px' }}>
-                <div className="rpt-card">
-                    <div className="rpt-card-header">
-                        <h5 className="rpt-card-title">Result Summary</h5>
-                    </div>
-                    <div className="rpt-chart-body rpt-chart-center">
-                        <ResponsiveContainer width="100%" height={200}>
-                            <PieChart>
-                                <Pie
-                                    data={[
-                                        { name: 'Passed', value: 34, color: '#28c76f' },
-                                        { name: 'Failed', value: 6, color: '#ea5455' }
-                                    ]}
-                                    cx="50%" cy="50%" innerRadius={50} outerRadius={70} dataKey="value"
-                                >
-                                    <Cell fill="#28c76f" />
-                                    <Cell fill="#ea5455" />
-                                </Pie>
-                                <Tooltip />
-                                <Legend />
-                            </PieChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
-                <div className="rpt-card">
-                    <div className="rpt-card-header">
-                        <h5 className="rpt-card-title">Grade Distribution</h5>
-                    </div>
-                    <div className="rpt-chart-body">
-                        <ResponsiveContainer width="100%" height={200}>
-                            <BarChart data={[
-                                { grade: 'A+', count: 12 },
-                                { grade: 'A', count: 15 },
-                                { grade: 'B', count: 8 },
-                                { grade: 'C', count: 5 }
-                            ]}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                                <XAxis dataKey="grade" axisLine={false} tickLine={false} />
-                                <YAxis />
-                                <Tooltip />
-                                <Bar dataKey="count" fill="#7367f0" radius={[4, 4, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
-                <div className="rpt-card">
-                    <div className="rpt-card-header">
-                        <h5 className="rpt-card-title">Avg Performance Trend</h5>
-                    </div>
-                    <div className="rpt-chart-body">
-                        <ResponsiveContainer width="100%" height={200}>
-                            <LineChart data={[
-                                { exam: 'UT1', avg: 65 },
-                                { exam: 'Quarterly', avg: 72 },
-                                { exam: 'UT2', avg: 70 },
-                                { exam: 'Half Yearly', avg: 78 },
-                                { exam: 'Annual', avg: 85 }
-                            ]}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                <XAxis dataKey="exam" axisLine={false} tickLine={false} />
-                                <YAxis domain={[0, 100]} />
-                                <Tooltip />
-                                <Line type="monotone" dataKey="avg" stroke="#3d5ee1" strokeWidth={3} dot={{ r: 5 }} />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </div>
                 </div>
             </div>
 

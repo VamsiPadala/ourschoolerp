@@ -3,6 +3,7 @@ import StatCard, { statsData } from './components/StatCard';
 import WelcomeBanner from './components/WelcomeBanner';
 import ScheduleCalendar from './components/ScheduleCalendar';
 import AttendanceChart from './components/AttendanceChart';
+import QuickLinks from './components/QuickLinks';
 import BestPerformer from './components/BestPerformer';
 import StarStudents from './components/StarStudents';
 import FeesCollectionChart from './components/FeesCollectionChart';
@@ -26,10 +27,22 @@ const Dashboard = () => {
                         <span>Dashboard</span> / <span className="current">Admin Dashboard</span>
                     </nav>
                 </div>
-
+                <div className="page-header-actions">
+                    <button className="btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="16"></line>
+                            <line x1="8" y1="12" x2="16" y2="12"></line>
+                        </svg>
+                        Add New Student
+                    </button>
+                    <button className="btn btn-outline">
+                        Fees Details
+                    </button>
+                </div>
             </div>
 
-            {/* Row 1: Welcome Banner */}
+            {/* Row 1: Welcome Banner + Birthdays (built inside WelcomeBanner) */}
             <div className="dashboard-row">
                 <WelcomeBanner />
             </div>
@@ -41,9 +54,11 @@ const Dashboard = () => {
                 ))}
             </div>
 
-            {/* Row 3: Attendance – all three pie charts full-width */}
-            <div className="dashboard-row">
-                <AttendanceChart />
+            {/* Row 3: Schedule | Attendance | Quick Links */}
+            <div className="dashboard-row three-col-row">
+                <div className="dash-cell"><ScheduleCalendar /></div>
+                <div className="dash-cell"><AttendanceChart /></div>
+                <div className="dash-cell"><QuickLinks /></div>
             </div>
 
             {/* Row 4: Fees Collection | Performance | Top Subjects */}
@@ -66,11 +81,6 @@ const Dashboard = () => {
                 <div className="dash-cell"><StarStudents /></div>
                 <div className="dash-cell"><StudentActivity /></div>
                 <div className="dash-cell"><TodoList /></div>
-            </div>
-
-            {/* Row 7: Schedule Calendar – full width at the bottom */}
-            <div className="dashboard-row">
-                <ScheduleCalendar />
             </div>
 
             {/* Footer */}

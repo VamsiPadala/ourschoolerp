@@ -64,7 +64,19 @@ const AddSchool = () => {
             navigate('/super/utilities/schools');
         } catch (err) {
             console.error('Failed to provision school:', err);
-            setError(err.response?.data?.detail || "Failed to create school and provision database");
+            const errorMsg = err.response?.data?.detail || "Failed to create school and provision database";
+
+            if (typeof errorMsg === 'string' && errorMsg.includes('[DISABLED_SCHOOL]')) {
+                setError({
+                    message: errorMsg.replace('[DISABLED_SCHOOL] ', ''),
+                    isDisabledConflict: true
+                });
+            } else {
+                setError({
+                    message: errorMsg,
+                    isDisabledConflict: false
+                });
+            }
         } finally {
             setIsSubmitting(false);
         }
@@ -80,8 +92,21 @@ const AddSchool = () => {
                 <form onSubmit={handleSubmit} className="mt-6">
                     <div className="flex flex-col gap-6">
                         {error && (
-                            <div className="p-3 bg-red-100 text-red-700 rounded-md text-sm">
-                                {error}
+                            <div className="p-4 bg-red-100 text-red-700 rounded-lg text-sm border border-red-200">
+                                <p className="font-medium">{error.message}</p>
+                                {error.isDisabledConflict && (
+                                    <div className="mt-3">
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            className="bg-white hover:bg-red-50 text-red-700 border-red-300"
+                                            onClick={() => navigate('/super/utilities/schools/disabled')}
+                                        >
+                                            View Disabled Schools to Restore
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
                         )}
                         {/* School Name */}

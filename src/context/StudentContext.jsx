@@ -16,11 +16,11 @@ export const StudentProvider = ({ children }) => {
         { id: 'PRE2123', name: 'Charles', class: '8', section: 'A', rollNo: '1008', gender: 'Male', image: '' },
         // Added Dummy Data for Testing
         { id: 'PRE3001', name: 'John Doe', class: '1', section: 'A', rollNo: '101', gender: 'Male', image: '' },
-        { id: 'PRE3002', name: 'Jane Smith', class: '1', section: 'A', rollNo: '102', gender: 'Female', image: '', isStaffChild: true },
+        { id: 'PRE3002', name: 'Jane Smith', class: '1', section: 'A', rollNo: '102', gender: 'Female', image: '' },
         { id: 'PRE3003', name: 'Bob Johnson', class: '1', section: 'B', rollNo: '103', gender: 'Male', image: '' },
         { id: 'PRE3004', name: 'Alice Brown', class: '2', section: 'A', rollNo: '201', gender: 'Female', image: '' },
         { id: 'PRE3005', name: 'Charlie Davis', class: '3', section: 'A', rollNo: '301', gender: 'Male', image: '' },
-        { id: 'PRE3006', name: 'Eva Wilson', class: '4', section: 'A', rollNo: '401', gender: 'Female', image: '', isStaffChild: true },
+        { id: 'PRE3006', name: 'Eva Wilson', class: '4', section: 'A', rollNo: '401', gender: 'Female', image: '' },
         { id: 'PRE3007', name: 'Frank Miller', class: '5', section: 'A', rollNo: '501', gender: 'Male', image: '' },
         { id: 'PRE3008', name: 'Grace Taylor', class: '6', section: 'A', rollNo: '601', gender: 'Female', image: '' },
         { id: 'PRE3009', name: 'Harry White', class: '7', section: 'A', rollNo: '701', gender: 'Male', image: '' },

@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import ExportToolbar from './ExportToolbar';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import './Reports.css';
 import { IconPrinter, IconX } from '@tabler/icons-react';
 
@@ -89,50 +88,6 @@ const HostelReport = () => {
                     </nav>
                 </div>
                 <ExportToolbar columns={columns.slice(0, -1)} rows={filtered} rowKeys={['sno', 'admNo', 'name', 'class', 'hostelName', 'roomNo', 'feeStatus', 'feeAmount']} title={title} />
-            </div>
-
-            {/* Hostel Analytics */}
-            <div className="rpt-row rpt-row-2" style={{ marginBottom: '20px' }}>
-                <div className="rpt-card">
-                    <div className="rpt-card-header"><h5 className="rpt-card-title">Hostel Occupancy Distribution</h5></div>
-                    <div className="rpt-chart-body">
-                        <ResponsiveContainer width="100%" height={200}>
-                            <BarChart data={[
-                                { name: 'Boys A', students: 85 },
-                                { name: 'Boys B', students: 62 },
-                                { name: 'Girls A', students: 94 },
-                                { name: 'Girls B', students: 78 }
-                            ]}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
-                                <Tooltip />
-                                <Bar dataKey="students" fill="#3d5ee1" radius={[4, 4, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
-                <div className="rpt-card">
-                    <div className="rpt-card-header"><h5 className="rpt-card-title">Fee Collection Summary</h5></div>
-                    <div className="rpt-chart-body rpt-chart-center">
-                        <ResponsiveContainer width="100%" height={180}>
-                            <PieChart>
-                                <Pie
-                                    data={[
-                                        { name: 'Paid', value: 24, color: '#28c76f' },
-                                        { name: 'Pending', value: 6, color: '#ea5455' }
-                                    ]}
-                                    cx="50%" cy="50%" innerRadius={50} outerRadius={70} dataKey="value"
-                                >
-                                    <Cell fill="#28c76f" />
-                                    <Cell fill="#ea5455" />
-                                </Pie>
-                                <Tooltip />
-                                <Legend />
-                            </PieChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
             </div>
 
             {/* Filters */}

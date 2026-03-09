@@ -28,8 +28,8 @@
     --af-input-bg: rgba(255, 255, 255, 0.02);
 }
 
-body {
-    background: var(--af-bg)
+.att-page {
+    background: var(--af-bg);
 }
 
 .att-page {

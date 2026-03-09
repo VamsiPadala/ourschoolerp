@@ -8,9 +8,6 @@ export const ScheduleProvider = ({ children }) => {
         { id: 1, exam: 'FA-1', class: '10th class', section: 'A', subject: 'Mathematics', date: '2025-06-08', timeFrom: '09:00', timeTo: '12:00', roomNo: '101' },
         { id: 2, exam: 'FA-1', class: '10th class', section: 'A', subject: 'Science', date: '2025-06-09', timeFrom: '09:00', timeTo: '12:00', roomNo: '102' },
         { id: 3, exam: 'SA-1', class: '9th class', section: 'B', subject: 'English', date: '2025-06-15', timeFrom: '10:00', timeTo: '01:00', roomNo: '203' },
-        { id: 4, exam: 'FA-2', class: '1st class', section: 'C', subject: 'English', date: '2025-07-10', timeFrom: '08:00', timeTo: '11:00', roomNo: '403' },
-        { id: 5, exam: 'SA-2', class: '2nd class', section: 'A', subject: 'Hindi', date: '2025-08-12', timeFrom: '09:00', timeTo: '12:00', roomNo: '205' },
-        { id: 6, exam: 'FA-1', class: '3rd class', section: 'B', subject: 'Science', date: '2025-09-21', timeFrom: '10:00', timeTo: '01:00', roomNo: '106' },
     ]);
 
     // Schedule templates (exam + subject rows, without class/section)

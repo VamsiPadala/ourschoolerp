@@ -5,7 +5,7 @@ import {
     IconEye, IconPencil, IconCreditCard, IconSearch,
     IconFilter, IconDownload, IconPrinter, IconChevronRight,
     IconRefresh, IconArrowRight, IconTrendingUp, IconUsers,
-    IconFileText, IconTable, IconX
+    IconFileText, IconTable
 } from '@tabler/icons-react';
 import './FeeReport.css';
 
@@ -13,9 +13,6 @@ const FeeReport = () => {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
     const [filterStatus, setFilterStatus] = useState('All');
-    const [selectedClass, setSelectedClass] = useState('');
-    const [selectedSection, setSelectedSection] = useState('');
-    const [isTableLoaded, setIsTableLoaded] = useState(false);
 
     const stats = [
         {
@@ -117,141 +114,116 @@ const FeeReport = () => {
                 ))}
             </section>
 
-            <div className="fee-filter-bar fee-filter-bar--top">
-                <div className="fee-top-actions">
-                    <select className="fee-select-modern" value={selectedClass} onChange={e => { setSelectedClass(e.target.value); setIsTableLoaded(false); }}>
-                        <option value="">Select Class</option>
-                        <option value="10">Class 10</option>
-                        <option value="9">Class 9</option>
-                        <option value="8">Class 8</option>
+            <div className="fee-filter-bar">
+                <div className="fee-search-group">
+                    <IconSearch size={22} className="fee-search-icon" />
+                    <input
+                        type="text"
+                        placeholder="Scan Student ID or Search by Name..."
+                        className="fee-search-input"
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                    />
+                </div>
+                <div className="fee-filter-actions">
+                    <select
+                        className="fee-select-modern"
+                        value={filterStatus}
+                        onChange={e => setFilterStatus(e.target.value)}
+                    >
+                        <option value="All">All Status</option>
+                        <option value="Paid">Paid Only</option>
+                        <option value="Partial">Partial Dues</option>
+                        <option value="Overdue">Overdue Alerts</option>
                     </select>
-                    <select className="fee-select-modern" value={selectedSection} onChange={e => { setSelectedSection(e.target.value); setIsTableLoaded(false); }}>
-                        <option value="">Select Section</option>
-                        <option value="A">A</option>
-                        <option value="B">B</option>
-                        <option value="C">C</option>
-                    </select>
-                    <button className="btn-premium btn-premium-primary btn-load-students" onClick={() => { if (selectedClass && selectedSection) setIsTableLoaded(true); else alert('Please select class and section'); }}>
-                        Load Students
+                    <button className="action-circle" onClick={() => { setSearchQuery(''); setFilterStatus('All'); }}>
+                        <IconRefresh size={18} />
                     </button>
                 </div>
             </div>
 
-            {isTableLoaded && (
-                <>
-                    <div className="fee-filter-bar" style={{ marginTop: '1.25rem' }}>
-                        <div className="fee-search-group">
-                            <IconSearch size={22} className="fee-search-icon" />
-                            <input
-                                type="text"
-                                placeholder="Scan Student ID or Search by Name..."
-                                className="fee-search-input"
-                                value={searchQuery}
-                                onChange={e => setSearchQuery(e.target.value)}
-                            />
-                        </div>
-                        <div className="fee-filter-actions">
-                            <select
-                                className="fee-select-modern"
-                                value={filterStatus}
-                                onChange={e => setFilterStatus(e.target.value)}
-                            >
-                                <option value="All">All Status</option>
-                                <option value="Paid">Paid Only</option>
-                                <option value="Partial">Partial Dues</option>
-                                <option value="Overdue">Overdue Alerts</option>
-                            </select>
-                            <button className="action-circle" onClick={() => { setSearchQuery(''); setFilterStatus('All'); }}>
-                                <IconRefresh size={18} />
-                            </button>
-                        </div>
+            <main className="fee-table-card">
+                <div className="fee-table-header">
+                    <h5 className="fee-table-title">Recent Fee Invoices</h5>
+                    <div className="ft-export-buttons">
+                        <button className="ft-export-btn"><IconFileText /> Copy</button>
+                        <button className="ft-export-btn"><IconDownload /> CSV</button>
+                        <button className="ft-export-btn"><IconTable /> Excel</button>
+                        <button className="ft-export-btn"><IconFileText color="#ea5455" /> PDF</button>
+                        <button className="ft-export-btn"><IconPrinter /> Print</button>
                     </div>
-
-                    <main className="fee-table-card">
-                        <div className="fee-table-header">
-                            <h5 className="fee-table-title">Recent Fee Invoices</h5>
-                            <div className="ft-export-buttons">
-                                <button className="ft-export-btn"><IconFileText /> Copy</button>
-                                <button className="ft-export-btn"><IconDownload /> CSV</button>
-                                <button className="ft-export-btn"><IconTable /> Excel</button>
-                                <button className="ft-export-btn"><IconFileText color="#ea5455" /> PDF</button>
-                                <button className="ft-export-btn"><IconPrinter /> Print</button>
-                            </div>
-                        </div>
-                        <div className="fee-table-container">
-                            <table className="fee-table">
-                                <thead>
-                                    <tr>
-                                        <th>Student Detail</th>
-                                        <th>Class</th>
-                                        <th>Total Fee</th>
-                                        <th>Collected</th>
-                                        <th>Balance</th>
-                                        <th>Progress</th>
-                                        <th>Due Date</th>
-                                        <th>Status</th>
-                                        <th>Control</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filteredStudents.map(student => (
-                                        <tr key={student.id}>
-                                            <td>
-                                                <div className="student-profile">
-                                                    <img src={student.image} alt="" className="student-img" />
-                                                    <div>
-                                                        <div className="student-info-name">{student.name}</div>
-                                                        <div className="student-info-id">{student.id}</div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td><span style={{ fontWeight: 600 }}>{student.class}</span></td>
-                                            <td><span style={{ fontWeight: 700 }}>₹{student.total.toLocaleString()}</span></td>
-                                            <td><span style={{ color: 'var(--f-success)', fontWeight: 700 }}>₹{student.paid.toLocaleString()}</span></td>
-                                            <td><span style={{ color: 'var(--f-danger)', fontWeight: 700 }}>₹{student.balance.toLocaleString()}</span></td>
-                                            <td>
-                                                <div style={{ width: 100 }}>
-                                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                                                        <span style={{ fontSize: 10, fontWeight: 900 }}>{student.progress}%</span>
-                                                    </div>
-                                                    <div style={{ height: 6, background: '#f1f5f9', borderRadius: 4, overflow: 'hidden' }}>
-                                                        <div style={{
-                                                            width: `${student.progress}%`,
-                                                            height: '100%',
-                                                            background: getProgressColor(student.progress),
-                                                            borderRadius: 4
-                                                        }} />
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td><span style={{ fontSize: 13, fontWeight: 500, color: '#64748b' }}>{student.dueDate}</span></td>
-                                            <td>
-                                                <span className={`status-badge ${getStatusClass(student.status)}`}>
-                                                    {student.status}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <div style={{ display: 'flex', gap: 6 }}>
-                                                    <button
-                                                        className="action-circle"
-                                                        style={{ background: 'var(--f-primary-light)', color: 'var(--f-primary)' }}
-                                                        onClick={() => navigate(`/school/finance/collect-fees/${student.id}`)}
-                                                    >
-                                                        <IconCreditCard size={16} />
-                                                    </button>
-                                                    <button className="action-circle" onClick={() => navigate(`/school/finance/transaction-history/${student.id}`)}><IconEye size={16} /></button>
-                                                    <button className="action-circle" onClick={() => navigate(`/school/finance/assign-fees/edit/${student.id}`)}><IconPencil size={16} /></button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </main>
-                </>
-            )}
-
+                </div>
+                <div className="fee-table-container">
+                    <table className="fee-table">
+                        <thead>
+                            <tr>
+                                <th>Student Detail</th>
+                                <th>Class</th>
+                                <th>Total Fee</th>
+                                <th>Collected</th>
+                                <th>Balance</th>
+                                <th>Progress</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                                <th>Control</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredStudents.map(student => (
+                                <tr key={student.id}>
+                                    <td>
+                                        <div className="student-profile">
+                                            <img src={student.image} alt="" className="student-img" />
+                                            <div>
+                                                <div className="student-info-name">{student.name}</div>
+                                                <div className="student-info-id">{student.id}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span style={{ fontWeight: 600 }}>{student.class}</span></td>
+                                    <td><span style={{ fontWeight: 700 }}>₹{student.total.toLocaleString()}</span></td>
+                                    <td><span style={{ color: 'var(--f-success)', fontWeight: 700 }}>₹{student.paid.toLocaleString()}</span></td>
+                                    <td><span style={{ color: 'var(--f-danger)', fontWeight: 700 }}>₹{student.balance.toLocaleString()}</span></td>
+                                    <td>
+                                        <div style={{ width: 100 }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                                                <span style={{ fontSize: 10, fontWeight: 900 }}>{student.progress}%</span>
+                                            </div>
+                                            <div style={{ height: 6, background: '#f1f5f9', borderRadius: 4, overflow: 'hidden' }}>
+                                                <div style={{
+                                                    width: `${student.progress}%`,
+                                                    height: '100%',
+                                                    background: getProgressColor(student.progress),
+                                                    borderRadius: 4
+                                                }} />
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span style={{ fontSize: 13, fontWeight: 500, color: '#64748b' }}>{student.dueDate}</span></td>
+                                    <td>
+                                        <span className={`status-badge ${getStatusClass(student.status)}`}>
+                                            {student.status}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div style={{ display: 'flex', gap: 6 }}>
+                                            <button
+                                                className="action-circle"
+                                                style={{ background: 'var(--f-primary-light)', color: 'var(--f-primary)' }}
+                                                onClick={() => navigate(`/school/finance/collect-fees/${student.id}`)}
+                                            >
+                                                <IconCreditCard size={16} />
+                                            </button>
+                                            <button className="action-circle" onClick={() => navigate(`/school/student-profile/${student.id}`)}><IconEye size={16} /></button>
+                                            <button className="action-circle" onClick={() => navigate(`/school/finance/assign-fees/edit/${student.id}`)}><IconPencil size={16} /></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </main>
         </div>
     );
 };

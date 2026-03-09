@@ -61,9 +61,9 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://ourschoolerp-m9y9k.ondigitalocean.app',
+        target: 'https://ourschoolerp-m9y9k.ondigitalocean.app/',
         changeOrigin: true,
-        secure: true,
+        secure: false,
       },
     },
   },

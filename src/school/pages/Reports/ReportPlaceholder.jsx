@@ -1,11 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { REPORT_CONFIG, BADGE_COLORS } from './reportData';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, LineChart, Line, AreaChart, Area } from 'recharts';
 import ExportToolbar from './ExportToolbar';
 import './Reports.css';
-
-const COLORS = ['#3d5ee1', '#28c76f', '#ff9f43', '#ea5455', '#7367f0', '#00cfe8', '#ff6b6b', '#1e293b'];
 
 /* ── small helpers ───────────────────────────────────────── */
 const classes = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
@@ -64,19 +61,11 @@ const ReportPlaceholder = () => {
     const filtered = useMemo(() => rows.filter(r => {
         const clsMatch = !filterClass || String(r.class || '').startsWith(filterClass);
         const secMatch = !filterSection || String(r.section || r.class || '').includes(filterSection);
-        const perMatch = !filterPeriod || String(r.period || r.date || '').includes(filterPeriod) || filterPeriod === 'All Time';
         const srchMatch = !searchText || Object.values(r).some(v =>
             String(v).toLowerCase().includes(searchText.toLowerCase())
         );
-
-        // Simple mock for "Today", etc. Just pass them if period exists to avoid breaking other reports.
-        let matchPeriod = perMatch;
-        if (['Today', 'This Week', 'This Month'].includes(filterPeriod)) {
-            matchPeriod = true; // bypass complex date logic for dummy data
-        }
-
-        return clsMatch && secMatch && srchMatch && matchPeriod;
-    }), [rows, filterClass, filterSection, filterPeriod, searchText]);
+        return clsMatch && secMatch && srchMatch;
+    }), [rows, filterClass, filterSection, searchText]);
 
     const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
     const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
@@ -97,61 +86,6 @@ const ReportPlaceholder = () => {
     const failedCount = filtered.filter(r => (r.status || '') === 'Fail').length;
     const passPercentage = kpiTotal > 0 ? Math.round((passedCount / kpiTotal) * 100) : 0;
 
-    /* ── Chart Data ── */
-    const analytics = useMemo(() => {
-        const statuses = {};
-        const classesCount = {};
-        const perf = { '0-40': 0, '40-60': 0, '60-80': 0, '80-100': 0 };
-
-        const admCounts = {};
-        const movementData = [];
-
-        filtered.forEach(r => {
-            const s = r.status || r.grade || r.result || r.payment;
-            if (s) statuses[s] = (statuses[s] || 0) + 1;
-
-            if (r.class) {
-                const c = String(r.class).split('-')[0];
-
-                // For class-strength, sum up the total number of students
-                if (r.total && reportType === 'class-strength') {
-                    classesCount[c] = (classesCount[c] || 0) + r.total;
-                } else {
-                    classesCount[c] = (classesCount[c] || 0) + 1;
-                }
-
-                // For admissions, use the total or count
-                if (r.total && reportType === 'admissions') {
-                    admCounts[r.class] = (admCounts[r.class] || 0) + r.total;
-                }
-            }
-
-            if (r.period && reportType === 'student-movement') {
-                movementData.push({ name: r.period, final: r.final, new: r.new, left: r.left });
-            }
-
-            const p = r.pct || r.percentage || r.marks;
-            if (p != null && reportType !== 'admissions' && reportType !== 'student-movement') {
-                const val = Number(String(p).replace(/[^0-9.-]+/g, ""));
-                if (val < 40) perf['0-40']++;
-                else if (val < 60) perf['40-60']++;
-                else if (val < 80) perf['60-80']++;
-                else perf['80-100']++;
-            }
-        });
-
-        // Ensure movementData is sorted by year
-        movementData.sort((a, b) => a.name.localeCompare(b.name));
-
-        return {
-            statusPie: Object.keys(statuses).map(k => ({ name: k, value: statuses[k] })),
-            classBar: Object.keys(classesCount).sort().map(k => ({ name: k, count: classesCount[k] })),
-            perfBar: reportType !== 'admissions' && reportType !== 'student-movement' ? Object.keys(perf).map(k => ({ range: k, count: perf[k] })) : [],
-            admBar: Object.keys(admCounts).sort().map(k => ({ name: k, admissions: admCounts[k] })),
-            movementLine: movementData
-        };
-    }, [filtered, reportType]);
-
     /* ── individual result state ── */
     const [selectedStudent, setSelectedStudent] = useState(null);
 
@@ -169,113 +103,6 @@ const ReportPlaceholder = () => {
                     </nav>
                 </div>
                 <ExportToolbar columns={columns} rows={filtered} rowKeys={rowKeys} title={title} />
-            </div>
-
-            {/* ── Analytical Summary ── */}
-            <div className="rpt-row rpt-row-3" style={{ marginBottom: '20px' }}>
-                {analytics.statusPie.length > 0 && (
-                    <div className="rpt-card">
-                        <div className="rpt-card-header">
-                            <h5 className="rpt-card-title">Status Distribution</h5>
-                        </div>
-                        <div className="rpt-chart-body rpt-chart-center">
-                            <ResponsiveContainer width="100%" height={200}>
-                                <PieChart>
-                                    <Pie data={analytics.statusPie} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
-                                        {analytics.statusPie.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip />
-                                    <Legend />
-                                </PieChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </div>
-                )}
-
-                {analytics.classBar.length > 0 && reportType !== 'admissions' && (
-                    <div className="rpt-card">
-                        <div className="rpt-card-header">
-                            <h5 className="rpt-card-title">Class Distribution</h5>
-                        </div>
-                        <div className="rpt-chart-body">
-                            <ResponsiveContainer width="100%" height={200}>
-                                <BarChart data={analytics.classBar}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                                    <XAxis dataKey="name" axisLine={false} tickLine={false} />
-                                    <YAxis axisLine={false} tickLine={false} />
-                                    <Tooltip />
-                                    <Bar dataKey="count" fill="#3d5ee1" radius={[4, 4, 0, 0]} />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </div>
-                )}
-
-                {analytics.admBar && analytics.admBar.length > 0 && (
-                    <div className="rpt-card">
-                        <div className="rpt-card-header">
-                            <h5 className="rpt-card-title">Admissions by Class</h5>
-                        </div>
-                        <div className="rpt-chart-body">
-                            <ResponsiveContainer width="100%" height={200}>
-                                <BarChart data={analytics.admBar}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                                    <XAxis dataKey="name" axisLine={false} tickLine={false} />
-                                    <YAxis axisLine={false} tickLine={false} />
-                                    <Tooltip />
-                                    <Bar dataKey="admissions" fill="#ff9f43" radius={[4, 4, 0, 0]} />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </div>
-                )}
-
-                {analytics.movementLine && analytics.movementLine.length > 0 && (
-                    <div className="rpt-card" style={{ gridColumn: 'span 2' }}>
-                        <div className="rpt-card-header">
-                            <h5 className="rpt-card-title">School Strength Trend</h5>
-                        </div>
-                        <div className="rpt-chart-body">
-                            <ResponsiveContainer width="100%" height={200}>
-                                <AreaChart data={analytics.movementLine}>
-                                    <defs>
-                                        <linearGradient id="colorFinal" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#7367f0" stopOpacity={0.8} />
-                                            <stop offset="95%" stopColor="#7367f0" stopOpacity={0} />
-                                        </linearGradient>
-                                    </defs>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                                    <XAxis dataKey="name" axisLine={false} tickLine={false} />
-                                    <YAxis axisLine={false} tickLine={false} />
-                                    <Tooltip />
-                                    <Area type="monotone" dataKey="final" stroke="#7367f0" fillOpacity={1} fill="url(#colorFinal)" />
-                                    <Line type="monotone" dataKey="new" stroke="#28c76f" strokeWidth={2} />
-                                </AreaChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </div>
-                )}
-
-                {analytics.perfBar.some(v => v.count > 0) && reportType !== 'admissions' && reportType !== 'student-movement' && (
-                    <div className="rpt-card">
-                        <div className="rpt-card-header">
-                            <h5 className="rpt-card-title">Performance Statistics</h5>
-                        </div>
-                        <div className="rpt-chart-body">
-                            <ResponsiveContainer width="100%" height={200}>
-                                <BarChart data={analytics.perfBar}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                                    <XAxis dataKey="range" axisLine={false} tickLine={false} />
-                                    <YAxis axisLine={false} tickLine={false} />
-                                    <Tooltip />
-                                    <Bar dataKey="count" fill="#28c76f" radius={[4, 4, 0, 0]} />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </div>
-                )}
             </div>
 
             {/* ── KPIs ── */}
@@ -351,12 +178,9 @@ const ReportPlaceholder = () => {
                 <div className="rpt-filter-grid">
                     {filters.includes('period') && (
                         <div className="rpt-filter-group">
-                            <label>Period / Academic Year</label>
+                            <label>Period</label>
                             <select value={filterPeriod} onChange={e => { setFilterPeriod(e.target.value); setPage(1); }}>
                                 <option value="">All Time</option>
-                                <option value="2023-2024">2023-2024 (Prev Year)</option>
-                                <option value="2024-2025">2024-2025 (Current Year)</option>
-                                <option value="2025-2026">2025-2026 (Next Year)</option>
                                 <option value="Today">Today</option>
                                 <option value="This Week">This Week</option>
                                 <option value="This Month">This Month</option>

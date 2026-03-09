@@ -25,9 +25,32 @@ apiClient.interceptors.request.use(
     }
 
     // Tenant header (for multi-school isolation)
-    const tenantId = localStorage.getItem('tenant_id');
+    let tenantId = localStorage.getItem('tenant_id');
+
+    // Auto-recover tenant ID from user profile if missing
+    if (!tenantId) {
+      const authUserStr = localStorage.getItem('auth_user');
+      if (authUserStr) {
+        try {
+          const authUser = JSON.parse(authUserStr);
+          if (authUser.username && authUser.username.includes('_') && authUser.username !== 'school_admin') {
+            tenantId = authUser.username.split('_')[1];
+            localStorage.setItem('tenant_id', tenantId);
+          }
+        } catch (e) {
+          // Ignore parsing errors
+        }
+      }
+    }
+
     if (tenantId) {
-      config.headers['X-Tenant-ID'] = tenantId;
+      config.headers['X-Tenant-Subdomain'] = tenantId;
+    }
+
+    // Branch header (for multi-branch filtering)
+    const branchId = localStorage.getItem('active_branch_id');
+    if (branchId) {
+      config.headers['X-Branch-ID'] = branchId;
     }
 
     return config;

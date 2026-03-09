@@ -1,176 +1,62 @@
 import React, { useState } from 'react';
-import { IconChevronDown } from '@tabler/icons-react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { IconBook } from '@tabler/icons-react';
+
+const HOMEWORKS = [
+    { subject: 'Physics', color: '#3D5EE1', bg: '#eef2ff', title: 'Write about Theory of Pendulum', teacher: 'Aaron', due: '16 Jun 2024', pct: 90 },
+    { subject: 'Chemistry', color: '#f59e0b', bg: '#fef3c7', title: 'Chemistry - Change of Elements', teacher: 'Hellana', due: '16 Jun 2024', pct: 65 },
+    { subject: 'Maths', color: '#10b981', bg: '#d1fae5', title: 'Maths - Problems to Solve Page 21', teacher: 'Morgan', due: '21 Jun 2024', pct: 30 },
+    { subject: 'English', color: '#ec4899', bg: '#fce7f3', title: 'English - Vocabulary Introduction', teacher: 'Daniel Josua', due: '21 Jun 2024', pct: 10 },
+];
+const FILTERS = ['All Subject', 'Physics', 'Chemistry', 'Maths', 'English'];
 
 const StudentHomework = () => {
     const [filter, setFilter] = useState('All Subject');
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-
-    const homeworks = [
-        {
-            subject: 'Physics',
-            subjectColor: '#3d5ee1',
-            title: 'Write about Theory of Pendulum',
-            teacher: 'Aaron',
-            teacherImg: 'https://preskool.developer24.org/html/template/assets/img/teachers/teacher-01.jpg',
-            dueDate: '16 Jun 2024',
-            status: 'completed',
-            progress: 100
-        },
-        {
-            subject: 'Chemistry',
-            subjectColor: '#ff9f43',
-            title: 'Chemistry - Change of Elements',
-            teacher: 'Hellana',
-            teacherImg: 'https://preskool.developer24.org/html/template/assets/img/teachers/teacher-02.jpg',
-            dueDate: '16 Jun 2024',
-            status: 'inprogress',
-            progress: 65
-        },
-        {
-            subject: 'Maths',
-            subjectColor: '#28c76f',
-            title: 'Maths - Problems to Solve Page 21',
-            teacher: 'Morgan',
-            teacherImg: 'https://preskool.developer24.org/html/template/assets/img/teachers/teacher-03.jpg',
-            dueDate: '21 Jun 2024',
-            status: 'pending',
-            progress: 30
-        },
-        {
-            subject: 'English',
-            subjectColor: '#ea5455',
-            title: 'English - Vocabulary Introduction',
-            teacher: 'Daniel Josua',
-            teacherImg: 'https://preskool.developer24.org/html/template/assets/img/teachers/teacher-04.jpg',
-            dueDate: '21 Jun 2024',
-            status: 'pending',
-            progress: 10
-        }
-    ];
-
-    // Calculate Summary
-    const summaryData = [
-        { name: 'Completed', value: homeworks.filter(hw => hw.status === 'completed').length, color: '#28c76f' },
-        { name: 'In Progress', value: homeworks.filter(hw => hw.status === 'inprogress').length, color: '#ff9f43' },
-        { name: 'Pending', value: homeworks.filter(hw => hw.status === 'pending').length, color: '#ea5455' }
-    ].filter(d => d.value > 0);
+    const list = HOMEWORKS.filter(h => filter === 'All Subject' || h.subject === filter);
 
     return (
-        <div className="dashboard-card student-homework-card">
-            <div className="card-header">
-                <h5>Home Works</h5>
-                <div className="dropdown-container">
-                    <button
-                        className="dropdown-toggle"
-                        onClick={() => setDropdownOpen(!dropdownOpen)}
-                    >
-                        {filter}
-                        <IconChevronDown size={16} />
-                    </button>
-                    {dropdownOpen && (
-                        <div className="dropdown-menu">
-                            {['All Subject', 'Physics', 'Chemistry', 'Maths', 'English'].map((option) => (
-                                <button
-                                    key={option}
-                                    className="dropdown-item"
-                                    onClick={() => {
-                                        setFilter(option);
-                                        setDropdownOpen(false);
-                                    }}
-                                >
-                                    {option}
-                                </button>
-                            ))}
-                        </div>
-                    )}
+        <div style={{ background: 'white', borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,0.06)', border: '1px solid #f1f5f9', overflow: 'hidden' }}>
+            {/* Header */}
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{ width: 34, height: 34, borderRadius: 9, background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <IconBook size={18} color="#3D5EE1" />
+                    </div>
+                    <span style={{ fontWeight: 800, fontSize: 16, color: '#1e1b4b' }}>Home Works</span>
+                </div>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                    {FILTERS.map(f => (
+                        <button key={f} onClick={() => setFilter(f)}
+                            style={{ padding: '5px 12px', borderRadius: 20, border: 'none', cursor: 'pointer', fontSize: 11, fontWeight: 600, background: filter === f ? '#3D5EE1' : '#f3f4f6', color: filter === f ? 'white' : '#6b7280', transition: 'all 0.15s' }}>
+                            {f}
+                        </button>
+                    ))}
                 </div>
             </div>
-            <div className="card-body">
-                <div className="homework-horizontal-layout">
-                    {/* Left: Chart & Stats */}
-                    <div className="homework-summary-column">
-                        <div className="summary-side-layout">
-                            <div className="summary-chart-left">
-                                <ResponsiveContainer width={160} height={160}>
-                                    <PieChart>
-                                        <Pie
-                                            data={summaryData}
-                                            cx="50%"
-                                            cy="50%"
-                                            innerRadius={55}
-                                            outerRadius={75}
-                                            paddingAngle={5}
-                                            dataKey="value"
-                                            stroke="none"
-                                        >
-                                            {summaryData.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={entry.color} />
-                                            ))}
-                                        </Pie>
-                                        <Tooltip />
-                                    </PieChart>
-                                </ResponsiveContainer>
-                            </div>
-                            <div className="summary-info-right">
-                                <div className="overall-percent">
-                                    <h3>{homeworks.length}</h3>
-                                    <span>Total Homeworks</span>
-                                </div>
-                                <div className="summary-stats">
-                                    <div className="stat-item">
-                                        <span className="stat-label">Total Assigned:</span>
-                                        <span className="stat-value">{homeworks.length}</span>
-                                    </div>
-                                </div>
-                                <div className="summary-legend" style={{ width: 'fit-content' }}>
-                                    {summaryData.map((entry, idx) => (
-                                        <div key={idx} className="legend-item">
-                                            <span className="legend-dot" style={{ backgroundColor: entry.color }}></span>
-                                            <span className="legend-label">{entry.name}:</span>
-                                            <span className="legend-value">{entry.value}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    {/* Right: Detailed List */}
-                    <div className="homework-list-column">
-                        <div className="dash-list-container">
-                            {homeworks.map((hw, index) => {
-                                const statusColor = hw.status === 'completed' ? '#28c76f' : hw.status === 'inprogress' ? '#ff9f43' : '#ea5455';
-                                return (
-                                    <div key={index} className="dash-list-item">
-                                        <div className="dash-list-icon avatar-wrap">
-                                            <img src={hw.teacherImg} alt={hw.teacher} />
-                                        </div>
-                                        <div className="dash-list-details">
-                                            <div className="dash-list-header-mini">
-                                                <span className="dash-subject-tag" style={{ backgroundColor: `${hw.subjectColor}15`, color: hw.subjectColor }}>
-                                                    {hw.subject}
-                                                </span>
-                                                <div className="dash-status-pill">
-                                                    <span className="dash-status-dot" style={{ backgroundColor: statusColor }}></span>
-                                                    <span className="dash-status-text" style={{ color: statusColor }}>
-                                                        {hw.status.charAt(0).toUpperCase() + hw.status.slice(1)}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <h6 className="dash-list-title">{hw.title}</h6>
-                                            <div className="dash-list-footer">
-                                                <span className="dash-teacher-name">{hw.teacher}</span>
-                                                <span className="dash-meta-divider">|</span>
-                                                <span className="dash-due-date">Due : {hw.dueDate}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+            {/* List */}
+            <div style={{ padding: '14px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {list.map((hw, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 14, padding: '14px 16px', borderRadius: 12, background: hw.bg, border: `1px solid ${hw.color}25` }}>
+                        <div style={{ width: 38, height: 38, borderRadius: 10, background: hw.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 2 }}>
+                            <IconBook size={19} color="white" />
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: 11, fontWeight: 700, color: hw.color, mb: 2, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{hw.subject}</div>
+                            <div style={{ fontWeight: 700, fontSize: 14, color: '#1e1b4b', margin: '3px 0 6px' }}>{hw.title}</div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 16, fontSize: 12, color: '#6b7280', marginBottom: 8 }}>
+                                <span>👤 {hw.teacher}</span>
+                                <span>📅 Due: {hw.due}</span>
+                            </div>
+                            {/* Progress */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <div style={{ flex: 1, height: 5, borderRadius: 99, background: 'rgba(255,255,255,0.6)', overflow: 'hidden' }}>
+                                    <div style={{ height: '100%', width: `${hw.pct}%`, background: hw.color, borderRadius: 99 }} />
+                                </div>
+                                <span style={{ fontSize: 10, fontWeight: 700, color: hw.color }}>{hw.pct}%</span>
+                            </div>
                         </div>
                     </div>
-                </div>
+                ))}
             </div>
         </div>
     );

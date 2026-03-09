@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import ExportToolbar from './ExportToolbar';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import './Reports.css';
 import { IconPrinter, IconX } from '@tabler/icons-react';
 
@@ -105,54 +104,6 @@ const HallTicketReport = () => {
                     </nav>
                 </div>
                 <ExportToolbar columns={columns.slice(0, -1)} rows={filtered} rowKeys={['sno', 'roll', 'name', 'class', 'section', 'exam', 'status']} title={title} />
-            </div>
-
-            {/* Stats & Graphs */}
-            <div className="rpt-row rpt-row-2" style={{ marginBottom: '20px' }}>
-                <div className="rpt-card">
-                    <div className="rpt-card-header">
-                        <h5 className="rpt-card-title">Eligibility Status</h5>
-                    </div>
-                    <div className="rpt-chart-body rpt-chart-center">
-                        <ResponsiveContainer width="100%" height={220}>
-                            <PieChart>
-                                <Pie
-                                    data={[
-                                        { name: 'Eligible', value: 36, color: '#28c76f' },
-                                        { name: 'Pending Dues', value: 9, color: '#ea5455' }
-                                    ]}
-                                    cx="50%" cy="50%" innerRadius={60} outerRadius={80} dataKey="value"
-                                >
-                                    <Cell fill="#28c76f" />
-                                    <Cell fill="#ea5455" />
-                                </Pie>
-                                <Tooltip />
-                                <Legend />
-                            </PieChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
-                <div className="rpt-card">
-                    <div className="rpt-card-header">
-                        <h5 className="rpt-card-title">Candidates by Class</h5>
-                    </div>
-                    <div className="rpt-chart-body">
-                        <ResponsiveContainer width="100%" height={220}>
-                            <BarChart data={[
-                                { class: 'IX', count: 150 },
-                                { class: 'X', count: 180 },
-                                { class: 'XI', count: 140 },
-                                { class: 'XII', count: 200 }
-                            ]}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                                <XAxis dataKey="class" axisLine={false} tickLine={false} />
-                                <YAxis />
-                                <Tooltip />
-                                <Bar dataKey="count" fill="#3d5ee1" radius={[4, 4, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
             </div>
 
             {/* Filters */}

@@ -1,82 +1,64 @@
-import React from 'react';
-import { Calendar } from 'lucide-react';
+import React, { useState } from 'react';
+
+const DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+// P = Present, A = Absent, H = Half-day, L = Late
+const STATUS = ['P', 'P', 'L', 'P', 'P', 'P', 'H'];
+
+const dayColor = (s) => ({
+    P: { bg: '#d1fae5', color: '#065f46' },
+    A: { bg: '#fee2e2', color: '#b91c1c' },
+    H: { bg: '#fef3c7', color: '#92400e' },
+    L: { bg: '#e0f2fe', color: '#0369a1' },
+}[s] || { bg: '#f3f4f6', color: '#6b7280' });
 
 const TeacherAttendance = () => {
-    const attendanceStats = { present: 25, absent: 2, halfday: 0, late: 1 };
-    const weekDays = [
-        { day: 'M', value: 85, status: 'present' },
-        { day: 'T', value: 70, status: 'present' },
-        { day: 'W', value: 90, status: 'present' },
-        { day: 'T', value: 60, status: 'present' },
-        { day: 'F', value: 45, status: 'absent' },
-        { day: 'S', value: 30, status: 'default' },
-        { day: 'S', value: 20, status: 'default' },
-    ];
+    const [period, setPeriod] = useState('This Week');
 
     return (
-        <div
-            className="h-full"
-            style={{
-                background: '#FFFFFF',
-                borderRadius: '10px',
-                boxShadow: '0 4px 24px 0 rgba(62, 44, 90, 0.05)',
-            }}
-        >
-            <div className="px-5 py-4 flex items-center justify-between border-b border-gray-100">
-                <h4 className="text-lg font-semibold" style={{ color: '#333333' }}>Attendance</h4>
-                <a href="#" className="text-sm flex items-center gap-1.5 hover:text-brand-blue" style={{ color: '#888888' }}>
-                    <Calendar size={18} /> This Week
-                </a>
+        <div style={{ background: 'white', borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,0.06)', padding: 24, height: '100%' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
+                <h4 style={{ fontWeight: 700, fontSize: 16, color: '#1e1b4b', margin: 0 }}>Attendance</h4>
+                <div style={{ display: 'flex', gap: 6 }}>
+                    {['This Week', 'Last Week', 'Last Month'].map(p => (
+                        <button key={p} onClick={() => setPeriod(p)} style={{ padding: '5px 12px', borderRadius: 20, border: 'none', cursor: 'pointer', fontSize: 11, fontWeight: 600, background: period === p ? '#3D5EE1' : '#f3f4f6', color: period === p ? 'white' : '#6b7280', transition: 'all 0.15s' }}>
+                            {p}
+                        </button>
+                    ))}
+                </div>
             </div>
-            <div className="px-5 py-4">
-                {/* Bar Chart */}
-                <div className="mb-5">
-                    <div className="flex items-center justify-between mb-3">
-                        <h6 className="text-sm font-medium" style={{ color: '#333333' }}>Last 7 Days</h6>
-                        <span className="text-xs" style={{ color: '#888888' }}>14 May 2024 - 21 May 2024</span>
-                    </div>
-                    <div className="flex items-end justify-between gap-3 h-24 pt-2">
-                        {weekDays.map((day, index) => (
-                            <div key={index} className="flex flex-col items-center flex-1">
-                                <div
-                                    className="w-full rounded-t-md transition-all"
-                                    style={{
-                                        height: `${day.value}%`,
-                                        backgroundColor: day.status === 'absent' ? '#EF4444' : day.status === 'default' ? '#E5E7EB' : '#3D5EE1',
-                                        minHeight: '12px'
-                                    }}
-                                />
-                                <span className="text-xs mt-2 font-medium" style={{ color: '#888888' }}>{day.day}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
 
-                {/* Stats */}
-                <div className="flex items-center text-sm mb-5" style={{ color: '#888888' }}>
-                    <span>No of total working days</span>
-                    <span className="font-semibold ml-2" style={{ color: '#333333' }}>28 Days</span>
-                </div>
+            {/* Day bubbles */}
+            <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 8 }}>Last 7 Days</div>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+                {DAYS.map((d, i) => {
+                    const s = STATUS[i];
+                    const { bg, color } = dayColor(s);
+                    return (
+                        <div key={i} style={{ flex: 1, textAlign: 'center' }}>
+                            <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 5 }}>{d}</div>
+                            <div style={{ width: 32, height: 32, borderRadius: '50%', background: bg, color, fontWeight: 700, fontSize: 11, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>{s}</div>
+                        </div>
+                    );
+                })}
+            </div>
 
-                {/* Summary Grid */}
-                <div className="grid grid-cols-4 gap-3 p-4 border border-gray-100 rounded-lg" style={{ backgroundColor: '#FAFAFA' }}>
-                    <div className="text-center">
-                        <p className="text-xs mb-1" style={{ color: '#888888' }}>Present</p>
-                        <h5 className="text-xl font-bold" style={{ color: '#333333' }}>{attendanceStats.present}</h5>
+            {/* Summary counts */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+                {[
+                    { label: 'Present', value: 25, color: '#10b981', bg: '#d1fae5' },
+                    { label: 'Absent', value: 2, color: '#ef4444', bg: '#fee2e2' },
+                    { label: 'Half Day', value: 1, color: '#f59e0b', bg: '#fef3c7' },
+                    { label: 'Late', value: 1, color: '#0ea5e9', bg: '#e0f2fe' },
+                ].map(({ label, value, color, bg }) => (
+                    <div key={label} style={{ background: bg, borderRadius: 12, padding: '12px 8px', textAlign: 'center' }}>
+                        <div style={{ fontWeight: 800, fontSize: 22, color }}>{value}</div>
+                        <div style={{ fontSize: 11, color: '#6b7280', marginTop: 2 }}>{label}</div>
                     </div>
-                    <div className="text-center">
-                        <p className="text-xs mb-1" style={{ color: '#888888' }}>Absent</p>
-                        <h5 className="text-xl font-bold" style={{ color: '#333333' }}>{attendanceStats.absent}</h5>
-                    </div>
-                    <div className="text-center">
-                        <p className="text-xs mb-1" style={{ color: '#888888' }}>Halfday</p>
-                        <h5 className="text-xl font-bold" style={{ color: '#333333' }}>{attendanceStats.halfday}</h5>
-                    </div>
-                    <div className="text-center">
-                        <p className="text-xs mb-1" style={{ color: '#888888' }}>Late</p>
-                        <h5 className="text-xl font-bold" style={{ color: '#333333' }}>{attendanceStats.late}</h5>
-                    </div>
-                </div>
+                ))}
+            </div>
+
+            <div style={{ marginTop: 14, fontSize: 12, color: '#9ca3af', textAlign: 'center' }}>
+                No. of total working days: <strong style={{ color: '#374151' }}>28 Days</strong>
             </div>
         </div>
     );

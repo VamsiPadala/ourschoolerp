@@ -24,7 +24,7 @@ import {
 import { Input } from 'src/components/ui/input';
 import { Button } from 'src/components/ui/button';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import { ArrowUp, ArrowDown, ChevronsUpDown, Trash2, Pencil, ExternalLink, Plus } from 'lucide-react';
+import { ArrowUp, ArrowDown, ChevronsUpDown, Trash2, Pencil, ExternalLink, Plus, Ban, RotateCcw } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -37,13 +37,16 @@ import { Label } from 'src/components/ui/label';
 import CardBox from 'src/components/shared/CardBox';
 import { getColorForValue, toTitleCase } from 'src/components/utilities/table/DataTable';
 import { useNavigate } from 'react-router';
+import { api } from 'src/lib/api-client';
 
 
 
 
 
 export const SchoolsTable = ({
-  data = []
+  data = [],
+  isDisabledView = false,
+  refreshData = () => { }
 }) => {
   const navigate = useNavigate();
   const [globalFilter, setGlobalFilter] = useState('');
@@ -123,31 +126,82 @@ export const SchoolsTable = ({
         const schoolId = row.original.id;
         return (
           <div className="flex items-center gap-2">
-            <Button
-              size={'sm'}
-              variant={'ghost'}
-              className="size-8! rounded-full hover:bg-lightinfo hover:text-info"
-              onClick={() => window.open(`/school/dashboard?id=${schoolId}`, '_blank')}
-              title="Open school in new tab">
+            {!isDisabledView && (
+              <Button
+                size={'sm'}
+                variant={'ghost'}
+                className="size-8! rounded-full hover:bg-lightinfo hover:text-info"
+                onClick={() => window.open(`/school/dashboard?id=${schoolId}`, '_blank')}
+                title="Open school in new tab">
+                <ExternalLink className="size-5" />
+              </Button>
+            )}
 
-              <ExternalLink className="size-5" />
-            </Button>
-            <Button
-              size={'sm'}
-              variant={'lightprimary'}
-              className="size-8! rounded-full"
-              title="Edit school">
+            {!isDisabledView && (
+              <Button
+                size={'sm'}
+                variant={'lightprimary'}
+                className="size-8! rounded-full"
+                onClick={() => navigate(`/super/utilities/schools/edit/${schoolId}`)}
+                title="Edit school">
+                <Pencil className="size-5" />
+              </Button>
+            )}
 
-              <Pencil className="size-5" />
-            </Button>
-            <Button
-              size={'sm'}
-              variant={'lighterror'}
-              className="size-8! rounded-full"
-              title="Delete school">
-
-              <Trash2 className="size-5" />
-            </Button>
+            {isDisabledView ? (
+              <>
+                <Button
+                  size={'sm'}
+                  variant={'lightsuccess'}
+                  className="size-8! rounded-full"
+                  title="Restore school"
+                  onClick={async () => {
+                    try {
+                      await api.put(`/master/schools/${schoolId}`, { is_active: true });
+                      refreshData();
+                    } catch (err) {
+                      console.error('Failed to restore school:', err);
+                    }
+                  }}>
+                  <RotateCcw className="size-5" />
+                </Button>
+                <Button
+                  size={'sm'}
+                  variant={'lighterror'}
+                  className="size-8! rounded-full"
+                  title="Permanently Delete School"
+                  onClick={async () => {
+                    if (window.confirm('WARNING: Are you sure you want to permanently delete this school? This will drop the database and remove all associated data forever!')) {
+                      try {
+                        await api.delete(`/master/schools/${schoolId}?hard=true`);
+                        refreshData();
+                      } catch (err) {
+                        console.error('Failed to hard delete school:', err);
+                      }
+                    }
+                  }}>
+                  <Trash2 className="size-5" />
+                </Button>
+              </>
+            ) : (
+              <Button
+                size={'sm'}
+                variant={'lighterror'}
+                className="size-8! rounded-full"
+                title="Disable school"
+                onClick={async () => {
+                  if (window.confirm('Are you sure you want to disable this school?')) {
+                    try {
+                      await api.delete(`/master/schools/${schoolId}`);
+                      refreshData();
+                    } catch (err) {
+                      console.error('Failed to disable school:', err);
+                    }
+                  }
+                }}>
+                <Ban className="size-5" />
+              </Button>
+            )}
           </div>);
 
       }

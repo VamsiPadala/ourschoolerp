@@ -1,169 +1,74 @@
 import React from 'react';
-import { Pencil } from 'lucide-react';
+import { IconEdit, IconMail, IconPhone, IconBook, IconUsers, IconNotebook, IconClipboard } from '@tabler/icons-react';
 
-const teacherPhoto = 'https://preskool.dreamstechnologies.com/html/template/assets/img/teachers/teacher-05.jpg';
+// Try importing useAuth, but don't crash if AuthContext isn't available
+let useAuthSafe;
+try {
+    useAuthSafe = require('src/context/AuthContext').useAuth;
+} catch {
+    useAuthSafe = () => ({ user: null });
+}
+
+const STAT_CARDS = [
+    { label: 'Total Classes', value: 12, color: '#3D5EE1', bg: '#EEF2FF', icon: IconBook },
+    { label: 'Total Students', value: 185, color: '#f59e0b', bg: '#fef3c7', icon: IconUsers },
+    { label: 'Subjects', value: 4, color: '#10b981', bg: '#d1fae5', icon: IconNotebook },
+    { label: 'Assignments', value: 28, color: '#ec4899', bg: '#fce7f3', icon: IconClipboard },
+];
 
 const TeacherProfileCard = () => {
+    const { user } = useAuthSafe();
+    const initial = user?.name?.charAt(0)?.toUpperCase() || 'T';
+    const name = user?.name || 'Henriques Morgan';
+    const dept = user?.department || 'Science Department';
+    const desg = user?.designation || 'Senior Teacher';
+
     return (
-        <div
-            className="relative overflow-hidden h-full"
-            style={{
-                background: '#1E293B',
-                borderRadius: '12px',
-                boxShadow: '0 4px 24px 0 rgba(62, 44, 90, 0.08)',
-            }}
-        >
-            {/* Decorative Background Circles */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                {/* Large circle */}
-                <div
-                    style={{
-                        position: 'absolute',
-                        width: '180px',
-                        height: '180px',
-                        background: 'rgba(99, 102, 241, 0.12)',
-                        borderRadius: '50%',
-                        top: '-50px',
-                        right: '10%',
-                    }}
-                />
-                {/* Medium circle */}
-                <div
-                    style={{
-                        position: 'absolute',
-                        width: '120px',
-                        height: '120px',
-                        background: 'rgba(99, 102, 241, 0.08)',
-                        borderRadius: '50%',
-                        top: '40px',
-                        right: '35%',
-                    }}
-                />
-                {/* Small circle */}
-                <div
-                    style={{
-                        position: 'absolute',
-                        width: '60px',
-                        height: '60px',
-                        background: 'rgba(99, 102, 241, 0.06)',
-                        borderRadius: '50%',
-                        bottom: '-10px',
-                        right: '25%',
-                    }}
-                />
+        <div style={{ background: 'white', borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,0.06)', padding: 24 }}>
+            {/* Profile header */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 20, paddingBottom: 18, borderBottom: '1px solid #f1f5f9' }}>
+                {/* Avatar */}
+                <div style={{ width: 68, height: 68, borderRadius: 14, background: 'linear-gradient(135deg, #3D5EE1, #6C49EF)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: 26, flexShrink: 0, boxShadow: '0 4px 14px rgba(61,94,225,0.3)' }}>
+                    {initial}
+                </div>
+
+                {/* Info */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 800, fontSize: 18, color: '#1e1b4b', marginBottom: 2 }}>{name}</div>
+                    <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 8 }}>{dept} · {desg}</div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+                        {user?.email && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#6b7280' }}>
+                                <IconMail size={13} color="#9ca3af" /> {user.email}
+                            </div>
+                        )}
+                        {user?.phone && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#6b7280' }}>
+                                <IconPhone size={13} color="#9ca3af" /> {user.phone}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Edit btn */}
+                <a href="/school/profile" style={{ flexShrink: 0, padding: '7px 14px', borderRadius: 10, background: '#f3f4f6', fontSize: 12, fontWeight: 600, color: '#374151', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <IconEdit size={14} /> Edit Profile
+                </a>
             </div>
 
-            {/* Main Content */}
-            <div className="relative z-10 p-5">
-                <div className="flex items-center gap-4">
-                    {/* Photo Container with Badge and Triangle */}
-                    <div className="relative flex-shrink-0">
-                        {/* ID Badge - positioned at top-left */}
-                        <span
-                            style={{
-                                position: 'absolute',
-                                top: '-10px',
-                                left: '-10px',
-                                zIndex: 20,
-                                background: '#8B5CF6',
-                                color: 'white',
-                                padding: '4px 10px',
-                                fontSize: '11px',
-                                fontWeight: '600',
-                                borderRadius: '4px',
-                            }}
-                        >
-                            #T594651
-                        </span>
-
-                        {/* Teacher Photo */}
-                        <div
-                            style={{
-                                width: '90px',
-                                height: '90px',
-                                borderRadius: '10px',
-                                border: '3px solid white',
-                                overflow: 'hidden',
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                            }}
-                        >
-                            <img
-                                src={teacherPhoto}
-                                alt="Teacher"
-                                className="w-full h-full object-cover"
-                            />
+            {/* Stat tiles – 4 across */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+                {STAT_CARDS.map(({ label, value, color, bg, icon: Icon }) => (
+                    <div key={label} style={{ background: bg, borderRadius: 12, padding: '14px 12px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8 }}>
+                        <div style={{ width: 34, height: 34, borderRadius: 9, background: color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Icon size={17} color="white" />
                         </div>
-
-                        {/* Blue Triangle Decoration */}
-                        <div
-                            style={{
-                                position: 'absolute',
-                                bottom: '-6px',
-                                left: '-6px',
-                                width: '0',
-                                height: '0',
-                                borderStyle: 'solid',
-                                borderWidth: '0 0 24px 24px',
-                                borderColor: 'transparent transparent #3B82F6 transparent',
-                            }}
-                        />
+                        <div>
+                            <div style={{ fontWeight: 800, fontSize: 20, color: '#1e1b4b', lineHeight: 1 }}>{value}</div>
+                            <div style={{ fontSize: 11, color: '#6b7280', marginTop: 3 }}>{label}</div>
+                        </div>
                     </div>
-
-                    {/* Teacher Info */}
-                    <div className="flex-1">
-                        <h3
-                            style={{
-                                color: 'white',
-                                fontSize: '20px',
-                                fontWeight: '700',
-                                marginBottom: '4px',
-                                lineHeight: '1.2',
-                            }}
-                        >
-                            Henriques Morgan
-                        </h3>
-                        <p
-                            className="flex items-center gap-2"
-                            style={{
-                                color: 'rgba(255,255,255,0.7)',
-                                fontSize: '13px',
-                            }}
-                        >
-                            Classes : I-A, V-B
-                            <span
-                                style={{
-                                    display: 'inline-block',
-                                    width: '7px',
-                                    height: '7px',
-                                    background: '#F59E0B',
-                                    borderRadius: '50%',
-                                }}
-                            />
-                            <span style={{ color: '#F59E0B', fontWeight: '500' }}>Physics</span>
-                        </p>
-                    </div>
-
-                    {/* Edit Profile Button - Solid Blue */}
-                    <button
-                        className="flex items-center gap-2 flex-shrink-0"
-                        style={{
-                            background: '#3B82F6',
-                            padding: '10px 18px',
-                            borderRadius: '8px',
-                            color: 'white',
-                            fontSize: '13px',
-                            fontWeight: '500',
-                            border: 'none',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s ease',
-                        }}
-                        onMouseOver={(e) => e.currentTarget.style.background = '#2563EB'}
-                        onMouseOut={(e) => e.currentTarget.style.background = '#3B82F6'}
-                    >
-                        <Pencil size={14} />
-                        Edit Profile
-                    </button>
-                </div>
+                ))}
             </div>
         </div>
     );

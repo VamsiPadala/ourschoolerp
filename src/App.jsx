@@ -7,6 +7,7 @@ import { AcademicsProvider } from './context/AcademicsContext';
 import { FeeProvider } from './context/FeeContext';
 import { ScheduleProvider } from './context/ScheduleContext';
 import { AuthProvider } from './context/AuthContext';
+import { BranchProvider } from './context/BranchContext';
 import { QueryProvider } from './lib/query-provider';
 import { CommunicationProvider } from './context/CommunicationContext';
 import { TransportProvider } from './context/TransportContext';
@@ -15,25 +16,27 @@ import { ExaminationProvider } from './context/ExaminationContext';
 function App() {
   return (
     <QueryProvider>
-      <AuthProvider>
-        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-          <StudentProvider>
-            <AcademicsProvider>
-              <TransportProvider>
-                <ExaminationProvider>
-                  <FeeProvider>
-                    <CommunicationProvider>
-                      <ScheduleProvider>
-                        <RouterProvider router={router} />
-                      </ScheduleProvider>
-                    </CommunicationProvider>
-                  </FeeProvider>
-                </ExaminationProvider>
-              </TransportProvider>
-            </AcademicsProvider>
-          </StudentProvider>
-        </ThemeProvider>
-      </AuthProvider>
+      <BranchProvider>
+        <AuthProvider>
+          <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+            <StudentProvider>
+              <AcademicsProvider>
+                <TransportProvider>
+                  <ExaminationProvider>
+                    <FeeProvider>
+                      <CommunicationProvider>
+                        <ScheduleProvider>
+                          <RouterProvider router={router} />
+                        </ScheduleProvider>
+                      </CommunicationProvider>
+                    </FeeProvider>
+                  </ExaminationProvider>
+                </TransportProvider>
+              </AcademicsProvider>
+            </StudentProvider>
+          </ThemeProvider>
+        </AuthProvider>
+      </BranchProvider>
     </QueryProvider>
   );
 }

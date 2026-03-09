@@ -68,25 +68,54 @@ const AuthLogin = () => {
     setIsLoading(true);
 
     try {
-      const response = await api.post('/super-admin/login', {
+      let loginEndpoint = '/super-admin/login';
+      let loginParams = {};
+
+      // Identify if it's a school user based on username pattern (e.g., admin_oep-002)
+      // or if it's not 'school_admin' (hardcoded super admin demo)
+      const isSchoolUser = username.includes('_') && username !== 'school_admin';
+
+      if (isSchoolUser) {
+        loginEndpoint = '/auth/login';
+        // Extract school code from username (e.g., oep-002 from admin_oep-002)
+        const schoolCode = username.split('_')[1];
+        if (schoolCode) {
+          loginParams = { school: schoolCode };
+          // Ensure the interceptor uses the correct tenant header for this request
+          localStorage.setItem('tenant_id', schoolCode);
+        }
+      } else {
+        // Super admins don't use tenant isolation, clear any stale tenant header
+        localStorage.removeItem('tenant_id');
+      }
+
+      const response = await api.post(loginEndpoint, {
         username,
         password
-      });
+      }, { params: loginParams });
 
       localStorage.setItem('auth_token', response.access_token);
 
-      // Try to fetch super admin profile to verify success
+      // Try to fetch profile to verify success
       try {
-        const profile = await api.get('/super-admin/me');
+        // Super admins use /super-admin/me, school users use /auth/me
+        const profileEndpoint = isSchoolUser ? '/auth/me' : '/super-admin/me';
+        const profile = await api.get(profileEndpoint, { params: loginParams });
 
-        // The /super-admin/me endpoint doesn't return 'role', but RoleGuard needs it.
-        // Extract it from the JWT token and inject it into the profile.
-        const userRole = getRoleFromToken(response.access_token);
+        // Extract role from JWT token or profile
+        const userRole = profile.role || getRoleFromToken(response.access_token);
         const userProfileWithRole = { ...profile, role: userRole };
 
-        // Update AuthContext state (so AuthGuard sees isAuthenticated = true and user.role)
+        // Update AuthContext state
         authLogin(response.access_token, userProfileWithRole);
-        navigate('/dashboard');
+        localStorage.setItem('auth_user', JSON.stringify(userProfileWithRole));
+
+        // Redirect based on role and first login status
+        if (profile.is_first_login) {
+          navigate(userProfileWithRole.role === 'super_admin' ? '/super/update-password' : '/school/update-password');
+        } else {
+          navigate(userProfileWithRole.role === 'super_admin' ? '/super/dashboard' : '/school/dashboard');
+        }
       } catch (profileError) {
         console.error("Failed to fetch profile", profileError);
         localStorage.removeItem('auth_token');

@@ -19,17 +19,17 @@ const ForgotPassword2 = Loadable(lazy(() => import('../views/authentication/auth
 const Register2 = Loadable(lazy(() => import('../views/authentication/auth2/Register')));
 const Maintainance = Loadable(lazy(() => import('../views/authentication/Maintainance')));
 const SchoolLogin = Loadable(lazy(() => import('../views/authentication/SchoolLogin')));
+const UpdatePassword = Loadable(lazy(() => import('../views/authentication/UpdatePassword')));
 
 // School Admin Pages
 const SchoolDashboard = Loadable(lazy(() => import('../school/pages/Dashboard/index')));
 const TeacherDashboard = Loadable(lazy(() => import('../school/pages/TeacherDashboard/index')));
 const StudentDashboard = Loadable(lazy(() => import('../school/pages/StudentDashboard/index')));
-const BranchAdminDashboard = Loadable(lazy(() => import('../school/pages/Dashboard/BranchAdminDashboard')));
-const BranchPrincipalDashboard = Loadable(lazy(() => import('../school/pages/Dashboard/BranchPrincipalDashboard')));
-const PrincipalDashboard = Loadable(lazy(() => import('../school/pages/Dashboard/PrincipalDashboard')));
-const AccountantDashboard = Loadable(lazy(() => import('../school/pages/Dashboard/AccountantDashboard')));
-const ReceptionistDashboard = Loadable(lazy(() => import('../school/pages/Dashboard/ReceptionistDashboard')));
-const LibraryDashboard = Loadable(lazy(() => import('../school/pages/Dashboard/LibraryDashboard')));
+const ParentDashboard = Loadable(lazy(() => import('../school/pages/ParentDashboard/index')));
+const AccountantDashboard = Loadable(lazy(() => import('../school/pages/AccountantDashboard/index')));
+const ReceptionistDashboard = Loadable(lazy(() => import('../school/pages/ReceptionistDashboard/index')));
+const LibrarianDashboard = Loadable(lazy(() => import('../school/pages/LibrarianDashboard/index')));
+const ManageBranches = Loadable(lazy(() => import('../school/pages/ManageBranches/index')));
 
 // Teachers Pages
 const AllTeachers = Loadable(lazy(() => import('../school/pages/Teachers/AllTeachers')));
@@ -85,7 +85,6 @@ const BehaviorRecords = Loadable(lazy(() => import('../school/pages/StudentInfor
 const AddBehaviorRecordPage = Loadable(lazy(() => import('../school/pages/StudentInformation/AddBehaviorRecordPage')));
 const DisabledStudents = Loadable(lazy(() => import('../school/pages/StudentInformation/DisabledStudents')));
 const BulkEdit = Loadable(lazy(() => import('../school/pages/StudentInformation/BulkEdit')));
-const SiblingsData = Loadable(lazy(() => import('../school/pages/StudentInformation/SiblingsData')));
 
 // Finance Pages
 const SearchDueFees = Loadable(lazy(() => import('../school/pages/Finance/SearchDueFees')));
@@ -95,13 +94,11 @@ const FeesCarryForward = Loadable(lazy(() => import('../school/pages/Finance/Fee
 const AssignFees = Loadable(lazy(() => import('../school/pages/Finance/AssignFees')));
 const AssignFeesEdit = Loadable(lazy(() => import('../school/pages/Finance/AssignFeesEdit')));
 const AssignFeesEditGlobal = Loadable(lazy(() => import('../school/pages/Finance/AssignFeesEditGlobal')));
-const EditFee = Loadable(lazy(() => import('../school/pages/Finance/EditFee')));
 const FeesDiscount = Loadable(lazy(() => import('../school/pages/Finance/FeesDiscount')));
 const FeeTypes = Loadable(lazy(() => import('../school/pages/Finance/FeeTypes')));
 const FeePermissions = Loadable(lazy(() => import('../school/pages/Finance/FeePermissions')));
 const FeeReport = Loadable(lazy(() => import('../school/pages/Finance/FeeReport')));
 const CollectFeeIndividual = Loadable(lazy(() => import('../school/pages/Finance/CollectFeeIndividual')));
-const StudentTransactionHistory = Loadable(lazy(() => import('../school/pages/Finance/StudentTransactionHistory')));
 
 // Accounts Pages
 const Income = Loadable(lazy(() => import('../school/pages/Accounts/Income')));
@@ -172,7 +169,19 @@ const ThermalPrint = Loadable(lazy(() => import('../school/pages/SystemSettings/
 const FrontCMSSetting = Loadable(lazy(() => import('../school/pages/SystemSettings/FrontCMSSetting')));
 const RolesPermissions = Loadable(lazy(() => import('../school/pages/SystemSettings/RolesPermissions')));
 const BackupRestore = Loadable(lazy(() => import('../school/pages/SystemSettings/BackupRestore')));
-const Users = Loadable(lazy(() => import('../school/pages/SystemSettings/Users')));
+const UserManagement = Loadable(lazy(() => import('../school/pages/SystemSettings/UserManagement')));
+
+// User Creation Flow
+const SelectUserRole = Loadable(lazy(() => import('../school/pages/UserCreation/SelectUserRole')));
+const CreateStudent = Loadable(lazy(() => import('../school/pages/UserCreation/CreateStudent')));
+const CreateTeacher = Loadable(lazy(() => import('../school/pages/UserCreation/CreateTeacher')));
+const CreateParent = Loadable(lazy(() => import('../school/pages/UserCreation/CreateParent')));
+const CreatePrincipal = Loadable(lazy(() => import('../school/pages/UserCreation/CreatePrincipal')));
+const CreateBranchAdmin = Loadable(lazy(() => import('../school/pages/UserCreation/CreateBranchAdmin')));
+const CreateAccountant = Loadable(lazy(() => import('../school/pages/UserCreation/CreateAccountant')));
+const CreateLibrarian = Loadable(lazy(() => import('../school/pages/UserCreation/CreateLibrarian')));
+const CreateReceptionist = Loadable(lazy(() => import('../school/pages/UserCreation/CreateReceptionist')));
+const CreateSchoolAdmin = Loadable(lazy(() => import('../school/pages/UserCreation/CreateSchoolAdmin')));
 const Modules = Loadable(lazy(() => import('../school/pages/SystemSettings/Modules')));
 const CustomFields = Loadable(lazy(() => import('../school/pages/SystemSettings/CustomFields')));
 const CaptchaSetting = Loadable(lazy(() => import('../school/pages/SystemSettings/CaptchaSetting')));
@@ -209,7 +218,9 @@ const UserProfile = Loadable(lazy(() => import('../views/pages/user-profile/User
 const Notes = Loadable(lazy(() => import('../views/apps/notes/Notes')));
 const Form = Loadable(lazy(() => import('../views/utilities/form/Form')));
 const Schools = Loadable(lazy(() => import('../views/utilities/schools/Schools')));
+const DisabledSchools = Loadable(lazy(() => import('../views/utilities/schools/DisabledSchools')));
 const AddSchool = Loadable(lazy(() => import('../views/utilities/schools/AddSchool')));
+const EditSchool = Loadable(lazy(() => import('../views/utilities/schools/EditSchool')));
 const Plans = Loadable(lazy(() => import('../views/utilities/plans/Plans')));
 const AddPlan = Loadable(lazy(() => import('../views/utilities/plans/AddPlan')));
 const PaymentHistory = Loadable(lazy(() => import('../views/utilities/payment-history/PaymentHistory')));
@@ -266,7 +277,6 @@ const HostelReport = Loadable(lazy(() => import('../school/pages/Reports/HostelR
 const TransportReport = Loadable(lazy(() => import('../school/pages/Reports/TransportReport')));
 const CertificateReport = Loadable(lazy(() => import('../school/pages/Reports/CertificateReport')));
 const ReportPlaceholder = Loadable(lazy(() => import('../school/pages/Reports/ReportPlaceholder')));
-const ExaminationReport = Loadable(lazy(() => import('../school/pages/Reports/ExaminationReport')));
 
 // Certificates Pages
 const CertificateTemplates = Loadable(lazy(() => import('../school/pages/Certificates/CertificateTemplates')));
@@ -308,16 +318,16 @@ const Router = [
       { index: true, element: <DashboardRedirect /> },
       { path: 'dashboard', element: <SchoolDashboard /> },
       { path: 'teacher-dashboard', element: <TeacherDashboard /> },
-      { path: 'branch-admin-dashboard', element: <BranchAdminDashboard /> },
-      { path: 'branch-principal-dashboard', element: <BranchPrincipalDashboard /> },
-      { path: 'principal-dashboard', element: <PrincipalDashboard /> },
-      { path: 'accountant-dashboard', element: <AccountantDashboard /> },
-      { path: 'receptionist-dashboard', element: <ReceptionistDashboard /> },
-      { path: 'library-dashboard', element: <LibraryDashboard /> },
+      { path: 'update-password', element: <UpdatePassword /> },
 
       // Student Routes
       { path: 'students', element: <Students /> },
       { path: 'student-dashboard', element: <StudentDashboard /> },
+      { path: 'parent-dashboard', element: <ParentDashboard /> },
+      { path: 'accountant-dashboard', element: <AccountantDashboard /> },
+      { path: 'receptionist-dashboard', element: <ReceptionistDashboard /> },
+      { path: 'librarian-dashboard', element: <LibrarianDashboard /> },
+      { path: 'settings/branches', element: <ManageBranches /> },
 
       // Student Information Routes (flat)
       { path: 'student-list', element: <StudentList /> },
@@ -333,7 +343,6 @@ const Router = [
       { path: 'behavior-records/add', element: <AddBehaviorRecordPage /> },
       { path: 'disabled-students', element: <DisabledStudents /> },
       { path: 'bulk-edit', element: <BulkEdit /> },
-      { path: 'siblings-data', element: <SiblingsData /> },
       { path: 'quick-admission', element: <QuickStudentAdmissionList /> },
       { path: 'quick-admission/add', element: <QuickStudentAdmissionForm /> },
       { path: 'quick-admission/:id', element: <QuickStudentAdmissionForm /> },
@@ -378,13 +387,11 @@ const Router = [
           { path: 'assign-fees', element: <AssignFees /> },
           { path: 'assign-fees/edit', element: <AssignFeesEditGlobal /> },
           { path: 'assign-fees/edit/:studentId', element: <AssignFeesEdit /> },
-          { path: 'edit-fee', element: <EditFee /> },
           { path: 'fees-discount', element: <FeesDiscount /> },
           { path: 'fee-types', element: <FeeTypes /> },
           { path: 'fee-types/:id', element: <FeeTypes /> },
           { path: 'fee-permissions', element: <FeePermissions /> },
           { path: 'collect-fees/:studentId', element: <CollectFeeIndividual /> },
-          { path: 'transaction-history/:studentId', element: <StudentTransactionHistory /> },
         ],
       },
 
@@ -528,7 +535,7 @@ const Router = [
           { path: 'cms', element: <FrontCMSSetting /> },
           { path: 'roles', element: <RolesPermissions /> },
           { path: 'backup', element: <BackupRestore /> },
-          { path: 'users', element: <Users /> },
+          { path: 'users', element: <UserManagement /> },
           { path: 'modules', element: <Modules /> },
           { path: 'custom-fields', element: <CustomFields /> },
           { path: 'captcha', element: <CaptchaSetting /> },
@@ -554,7 +561,19 @@ const Router = [
       { path: 'settings/cms', element: <FrontCMSSetting /> },
       { path: 'settings/roles', element: <RolesPermissions /> },
       { path: 'settings/backup', element: <BackupRestore /> },
-      { path: 'settings/users', element: <Users /> },
+      { path: 'settings/users', element: <UserManagement /> },
+
+      // User Creation Flow - Role Selection + Role-specific forms
+      { path: 'users/create', element: <SelectUserRole /> },
+      { path: 'users/create/student', element: <CreateStudent /> },
+      { path: 'users/create/teacher', element: <CreateTeacher /> },
+      { path: 'users/create/parent', element: <CreateParent /> },
+      { path: 'users/create/principal', element: <CreatePrincipal /> },
+      { path: 'users/create/branch-admin', element: <CreateBranchAdmin /> },
+      { path: 'users/create/accountant', element: <CreateAccountant /> },
+      { path: 'users/create/librarian', element: <CreateLibrarian /> },
+      { path: 'users/create/receptionist', element: <CreateReceptionist /> },
+      { path: 'users/create/school-admin', element: <CreateSchoolAdmin /> },
       { path: 'settings/modules', element: <Modules /> },
       { path: 'settings/custom-fields', element: <CustomFields /> },
       { path: 'settings/captcha', element: <CaptchaSetting /> },
@@ -598,7 +617,6 @@ const Router = [
           { path: 'hostel', element: <HostelReport /> },
           { path: 'transport', element: <TransportReport /> },
           { path: 'certificate', element: <CertificateReport /> },
-          { path: 'examinations', element: <ExaminationReport /> },
           { path: ':reportType', element: <ReportPlaceholder /> },
         ],
       },
@@ -684,10 +702,13 @@ const Router = [
     children: [
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: 'dashboard', element: <Modern /> },
+      { path: 'update-password', element: <UpdatePassword /> },
       { path: 'apps/notes', element: <Notes /> },
       { path: 'utilities/form', element: <Form /> },
       { path: 'utilities/schools', element: <Schools /> },
+      { path: 'utilities/schools/disabled', element: <DisabledSchools /> },
       { path: 'utilities/schools/create', element: <AddSchool /> },
+      { path: 'utilities/schools/edit/:id', element: <EditSchool /> },
       { path: 'utilities/plans', element: <Plans /> },
       { path: 'utilities/plans/create', element: <AddPlan /> },
       { path: 'utilities/payment-history', element: <PaymentHistory /> },

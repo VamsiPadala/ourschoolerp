@@ -32,6 +32,12 @@ const SidebarContent = [
         url: '/super/utilities/schools'
       },
       {
+        name: 'Disabled Schools',
+        icon: 'solar:server-square-linear',
+        id: uniqueId(),
+        url: '/super/utilities/schools/disabled'
+      },
+      {
         name: 'Manage Plans',
         icon: 'solar:document-add-linear',
         id: uniqueId(),

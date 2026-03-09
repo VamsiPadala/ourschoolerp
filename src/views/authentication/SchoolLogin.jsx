@@ -26,7 +26,9 @@ const DEMO_USERS = {
       username: 'school_admin',
       fullName: 'School Administrator',
       role: 'school_admin',
-      schoolId: 1
+      schoolId: 1,
+      role_assignments: [],
+      permissions: ['student.read', 'student.write', 'teacher.read', 'fees.view', 'course.read', 'school.settings', 'users.manage']
     }
   },
   branch_admin: {
@@ -39,27 +41,16 @@ const DEMO_USERS = {
       role: 'branch_admin',
       schoolId: 1,
       branchId: 1,
-      branchName: 'Main Branch'
-    }
-  },
-  teacher: {
-    password: 'teacher123',
-    user: {
-      id: 3,
-      email: 'teacher@school.com',
-      username: 'teacher1',
-      fullName: 'John Teacher',
-      role: 'teacher',
-      schoolId: 1,
-      branchId: 1,
-      branchName: 'Main Branch'
+      branchName: 'Main Branch',
+      role_assignments: [],
+      permissions: ['student.read', 'attendance.mark', 'teacher.read', 'course.read', 'users.manage']
     }
   }
 };
 
 const SchoolLogin = () => {
   const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -67,16 +58,10 @@ const SchoolLogin = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // If already authenticated with correct role, redirect to dashboard
+  // If already authenticated, let the DashboardRedirect handle it
   useEffect(() => {
-    const savedUser = localStorage.getItem('auth_user');
-    if (savedUser) {
-      try {
-        const parsed = JSON.parse(savedUser);
-        if (parsed.role === 'super_admin' && isAuthenticated) {
-          navigate('/super/dashboard', { replace: true });
-        }
-      } catch { /* ignore */ }
+    if (isAuthenticated) {
+      navigate('/', { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
@@ -86,33 +71,69 @@ const SchoolLogin = () => {
     setIsLoading(true);
 
     try {
+      // Detect school admin by username pattern (e.g., admin_oep-002)
+      const isSchoolUser = username.includes('_') && username !== 'school_admin' && username !== 'branch_admin';
+      let loginEndpoint = '/super-admin/login';
+      let loginParams = {};
+
+      // Handle demo users specifically
+      if (DEMO_USERS[username]) {
+        const demo = DEMO_USERS[username];
+        if (password === demo.password) {
+          localStorage.setItem('auth_token', 'demo-token');
+          localStorage.setItem('auth_user', JSON.stringify(demo.user));
+          window.location.href = '/';
+          return;
+        }
+      }
+
+      if (isSchoolUser) {
+        loginEndpoint = '/auth/login';
+        const schoolCode = username.split('_').slice(1).join('_');
+        if (schoolCode) {
+          loginParams = { school: schoolCode };
+        }
+      }
+
       // 1. Authenticate with backend
-      const response = await api.post('/super-admin/login', {
+      const response = await api.post(loginEndpoint, {
         username,
         password
-      });
+      }, { params: loginParams });
 
       // 2. Save token FIRST — axios interceptor needs it for the /me call
       localStorage.setItem('auth_token', response.access_token);
 
-      // 3. Fetch profile and add role
-      const profile = await api.get('/super-admin/me');
-      const userData = { ...profile, role: 'super_admin' };
+      // 3. Fetch profile which now contains full RBAC data
+      const profileEndpoint = isSchoolUser ? '/auth/me' : '/super-admin/me';
+      const profile = await api.get(profileEndpoint, { params: loginParams });
 
-      // 4. Persist user to localStorage and do a full reload to ensure clean state
+      // Ensure role is set (backend sends it, but fallback just in case)
+      const userData = {
+        ...profile,
+        role: profile.role || (isSchoolUser ? 'school_admin' : 'super_admin')
+      };
+
+      // 4. Persist user to localStorage and do a full reload
       localStorage.setItem('auth_user', JSON.stringify(userData));
-      window.location.href = '/super/dashboard';
+
+      if (userData.is_first_login) {
+        window.location.href = '/school/update-password';
+      } else {
+        window.location.href = '/';
+      }
 
     } catch (err) {
       console.error('Login error:', err);
-      // Clean up any partial state
       localStorage.removeItem('auth_token');
       localStorage.removeItem('auth_user');
 
       if (err.response && err.response.status === 401) {
         setError('Invalid username or password');
+      } else if (err.response && err.response.data?.detail) {
+        setError(err.response.data.detail);
       } else {
-        setError('Login failed. Please try again later.');
+        setError('Login failed. Please verify your credentials and try again.');
       }
     } finally {
       setIsLoading(false);

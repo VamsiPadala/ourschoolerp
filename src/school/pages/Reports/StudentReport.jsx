@@ -1,7 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ExportToolbar from './ExportToolbar';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import './Reports.css';
 
 const STU_COLUMNS = ['#', 'Adm No', 'Name', 'Class', 'Section', 'DOB', 'Gender', 'Category', 'Mobile', 'Status'];
@@ -48,84 +47,16 @@ const StudentReport = () => {
     const totalPages = Math.ceil(filtered.length / perPage);
     const paged = filtered.slice((page - 1) * perPage, page * perPage);
 
-    /* ── Chart Totals ── */
-    const genderData = [
-        { name: 'Male', value: filtered.filter(s => s.gender === 'Male').length, color: '#3d5ee1' },
-        { name: 'Female', value: filtered.filter(s => s.gender === 'Female').length, color: '#ff78b1' }
-    ];
-
-    const categoryData = ['General', 'OBC', 'SC', 'ST'].map((cat, i) => ({
-        name: cat,
-        value: filtered.filter(s => s.category === cat).length,
-        color: ['#3d5ee1', '#28c76f', '#ff9f43', '#ea5455'][i]
-    }));
-
-    const classCounts = useMemo(() => {
-        const counts = {};
-        filtered.forEach(s => { counts[s.class] = (counts[s.class] || 0) + 1; });
-        return Object.keys(counts).sort((a, b) => {
-            const order = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
-            return order.indexOf(a) - order.indexOf(b);
-        }).map(k => ({ class: k, count: counts[k] }));
-    }, [filtered]);
-
     return (
         <div className="rpt-report-page">
             <div className="rpt-page-header">
                 <div>
-                    <h4 className="rpt-page-title">👨‍🎓 Student Report</h4>
+                    <h4 className="rpt-page-title">Student Report</h4>
                     <nav className="rpt-breadcrumb">
                         <Link to="/school/dashboard">Dashboard</Link> /&nbsp;
                         <Link to="/school/reports">Reports &amp; Analytics</Link> /&nbsp;
                         <span className="rpt-breadcrumb-current">Student Report</span>
                     </nav>
-                </div>
-            </div>
-
-            {/* Student Analytics Row */}
-            <div className="rpt-row rpt-row-3" style={{ marginBottom: '20px' }}>
-                <div className="rpt-card">
-                    <div className="rpt-card-header"><h5 className="rpt-card-title">Gender Distribution</h5></div>
-                    <div className="rpt-chart-body rpt-chart-center">
-                        <ResponsiveContainer width="100%" height={180}>
-                            <PieChart>
-                                <Pie data={genderData} cx="50%" cy="50%" innerRadius={50} outerRadius={70} dataKey="value">
-                                    {genderData.map((e, i) => <Cell key={i} fill={e.color} />)}
-                                </Pie>
-                                <Tooltip />
-                                <Legend />
-                            </PieChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
-                <div className="rpt-card">
-                    <div className="rpt-card-header"><h5 className="rpt-card-title">Category-wise Summary</h5></div>
-                    <div className="rpt-chart-body">
-                        <ResponsiveContainer width="100%" height={180}>
-                            <BarChart data={categoryData} layout="vertical">
-                                <XAxis type="number" hide />
-                                <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
-                                <Tooltip />
-                                <Bar dataKey="value" name="Students" radius={[0, 4, 4, 0]}>
-                                    {categoryData.map((e, i) => <Cell key={i} fill={e.color} />)}
-                                </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
-                <div className="rpt-card">
-                    <div className="rpt-card-header"><h5 className="rpt-card-title">Students by Class</h5></div>
-                    <div className="rpt-chart-body">
-                        <ResponsiveContainer width="100%" height={180}>
-                            <BarChart data={classCounts}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                                <XAxis dataKey="class" axisLine={false} tickLine={false} tick={{ fontSize: 10 }} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10 }} />
-                                <Tooltip />
-                                <Bar dataKey="count" fill="#7367f0" radius={[4, 4, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
                 </div>
             </div>
 

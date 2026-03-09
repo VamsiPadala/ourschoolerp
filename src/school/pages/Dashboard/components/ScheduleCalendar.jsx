@@ -133,13 +133,11 @@ const ScheduleCalendar = () => {
                     <div className="events-list">
                         {events.map((event, index) => (
                             <div key={index} className="event-item" style={{ borderLeftColor: event.color }}>
-                                <div className="event-header">
-                                    <div className="event-icon" style={{ backgroundColor: `${event.color}15`, color: event.color }}>
-                                        <IconMapPin size={20} />
-                                    </div>
-                                    <h6 className="event-title">{event.title}</h6>
+                                <div className="event-icon" style={{ backgroundColor: `${event.color}15`, color: event.color }}>
+                                    <IconMapPin size={20} />
                                 </div>
                                 <div className="event-info">
+                                    <h6 className="event-title">{event.title}</h6>
                                     <p className="event-date">
                                         <IconCalendar size={14} />
                                         {event.date}

@@ -117,7 +117,7 @@ body {
 }
 
 .sidebar-menu::-webkit-scrollbar {
-    width: 4px;
+    width: 3px;
 }
 
 .sidebar-menu::-webkit-scrollbar-track {
@@ -125,8 +125,12 @@ body {
 }
 
 .sidebar-menu::-webkit-scrollbar-thumb {
-    background: #d1d5db;
-    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 3px;
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.22);
 }
 
 .menu-section {
@@ -217,7 +221,7 @@ body {
 
 .submenu-link {
     display: block;
-    padding: 8px 12px;
+    padding: 9px 16px 9px 20px;
     color: var(--text-muted);
     text-decoration: none;
     font-size: 13px;
@@ -230,7 +234,7 @@ body {
 .submenu-link::before {
     content: '';
     position: absolute;
-    left: 0;
+    left: 10px;
     top: 50%;
     transform: translateY(-50%);
     width: 6px;
@@ -240,14 +244,24 @@ body {
     transition: var(--transition);
 }
 
-.submenu-link:hover,
+.submenu-link:hover {
+    color: var(--primary-color);
+    background: var(--primary-light);
+    padding-left: 25px;
+}
+
 .submenu-link.active {
     color: var(--primary-color);
+    background: var(--primary-light);
+    font-weight: 600;
+    padding-left: 25px;
 }
 
 .submenu-link:hover::before,
 .submenu-link.active::before {
     background: var(--primary-color);
+    width: 8px;
+    height: 8px;
 }
 
 /* Layout Content */
@@ -311,12 +325,13 @@ body {
 }
 
 .header-search input {
-    width: 300px;
-    padding: 10px 16px 10px 40px;
+    width: 220px;
+    padding: 8px 16px 8px 40px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    font-size: 14px;
+    font-size: 13px;
     background: var(--bg-body);
+    color: var(--text-color);
     transition: var(--transition);
 }
 
@@ -345,7 +360,7 @@ body {
 .header-right {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 /* Academic Year Badge & Dropdown */
@@ -356,17 +371,18 @@ body {
 .academic-year-badge {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
+    gap: 6px;
+    padding: 7px 12px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     color: var(--text-color);
     background: var(--bg-white);
-    margin-right: 8px;
     cursor: pointer;
     transition: var(--transition);
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .academic-year-badge:hover {

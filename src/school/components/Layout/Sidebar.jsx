@@ -22,220 +22,15 @@ import {
 } from '@tabler/icons-react';
 import './Layout.css';
 
-// ── Try importing auth context (graceful fallback if not available) ──
-let useAuth;
-try {
-    useAuth = require('../../../context/AuthContext').useAuth;
-} catch {
-    useAuth = null;
-}
-
-// ────────────────────────────────────────────────
-// Mapping: sidebar sub-item paths → MasterMenuBuilder permission IDs.
-// The MasterMenuBuilder saves permissions as { [permId]: boolean }
-// in localStorage under key `menu_access_{role}`.
-// ────────────────────────────────────────────────
-const PATH_TO_PERMISSION_ID = {
-    // Dashboard
-    '/school/dashboard': 'dashboard_overview',
-    '/school/teacher-dashboard': 'dashboard_overview',
-    '/school/student-dashboard': 'dashboard_overview',
-    '/school/parent-dashboard': 'dashboard_overview',
-
-    // Finance & Fees
-    '/school/finance/collect-fees': 'fee_collect',
-    '/school/finance/search-due-fees': 'fee_dues',
-    '/school/finance/all-transactions': 'fee_reports',
-    '/school/finance/online-transactions': 'fee_reports',
-    '/school/finance/fees-carry-forward': 'fee_structure',
-    '/school/finance/assign-fees': 'fee_structure',
-    '/school/finance/edit-fee': 'fee_structure',
-    '/school/finance/fees-master': 'fee_structure',
-    '/school/finance/fee-groups': 'fee_structure',
-    '/school/finance/fees-discount': 'fee_structure',
-    '/school/finance/fee-types': 'fee_structure',
-    '/school/finance/fee-permissions': 'fee_structure',
-
-    // Accounts
-    '/school/accounts/income': 'expenses',
-    '/school/accounts/income-heads': 'expenses',
-    '/school/accounts/expense': 'expenses',
-    '/school/accounts/expense-heads': 'expenses',
-
-    // Student Information
-    '/school/student-list': 'student_list',
-    '/school/quick-admission': 'student_add',
-    '/school/student-attendance': 'attendance_mark',
-    '/school/behavior-records': 'behaviour',
-    '/school/student-categories': 'student_list',
-    '/school/disabled-students': 'student_list',
-    '/school/bulk-edit': 'student_list',
-
-    // Teachers
-    '/school/teachers/all': 'staff_list',
-    '/school/teachers/list': 'staff_list',
-    '/school/teachers/routine': 'timetable_view',
-    '/school/teachers/user': 'staff_list',
-
-    // Academics
-    '/school/academics/classes': 'class_list',
-    '/school/academics/sections': 'section_manage',
-    '/school/academics/subjects': 'subject_list',
-    '/school/academics/assign-subjects': 'subject_assign',
-    '/school/academics/assign-class-teacher': 'class_list',
-    '/school/academics/manage-periods': 'timetable_create',
-    '/school/academics/class-timetable': 'timetable_view',
-    '/school/academics/promote-students': 'student_promote',
-    '/school/academics/homework': 'homework_list',
-
-    // Exam
-    '/school/exam/dashboard': 'exam_schedule',
-    '/school/exam/schedule': 'exam_schedule',
-
-    // HR
-    '/school/hr': 'dashboard_overview',
-    '/school/hr/staff': 'staff_list',
-    '/school/hr/attendance': 'staff_attendance',
-    '/school/hr/payroll': 'salary',
-    '/school/hr/set-salary': 'salary',
-    '/school/hr/leave': 'leave_approve',
-    '/school/hr/leave-types': 'leave_approve',
-    '/school/hr/departments': 'staff_list',
-    '/school/hr/designations': 'staff_list',
-
-    // Communication
-    '/communicate/notice': 'notice_board',
-    '/communicate/events': 'notice_board',
-    '/communicate/broadcast': 'sms_send',
-    '/communicate/history': 'sms_send',
-
-    // Library
-    '/library/issue-return': 'library',
-    '/library/books': 'library',
-    '/library/categories': 'library',
-
-    // Inventory
-    '/school/inventory/issue-item': 'inventory',
-    '/school/inventory/add-stock': 'inventory',
-    '/school/inventory/items': 'inventory',
-    '/school/inventory/categories': 'inventory',
-    '/school/inventory/suppliers': 'inventory',
-    '/school/inventory/reports': 'inventory',
-
-    // Transport
-    '/transport/vehicles': 'transport',
-    '/transport/routes': 'transport',
-    '/transport/tracking': 'transport',
-
-    // Hostel
-    '/school/hostel': 'hostel',
-    '/school/hostel/category': 'hostel',
-    '/school/hostel/manage': 'hostel',
-    '/hostel/allocation': 'hostel',
-    '/hostel/rooms': 'hostel',
-    '/hostel/room-types': 'hostel',
-    '/hostel/manage': 'hostel',
-    '/hostel/permissions': 'hostel',
-
-    // Reports
-    '/reports/class': 'report_academic',
-    '/reports/student': 'report_academic',
-    '/reports/attendance': 'report_attendance',
-    '/reports/fees': 'report_financial',
-    '/reports/due-fees': 'report_financial',
-    '/reports/balance-fees': 'report_financial',
-    '/reports/transactions': 'report_financial',
-    '/reports/salary': 'report_financial',
-    '/reports/audit': 'report_financial',
-    '/reports/ledger': 'report_financial',
-    '/reports/sponsorship': 'report_academic',
-    '/reports/id-card': 'report_academic',
-    '/reports/hall-ticket': 'report_academic',
-    '/reports/timetable': 'report_academic',
-    '/reports/exam-schedule': 'report_academic',
-    '/reports/library': 'report_academic',
-    '/reports/terminal': 'report_academic',
-    '/reports/merit': 'report_academic',
-    '/reports/online-exam': 'report_academic',
-    '/reports/certificate': 'report_academic',
-    '/reports/leave': 'report_academic',
-    '/reports/purchase': 'report_financial',
-    '/reports/sales': 'report_financial',
-    '/reports/fines': 'report_financial',
-    '/reports/overtime': 'report_financial',
-
-    // Settings
-    '/settings/general': 'settings',
-    '/settings/session': 'settings',
-    '/settings/notifications': 'settings',
-    '/settings/whatsapp': 'settings',
-    '/settings/sms': 'settings',
-    '/settings/email': 'settings',
-    '/settings/payments': 'settings',
-    '/settings/print': 'settings',
-    '/settings/thermal-print': 'settings',
-    '/settings/cms': 'settings',
-    '/settings/roles': 'settings',
-    '/settings/backup': 'settings',
-    '/settings/users': 'settings',
-    '/settings/modules': 'settings',
-    '/settings/custom-fields': 'settings',
-    '/settings/captcha': 'settings',
-    '/settings/system-fields': 'settings',
-    '/settings/student-profile': 'settings',
-    '/settings/admission': 'settings',
-    '/settings/file-types': 'settings',
-    '/settings/sidebar': 'settings',
-    '/settings/update': 'settings',
-
-    // Study Center
-    '/study/resources': 'online_classes',
-    '/study/assignments': 'homework_list',
-    '/study/live-classes': 'online_classes',
-
-    // Certificates
-    '/school/certificates/templates': 'transfer_cert',
-    '/school/certificates/generate': 'transfer_cert',
-
-    // Front Office
-    '/school/front-office/visitors': 'visitor_log',
-    '/school/front-office/complaints': 'visitor_log',
-    '/school/front-office/postal': 'visitor_log',
-    '/school/front-office/admission-enquiry': 'visitor_log',
-
-    // Book Sales
-    '/school/book-sales': 'inventory',
-    '/school/book-sales/vendors': 'inventory',
-    '/school/book-sales/inventory': 'inventory',
-    '/school/book-sales/sales': 'inventory',
-    '/school/book-sales/returns': 'inventory',
-    '/school/book-sales/reports': 'report_financial',
-
-    // Online Exam
-    '/exam/online': 'exam_schedule',
-};
+import { useAuth } from '../../../context/AuthContext';
+import './Layout.css';
 
 /**
- * Load role-based menu access from localStorage.
- * Returns null if no role or no saved permissions.
+ * Check if a menu item is permitted for the current user.
  */
-function loadRoleMenuAccess(role) {
-    if (!role) return null;
-    try {
-        const saved = localStorage.getItem(`menu_access_${role}`);
-        if (saved) return JSON.parse(saved);
-    } catch { /* ignore */ }
-    return null;
-}
-
-/**
- * Check if a sub-item path is permitted for the current role.
- */
-function isSubItemPermitted(path, access) {
-    if (!access) return true; // no restrictions configured
-    const permId = PATH_TO_PERMISSION_ID[path];
-    if (!permId) return true; // unmapped items are shown by default
-    return access[permId] !== false;
+function isItemPermitted(item, hasPermission) {
+    if (!item.permission) return true; // No restriction
+    return hasPermission(item.permission);
 }
 
 const menuData = [
@@ -246,18 +41,20 @@ const menuData = [
                 title: 'Dashboard',
                 icon: IconLayoutDashboard,
                 subItems: [
-                    { title: '🏫 Admin Dashboard', path: '/school/dashboard' },
-                    { title: '👩‍🏫 Teacher Dashboard', path: '/school/teacher-dashboard' },
-                    { title: '👨‍🎓 Student Dashboard', path: '/school/student-dashboard' },
-                    { title: '🏢 Branch Admin Dashboard', path: '/school/branch-admin-dashboard' },
-                    { title: '🎓 Branch Principal Dashboard', path: '/school/branch-principal-dashboard' },
-                    { title: '🏛️ Principal Dashboard', path: '/school/principal-dashboard' },
-                    { title: '💰 Accountant Dashboard', path: '/school/accountant-dashboard' },
-                    { title: '🛎️ Receptionist Dashboard', path: '/school/receptionist-dashboard' },
-                    { title: '📚 Library Dashboard', path: '/school/library-dashboard' },
-                    { title: '🛏️ Hostel Dashboard', path: '/school/hostel' },
-                    { title: '🚌 Transport Dashboard', path: '/school/transport' },
+                    { title: 'Admin Dashboard', path: '/school/dashboard' },
+                    { title: 'Teacher Dashboard', path: '/school/teacher-dashboard' },
+                    { title: 'Student Dashboard', path: '/school/student-dashboard' },
+                    { title: 'Parent Dashboard', path: '/school/parent-dashboard' },
+                    { title: 'Accountant Dashboard', path: '/school/accountant-dashboard' },
+                    { title: 'Receptionist Dashboard', path: '/school/receptionist-dashboard' },
+                    { title: 'Librarian Dashboard', path: '/school/librarian-dashboard' }
                 ]
+            },
+            {
+                title: 'User Management',
+                icon: IconUserCheck,
+                path: '/school/settings/users',
+                permission: 'users.manage'
             }
         ]
     },
@@ -267,16 +64,16 @@ const menuData = [
             {
                 title: 'Finance & Fees',
                 icon: IconCash,
+                permission: 'fees.view',
                 subItems: [
-                    { title: 'Fee Type', path: '/school/finance/fee-types' },
-                    { title: 'Assign Fee', path: '/school/finance/assign-fees' },
-                    { title: 'Edit Fee', path: '/school/finance/edit-fee' },
-                    { title: 'Collect Fee', path: '/school/finance/collect-fees' },
-                    { title: 'Search Due Fee', path: '/school/finance/search-due-fees' },
-                    { title: 'All Transactions', path: '/school/finance/all-transactions' },
-                    { title: 'Online Transaction', path: '/school/finance/online-transactions' },
-                    { title: 'Fees Carry Forward', path: '/school/finance/fees-carry-forward' },
-                    { title: 'Fee Permission', path: '/school/finance/fee-permissions' }
+                    { title: 'Fee Type', path: '/school/finance/fee-types', permission: 'school.settings' },
+                    { title: 'Assign Fee', path: '/school/finance/assign-fees', permission: 'fees.collect' },
+                    { title: 'Collect Fee', path: '/school/finance/collect-fees', permission: 'fees.collect' },
+                    { title: 'Search Due Fee', path: '/school/finance/search-due-fees', permission: 'fees.view' },
+                    { title: 'All Transactions', path: '/school/finance/all-transactions', permission: 'fees.report' },
+                    { title: 'Online Transaction', path: '/school/finance/online-transactions', permission: 'fees.report' },
+                    { title: 'Fees Carry Forward', path: '/school/finance/fees-carry-forward', permission: 'fees.collect' },
+                    { title: 'Fee Permission', path: '/school/finance/fee-permissions', permission: 'roles.manage' }
                 ]
             },
             {
@@ -305,40 +102,42 @@ const menuData = [
             {
                 title: 'Student Information',
                 icon: IconUser,
+                permission: 'student.read',
                 subItems: [
-                    { title: 'Student List', path: '/school/student-list' },
-                    { title: 'Quick Student Admission', path: '/school/quick-admission' },
-                    { title: 'Student Attendance', path: '/school/student-attendance' },
-                    { title: 'Behavior Records', path: '/school/behavior-records' },
-                    { title: 'Student Categories', path: '/school/student-categories' },
-                    { title: 'Disabled Students', path: '/school/disabled-students' },
-                    { title: 'Siblings Data', path: '/school/siblings-data' },
-                    { title: 'Bulk Edit', path: '/school/bulk-edit' }
+                    { title: 'Student List', path: '/school/student-list', permission: 'student.read' },
+                    { title: 'Quick Student Admission', path: '/school/quick-admission', permission: 'student.write' },
+                    { title: 'Student Attendance', path: '/school/student-attendance', permission: 'attendance.mark' },
+                    { title: 'Behavior Records', path: '/school/behavior-records', permission: 'student.read' },
+                    { title: 'Student Categories', path: '/school/student-categories', permission: 'school.settings' },
+                    { title: 'Disabled Students', path: '/school/disabled-students', permission: 'student.read' },
+                    { title: 'Bulk Edit', path: '/school/bulk-edit', permission: 'student.write' }
                 ]
             },
             {
                 title: 'Teachers',
                 icon: IconUsers,
+                permission: 'teacher.read',
                 subItems: [
-                    { title: 'All Teachers', path: '/school/teachers/all' },
-                    { title: 'Teachers List', path: '/school/teachers/list' },
-                    { title: 'TimeTable', path: '/school/teachers/routine' },
-                    { title: 'User', path: '/school/teachers/user' }
+                    { title: 'All Teachers', path: '/school/teachers/all', permission: 'teacher.read' },
+                    { title: 'Teachers List', path: '/school/teachers/list', permission: 'teacher.read' },
+                    { title: 'TimeTable', path: '/school/teachers/routine', permission: 'course.read' },
+                    { title: 'User', path: '/school/teachers/user', permission: 'teacher.read' }
                 ]
             },
             {
                 title: 'Academics',
                 icon: IconSchool,
+                permission: 'course.read',
                 subItems: [
-                    { title: 'Classes', path: '/school/academics/classes' },
-                    { title: 'Sections', path: '/school/academics/sections' },
-                    { title: 'Subjects', path: '/school/academics/subjects' },
-                    { title: 'Assign Subjects', path: '/school/academics/assign-subjects' },
-                    { title: 'Assign Class Teacher', path: '/school/academics/assign-class-teacher' },
-                    { title: 'Manage Periods', path: '/school/academics/manage-periods' },
-                    { title: 'Class Timetable', path: '/school/academics/class-timetable' },
-                    { title: 'Promote Students', path: '/school/academics/promote-students' },
-                    { title: 'Homework', path: '/school/academics/homework' }
+                    { title: 'Classes', path: '/school/academics/classes', permission: 'school.settings' },
+                    { title: 'Sections', path: '/school/academics/sections', permission: 'school.settings' },
+                    { title: 'Subjects', path: '/school/academics/subjects', permission: 'course.read' },
+                    { title: 'Assign Subjects', path: '/school/academics/assign-subjects', permission: 'course.write' },
+                    { title: 'Assign Class Teacher', path: '/school/academics/assign-class-teacher', permission: 'school.settings' },
+                    { title: 'Manage Periods', path: '/school/academics/manage-periods', permission: 'school.settings' },
+                    { title: 'Class Timetable', path: '/school/academics/class-timetable', permission: 'course.read' },
+                    { title: 'Promote Students', path: '/school/academics/promote-students', permission: 'student.write' },
+                    { title: 'Homework', path: '/school/academics/homework', permission: 'course.read' }
                 ]
             },
 
@@ -363,15 +162,16 @@ const menuData = [
             {
                 title: 'Human Resource',
                 icon: IconBriefcase,
+                permission: 'teacher.read',
                 subItems: [
-                    { title: 'Staff Directory', path: '/school/hr/staff' },
-                    { title: 'Staff Attendance', path: '/school/hr/attendance' },
-                    { title: 'Payroll', path: '/school/hr/payroll' },
-                    { title: 'Set Salary', path: '/school/hr/set-salary' },
-                    { title: 'Approve Leave Request', path: '/school/hr/leave' },
-                    { title: 'Leave Types', path: '/school/hr/leave-types' },
-                    { title: 'Departments', path: '/school/hr/departments' },
-                    { title: 'Designations', path: '/school/hr/designations' }
+                    { title: 'Staff Directory', path: '/school/hr/staff', permission: 'teacher.read' },
+                    { title: 'Staff Attendance', path: '/school/hr/attendance', permission: 'attendance.mark' },
+                    { title: 'Payroll', path: '/school/hr/payroll', permission: 'fees.report' },
+                    { title: 'Set Salary', path: '/school/hr/set-salary', permission: 'school.settings' },
+                    { title: 'Approve Leave Request', path: '/school/hr/leave', permission: 'teacher.read' },
+                    { title: 'Leave Types', path: '/school/hr/leave-types', permission: 'school.settings' },
+                    { title: 'Departments', path: '/school/hr/departments', permission: 'school.settings' },
+                    { title: 'Designations', path: '/school/hr/designations', permission: 'school.settings' }
                 ]
             },
             {
@@ -458,40 +258,36 @@ const menuData = [
                 title: 'Reports & Analytics',
                 icon: IconReportAnalytics,
                 subItems: [
-                    { title: '📊 Dashboard', path: '/school/reports' },
-                    { title: '👨‍🎓 Student Report', path: '/school/reports/student' },
-                    { title: '🏫 Class Strength', path: '/school/reports/class-strength' },
-                    { title: '🎓 Admission Report', path: '/school/reports/admissions' },
-                    { title: '📉 Left Students', path: '/school/reports/left-students' },
-                    { title: '📈 Student Movement', path: '/school/reports/student-movement' }
+                    { title: '📊 Dashboard', path: '/school/reports' }
                 ]
             },
             {
                 title: 'System Setting',
                 icon: IconSettings,
+                permission: 'school.settings',
                 subItems: [
-                    { title: 'General Setting', path: '/settings/general' },
-                    { title: 'Session Setting', path: '/settings/session' },
-                    { title: 'Notification Setting', path: '/settings/notifications' },
-                    { title: 'WhatsApp Messaging', path: '/settings/whatsapp' },
-                    { title: 'SMS Setting', path: '/settings/sms' },
-                    { title: 'Email Setting', path: '/settings/email' },
-                    { title: 'Payment Methods', path: '/settings/payments' },
-                    { title: 'Print Header Footer', path: '/settings/print' },
-                    { title: 'Thermal Print', path: '/settings/thermal-print' },
-                    { title: 'Front CMS Setting', path: '/settings/cms' },
-                    { title: 'Roles Permissions', path: '/settings/roles' },
-                    { title: 'Backup Restore', path: '/settings/backup' },
-                    { title: 'Users', path: '/settings/users' },
-                    { title: 'Modules', path: '/settings/modules' },
-                    { title: 'Custom Fields', path: '/settings/custom-fields' },
-                    { title: 'Captcha Setting', path: '/settings/captcha' },
-                    { title: 'System Fields', path: '/settings/system-fields' },
-                    { title: 'Student Profile Update', path: '/settings/student-profile' },
-                    { title: 'Online Admission', path: '/settings/admission' },
-                    { title: 'File Types', path: '/settings/file-types' },
-                    { title: 'Sidebar Menu', path: '/settings/sidebar' },
-                    { title: 'System Update', path: '/settings/update' }
+                    { title: 'Manage Branches', path: '/school/settings/branches', permission: 'school.settings' },
+                    { title: 'General Setting', path: '/school/settings/general', permission: 'school.settings' },
+                    { title: 'Session Setting', path: '/school/settings/session', permission: 'school.settings' },
+                    { title: 'Notification Setting', path: '/school/settings/notifications', permission: 'school.settings' },
+                    { title: 'WhatsApp Messaging', path: '/school/settings/whatsapp', permission: 'school.settings' },
+                    { title: 'SMS Setting', path: '/school/settings/sms', permission: 'school.settings' },
+                    { title: 'Email Setting', path: '/school/settings/email', permission: 'school.settings' },
+                    { title: 'Payment Methods', path: '/school/settings/payments', permission: 'school.settings' },
+                    { title: 'Print Header Footer', path: '/school/settings/print', permission: 'school.settings' },
+                    { title: 'Thermal Print', path: '/school/settings/thermal-print', permission: 'school.settings' },
+                    { title: 'Front CMS Setting', path: '/school/settings/cms', permission: 'school.settings' },
+                    { title: 'Roles Permissions', path: '/school/settings/roles', permission: 'roles.manage' },
+                    { title: 'Backup Restore', path: '/school/settings/backup', permission: 'school.settings' },
+                    { title: 'Modules', path: '/school/settings/modules', permission: 'school.settings' },
+                    { title: 'Custom Fields', path: '/school/settings/custom-fields', permission: 'school.settings' },
+                    { title: 'Captcha Setting', path: '/school/settings/captcha', permission: 'school.settings' },
+                    { title: 'System Fields', path: '/school/settings/system-fields', permission: 'school.settings' },
+                    { title: 'Student Profile Update', path: '/school/settings/student-profile', permission: 'school.settings' },
+                    { title: 'Online Admission', path: '/school/settings/admission', permission: 'school.settings' },
+                    { title: 'File Types', path: '/school/settings/file-types', permission: 'school.settings' },
+                    { title: 'Sidebar Menu', path: '/school/settings/sidebar', permission: 'school.settings' },
+                    { title: 'System Update', path: '/school/settings/update', permission: 'school.settings' }
                 ]
             }
         ]
@@ -602,34 +398,24 @@ const SidebarMenuItem = ({ item }) => {
 };
 
 const Sidebar = ({ isOpen }) => {
-    // ── Get current user role (graceful fallback) ──
-    let userRole = null;
-    let branchName = null;
-    try {
-        if (useAuth) {
-            const auth = useAuth();
-            userRole = auth?.user?.role || null;
-            branchName = auth?.user?.branchName || null;
-        }
-    } catch {
-        // AuthContext not available — show all menus
-    }
+    const { hasPermission, user } = useAuth();
+    const userRole = user?.role || null;
+    const branchName = user?.branch_id ? (user?.branch?.name || 'Assigned Branch') : null;
 
-    // ── Load role-based menu access ──
-    const roleAccess = useMemo(() => loadRoleMenuAccess(userRole), [userRole]);
-
-    // ── Filter menu data based on role permissions ──
+    // ── Filter menu data based on granular permissions ──
     const filteredMenuData = useMemo(() => {
-        if (!roleAccess) return menuData; // no filtering if no access config
-
         return menuData
             .map((section) => {
                 const filteredItems = section.items
                     .map((item) => {
+                        // Check if parent item is permitted
+                        if (!isItemPermitted(item, hasPermission)) return null;
+
                         if (!item.subItems || item.subItems.length === 0) return item;
 
+                        // Filter sub-items
                         const filteredSubItems = item.subItems.filter((sub) =>
-                            isSubItemPermitted(sub.path, roleAccess)
+                            isItemPermitted(sub, hasPermission)
                         );
 
                         if (filteredSubItems.length === 0) return null;
@@ -641,7 +427,7 @@ const Sidebar = ({ isOpen }) => {
                 return { ...section, items: filteredItems };
             })
             .filter(Boolean);
-    }, [roleAccess]);
+    }, [hasPermission]);
 
     return (
         <aside className={`sidebar ${!isOpen ? 'collapsed' : ''}`}>

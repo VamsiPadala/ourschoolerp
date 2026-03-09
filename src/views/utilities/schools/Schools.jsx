@@ -16,21 +16,21 @@ const BCrumb = [
 const Schools = () => {
   const [schools, setSchools] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const fetchSchools = async () => {
+    setIsLoading(true);
+    try {
+      const response = await api.get('/master/schools/?is_active=true');
+      if (response && response.schools) {
+        setSchools(response.schools);
+      }
+    } catch (error) {
+      console.error("Failed to fetch schools:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchSchools = async () => {
-      try {
-        const response = await api.get('/master/schools/');
-        if (response && response.schools) {
-          setSchools(response.schools);
-        }
-      } catch (error) {
-        console.error("Failed to fetch schools:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchSchools();
   }, []);
 
@@ -41,7 +41,7 @@ const Schools = () => {
         {isLoading ? (
           <div className="p-8 text-center text-gray-500">Loading schools...</div>
         ) : (
-          <SchoolsTable data={schools} />
+          <SchoolsTable data={schools} refreshData={fetchSchools} />
         )}
       </div>
     </>

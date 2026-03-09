@@ -1,160 +1,112 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
-// ── Data ─────────────────────────────────────────────────────────────
-const attendanceConfig = [
-    {
-        key: 'students',
-        label: 'Students',
-        icon: '👨‍🎓',
-        color: '#3d5ee1',
-        accentBg: '#eef1fd',
-        total: 1248,
-        present: 1163,
-        absent: 62,
-        late: 23,
-        pct: 93.2,
-    },
-    {
-        key: 'teachers',
-        label: 'Teachers',
-        icon: '👩‍🏫',
-        color: '#28c76f',
-        accentBg: '#e8faf1',
-        total: 87,
-        present: 82,
-        absent: 3,
-        late: 2,
-        pct: 94.3,
-    },
-    {
-        key: 'staff',
-        label: 'Staff',
-        icon: '👷',
-        color: '#ff9f43',
-        accentBg: '#fff5e6',
-        total: 45,
-        present: 41,
-        absent: 3,
-        late: 1,
-        pct: 91.1,
-    },
-];
+const AttendanceChart = () => {
+    const [activeTab, setActiveTab] = useState('students');
 
-const CustomTooltip = ({ active, payload }) => {
-    if (active && payload?.length) {
-        const item = payload[0].payload;
-        return (
-            <div style={{
-                background: 'var(--bg-card)',
-                border: '1px solid var(--border-color)',
-                borderRadius: 10,
-                padding: '8px 12px',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
-                fontSize: 12
-            }}>
-                <p style={{ margin: 0, fontWeight: 700, color: item.color }}>{item.name}</p>
-                <p style={{ margin: '2px 0 0', color: 'var(--text-primary)' }}>{item.count}</p>
-            </div>
-        );
-    }
-    return null;
-};
+    const dataMap = {
+        students: [
+            { name: 'Present', value: 988, color: '#3d5ee1' },
+            { name: 'Absent', value: 8, color: '#ea5455' },
+            { name: 'Late', value: 4, color: '#ff9f43' }
+        ],
+        teachers: [
+            { name: 'Present', value: 965, color: '#3d5ee1' },
+            { name: 'Absent', value: 20, color: '#ea5455' },
+            { name: 'Late', value: 15, color: '#ff9f43' }
+        ],
+        staff: [
+            { name: 'Present', value: 972, color: '#3d5ee1' },
+            { name: 'Absent', value: 18, color: '#ea5455' },
+            { name: 'Late', value: 10, color: '#ff9f43' }
+        ],
+    };
 
-const SingleAttendancePie = ({ config }) => {
-    const { label, icon, color, accentBg, total, present, absent, late, pct } = config;
+    const stats = {
+        students: { emergency: 28, absent: 1, late: 1, present: 98.8 },
+        teachers: { emergency: 5, absent: 2, late: 0, present: 96.5 },
+        staff: { emergency: 3, absent: 1, late: 2, present: 97.2 },
+    };
 
-    const data = [
-        { name: 'Present', count: present, value: present, color },
-        { name: 'Absent', count: absent, value: absent, color: '#ea5455' },
-        { name: 'Late', count: late, value: late, color: '#ff9f43' },
-    ];
+    const data = dataMap[activeTab];
+    const currentStats = stats[activeTab];
+
+    const CustomTooltip = ({ active, payload }) => {
+        if (active && payload && payload.length) {
+            const item = payload[0].payload;
+            return (
+                <div style={{
+                    background: 'var(--bg-card)',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '10px',
+                    padding: '8px 12px',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
+                    fontSize: '12px'
+                }}>
+                    <p style={{ margin: 0, fontWeight: 700, color: item.color }}>{item.name}</p>
+                    <p style={{ margin: '2px 0 0', color: 'var(--text-primary)' }}>{(item.value / 10).toFixed(1)}%</p>
+                </div>
+            );
+        }
+        return null;
+    };
 
     return (
-        <div className="att-pie-block">
-            {/* Icon + Label */}
-            <div className="att-pie-header">
-                <span className="att-pie-icon" style={{ background: accentBg, color }}>{icon}</span>
-                <div>
-                    <p className="att-pie-title">{label}</p>
-                    <p className="att-pie-total">Total: {total}</p>
-                </div>
+        <div className="dashboard-card attendance-card">
+            <div className="card-header">
+                <h5>Attendance</h5>
             </div>
 
-            {/* Donut chart */}
-            <div className="att-donut-wrap">
-                <ResponsiveContainer width="100%" height={150}>
+            <div className="attendance-tabs">
+                {['students', 'teachers', 'staff'].map(tab => (
+                    <button
+                        key={tab}
+                        className={activeTab === tab ? 'active' : ''}
+                        onClick={() => setActiveTab(tab)}
+                    >
+                        {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                    </button>
+                ))}
+            </div>
+
+            <div className="attendance-chart" style={{ position: 'relative', height: 160 }}>
+                <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                         <Pie
                             data={data}
-                            innerRadius={46}
-                            outerRadius={68}
+                            innerRadius={48}
+                            outerRadius={70}
                             dataKey="value"
                             startAngle={90}
                             endAngle={-270}
-                            paddingAngle={2}
-                            isAnimationActive={true}
+                            paddingAngle={3}
                         >
-                            {data.map((entry, i) => (
-                                <Cell key={i} fill={entry.color} stroke="none" />
+                            {data.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
                             ))}
                         </Pie>
                         <Tooltip content={<CustomTooltip />} />
                     </PieChart>
                 </ResponsiveContainer>
-                <div className="att-donut-center">
-                    <span className="att-donut-pct" style={{ color }}>{pct}%</span>
-                    <span className="att-donut-label">Present</span>
+                <div className="donut-center">
+                    <span className="donut-pct" style={{ fontSize: '1.2rem' }}>{currentStats.present}%</span>
+                    <span className="donut-label">Present</span>
                 </div>
             </div>
 
-            {/* Stats row */}
-            <div className="att-stats-row">
-                <div className="att-stat-chip" style={{ background: `${color}15`, color }}>
-                    <span className="att-stat-num">{present}</span>
-                    <span className="att-stat-lbl">Present</span>
+            <div className="attendance-legend">
+                <div className="legend-item">
+                    <span className="dot emergency"></span>
+                    <span>Emergency: <strong>{currentStats.emergency}</strong></span>
                 </div>
-                <div className="att-stat-chip" style={{ background: '#fce8e8', color: '#ea5455' }}>
-                    <span className="att-stat-num">{absent}</span>
-                    <span className="att-stat-lbl">Absent</span>
+                <div className="legend-item">
+                    <span className="dot absent"></span>
+                    <span>Absent: <strong>{String(currentStats.absent).padStart(2, '0')}</strong></span>
                 </div>
-                <div className="att-stat-chip" style={{ background: '#fff5e6', color: '#ff9f43' }}>
-                    <span className="att-stat-num">{late}</span>
-                    <span className="att-stat-lbl">Late</span>
+                <div className="legend-item">
+                    <span className="dot late"></span>
+                    <span>Late: <strong>{String(currentStats.late).padStart(2, '0')}</strong></span>
                 </div>
-            </div>
-
-            {/* Progress bar */}
-            <div className="att-progress-bar-bg">
-                <div
-                    className="att-progress-bar-fill"
-                    style={{ width: `${pct}%`, background: color }}
-                />
-            </div>
-        </div>
-    );
-};
-
-const AttendanceChart = () => {
-    return (
-        <div className="dashboard-card attendance-triple-card">
-            <div className="card-header">
-                <h5>Today's Attendance</h5>
-                <span style={{
-                    fontSize: 12,
-                    background: '#e8faf1',
-                    color: '#28c76f',
-                    padding: '3px 10px',
-                    borderRadius: 20,
-                    fontWeight: 700
-                }}>
-                    📅 Live
-                </span>
-            </div>
-            <div className="attendance-triple-grid">
-                {attendanceConfig.map(cfg => (
-                    <SingleAttendancePie key={cfg.key} config={cfg} />
-                ))}
             </div>
         </div>
     );
