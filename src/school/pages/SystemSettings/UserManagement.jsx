@@ -226,6 +226,9 @@ const UserManagement = () => {
                                             accountant: { grad: 'linear-gradient(135deg,#10b981,#14b8a6)', pill: '#d1fae5', text: '#065f46' },
                                             librarian: { grad: 'linear-gradient(135deg,#7c3aed,#8b5cf6)', pill: '#ede9fe', text: '#5b21b6' },
                                             receptionist: { grad: 'linear-gradient(135deg,#0ea5e9,#06b6d4)', pill: '#e0f2fe', text: '#0369a1' },
+                                            pro: { grad: 'linear-gradient(135deg,#ec4899,#db2777)', pill: '#fce7f3', text: '#9d174d' },
+                                            transport_manager: { grad: 'linear-gradient(135deg,#10b981,#059669)', pill: '#d1fae5', text: '#065f46' },
+                                            hostel_warden: { grad: 'linear-gradient(135deg,#f59e0b,#d97706)', pill: '#fef3c7', text: '#b45309' },
                                         }[u.role] || { grad: 'linear-gradient(135deg,#6b7280,#374151)', pill: '#f3f4f6', text: '#374151' };
 
                                         return (

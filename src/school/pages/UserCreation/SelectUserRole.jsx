@@ -16,7 +16,11 @@ const ALL_ROLES = [
     { id: 'parent', label: 'Parent / Guardian', description: "Linked to student's account", icon: IconHeartHandshake, color: '#ec4899', bg: '#fce7f3', path: '/school/users/create/parent' },
     { id: 'receptionist', label: 'Receptionist', description: 'Front desk & visitor management', icon: IconPhone, color: '#6b7280', bg: '#f3f4f6', path: '/school/users/create/receptionist' },
     { id: 'librarian', label: 'Librarian', description: 'Library and book management', icon: IconLibrary, color: '#7c3aed', bg: '#ede9fe', path: '/school/users/create/librarian' },
+    { id: 'pro', label: 'PRO', description: 'Public Relations Officer', icon: IconUsers, color: '#ec4899', bg: '#fce7f3', path: '/school/users/create/pro' },
+    { id: 'transport_manager', label: 'Transport Manager', description: 'Vehicle and route tracking', icon: IconSchool, color: '#10b981', bg: '#d1fae5', path: '/school/users/create/transport-manager' },
+    { id: 'hostel_warden', label: 'Hostel Warden', description: 'Hostel and room allocation', icon: IconBuildingBank, color: '#f59e0b', bg: '#fef3c7', path: '/school/users/create/hostel-warden' },
 ];
+
 
 const SelectUserRole = () => {
     const navigate = useNavigate();

@@ -149,114 +149,166 @@ const SchoolLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
-      <div className="w-full max-w-md">
-        {/* Logo / branding */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/25 mb-4">
-            <IconSchool size={32} className="text-white" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">MindWhile ERP</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Sign in to your school portal</p>
-        </div>
+    <>
+      <style>{`
+        .login-input-wrap {
+          background: #f4f6fa;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          padding: 8px 16px;
+          margin-bottom: 20px;
+          color: #6b7280;
+        }
+        .login-input-wrap input {
+          background: transparent;
+          border: none;
+          outline: none;
+          width: 100%;
+          padding: 10px 12px;
+          color: #374151;
+          font-weight: 500;
+          font-size: 15px;
+        }
+        .login-input-wrap input::placeholder {
+          color: #9ca3af;
+        }
+        .login-btn-primary {
+          background-color: #1e3a8a; /* Deep blue from second image */
+          color: white;
+          border-radius: 10px;
+          padding: 14px;
+          font-weight: 600;
+          font-size: 16px;
+          width: 100%;
+          max-width: 180px;
+          transition: all 0.2s ease;
+        }
+        .login-btn-primary:hover {
+          background-color: #1e40af;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+        }
+        .bg-illustration {
+          background-image: url('/src/assets/login-bg.png');
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+        }
+      `}</style>
 
-        {/* Login card */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl shadow-gray-200/50 dark:shadow-gray-900/50 border border-gray-100 dark:border-gray-700 p-8">
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Username */}
+      <div className="flex min-h-screen bg-white font-sans overflow-hidden">
+
+        {/* Left Side: Login Form Area (Similar to second image) */}
+        <div className="w-full lg:w-[45%] flex flex-col justify-center px-8 sm:px-16 lg:px-24 xl:px-32 relative z-10 bg-white">
+
+          {/* Logo Section */}
+          <div className="flex items-center gap-3 mb-16">
+            <div className="w-12 h-12 bg-slate-900 rounded-lg flex items-center justify-center text-white shadow-md">
+              <IconSchool size={28} />
+            </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                Username
-              </label>
-              <div className="relative">
-                <IconMail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <h1 className="text-2xl font-black text-slate-800 tracking-tight leading-tight uppercase">OUR SCHOOL ERP</h1>
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-slate-500">School Management System</p>
+            </div>
+          </div>
+
+          <div className="max-w-md w-full">
+            <h2 className="text-3xl font-bold text-slate-800 mb-8">Login to your account</h2>
+
+            <form onSubmit={handleSubmit}>
+
+              {/* Username Input */}
+              <div className="login-input-wrap">
+                <IconMail size={20} className="text-slate-400" />
                 <input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Enter your username"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all text-sm"
-                  required />
-
+                  placeholder="Username or Email"
+                  required
+                />
               </div>
-            </div>
 
-            {/* Password */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                Password
-              </label>
-              <div className="relative">
-                <IconLock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              {/* Password Input */}
+              <div className="login-input-wrap mb-4">
+                <IconLock size={20} className="text-slate-400" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  className="w-full pl-10 pr-11 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all text-sm"
-                  required />
-
+                  placeholder="Password"
+                  required
+                />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-
-                  {showPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
+                  className="p-1 focus:outline-none text-slate-400 hover:text-slate-600 transition-colors"
+                >
+                  {showPassword ? <IconEyeOff size={20} /> : <IconEye size={20} />}
                 </button>
               </div>
-            </div>
 
-            {/* Error message */}
-            {error &&
-              <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm px-4 py-2.5 rounded-xl border border-red-100 dark:border-red-800">
-                {error}
-              </div>
-            }
+              {/* Extras & Submit */}
+              <div className="flex flex-col gap-6 mb-8">
+                <a href="#" className="text-sm font-semibold text-slate-600 hover:text-blue-700 w-fit transition-colors">
+                  Forget password?
+                </a>
 
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold text-sm shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed">
-
-              {isLoading ?
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" /> :
-
-                <>
-                  Sign In
-                  <IconArrowRight size={16} />
-                </>
-              }
-            </button>
-          </form>
-
-          {/* Quick login buttons (dev only) */}
-          <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-700">
-            <p className="text-xs text-gray-400 dark:text-gray-500 mb-3 text-center">Quick Login (Demo)</p>
-            <div className="grid grid-cols-3 gap-2">
-              {Object.entries(DEMO_USERS).map(([key, demo]) =>
                 <button
-                  key={key}
-                  onClick={() => quickLogin(key)}
-                  className="flex flex-col items-center gap-1 p-2 rounded-lg border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-center">
-
-                  <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
-                    {key === 'branch_admin' ?
-                      <IconBuildingBank size={16} className="text-blue-500" /> :
-
-                      <IconSchool size={16} className="text-blue-500" />
-                    }
-                  </div>
-                  <span className="text-[10px] font-medium text-gray-600 dark:text-gray-400 leading-tight">
-                    {demo.user.fullName.split(' ')[0]}
-                  </span>
+                  type="submit"
+                  disabled={isLoading}
+                  className="login-btn-primary flex justify-center items-center gap-2"
+                >
+                  {isLoading ? (
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white" />
+                  ) : (
+                    "Login"
+                  )}
                 </button>
+              </div>
+
+              {/* Error block */}
+              {error && (
+                <div className="text-red-500 text-sm font-medium mt-2 p-3 bg-red-50 rounded-lg border border-red-100 mb-6">
+                  {error}
+                </div>
               )}
+            </form>
+
+            {/* Dev Tools / Quick Login */}
+            <div className="mt-8 pt-8 border-t border-slate-100">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Demo Access</p>
+              <div className="flex gap-3">
+                {Object.entries(DEMO_USERS).map(([key, demo]) => (
+                  <button
+                    key={key}
+                    onClick={() => quickLogin(key)}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 hover:bg-white hover:border-blue-400 hover:shadow-sm text-sm font-semibold text-slate-600 transition-all"
+                  >
+                    {key === 'branch_admin' ? <IconBuildingBank size={16} className="text-blue-600" /> : <IconSchool size={16} className="text-blue-600" />}
+                    {demo.user.fullName.split(' ')[0]}
+                  </button>
+                ))}
+              </div>
             </div>
+
           </div>
         </div>
+
+        {/* Right Side: Flowing Background Illustration */}
+        <div className="hidden lg:block w-[55%] relative overflow-hidden bg-slate-50">
+          {/* Soft edge fade left */}
+          <div className="absolute top-0 bottom-0 left-0 w-32 bg-gradient-to-r from-white to-transparent z-10"></div>
+
+          {/* Illustration graphic */}
+          <div className="absolute inset-0 bg-illustration"></div>
+
+        </div>
+
       </div>
-    </div>);
+    </>
+  );
 
 };
 

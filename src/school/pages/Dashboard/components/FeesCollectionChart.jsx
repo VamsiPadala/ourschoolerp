@@ -47,15 +47,25 @@ const FeesCollectionChart = () => {
             <div className="card-header">
                 <h5>Fees Collection</h5>
                 <div className="period-toggle">
-                    {['2023', '2024'].map(p => (
-                        <button
-                            key={p}
-                            className={`period-btn ${activePeriod === p ? 'active' : ''}`}
-                            onClick={() => setActivePeriod(p)}
-                        >
-                            {p}
-                        </button>
-                    ))}
+                    <select
+                        className="period-select"
+                        value={activePeriod}
+                        onChange={(e) => setActivePeriod(e.target.value)}
+                        style={{
+                            padding: '6px 12px',
+                            borderRadius: '8px',
+                            border: '1px solid var(--border-color)',
+                            backgroundColor: 'white',
+                            color: 'var(--text-primary)',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            outline: 'none',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        <option value="2023">2023</option>
+                        <option value="2024">2024</option>
+                    </select>
                 </div>
             </div>
 

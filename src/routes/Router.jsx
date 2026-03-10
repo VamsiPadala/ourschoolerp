@@ -25,10 +25,14 @@ const UpdatePassword = Loadable(lazy(() => import('../views/authentication/Updat
 const SchoolDashboard = Loadable(lazy(() => import('../school/pages/Dashboard/index')));
 const TeacherDashboard = Loadable(lazy(() => import('../school/pages/TeacherDashboard/index')));
 const StudentDashboard = Loadable(lazy(() => import('../school/pages/StudentDashboard/index')));
+const BranchAdminDashboard = Loadable(lazy(() => import('../school/pages/Dashboard/BranchAdminDashboard')));
+const BranchPrincipalDashboard = Loadable(lazy(() => import('../school/pages/Dashboard/BranchPrincipalDashboard')));
+const PrincipalDashboard = Loadable(lazy(() => import('../school/pages/Dashboard/PrincipalDashboard')));
 const ParentDashboard = Loadable(lazy(() => import('../school/pages/ParentDashboard/index')));
 const AccountantDashboard = Loadable(lazy(() => import('../school/pages/AccountantDashboard/index')));
 const ReceptionistDashboard = Loadable(lazy(() => import('../school/pages/ReceptionistDashboard/index')));
 const LibrarianDashboard = Loadable(lazy(() => import('../school/pages/LibrarianDashboard/index')));
+const PRODashboard = Loadable(lazy(() => import('../school/pages/Dashboard/PRODashboard')));
 const ManageBranches = Loadable(lazy(() => import('../school/pages/ManageBranches/index')));
 
 // Teachers Pages
@@ -85,6 +89,7 @@ const BehaviorRecords = Loadable(lazy(() => import('../school/pages/StudentInfor
 const AddBehaviorRecordPage = Loadable(lazy(() => import('../school/pages/StudentInformation/AddBehaviorRecordPage')));
 const DisabledStudents = Loadable(lazy(() => import('../school/pages/StudentInformation/DisabledStudents')));
 const BulkEdit = Loadable(lazy(() => import('../school/pages/StudentInformation/BulkEdit')));
+const SiblingsData = Loadable(lazy(() => import('../school/pages/StudentInformation/SiblingsData')));
 
 // Finance Pages
 const SearchDueFees = Loadable(lazy(() => import('../school/pages/Finance/SearchDueFees')));
@@ -94,11 +99,13 @@ const FeesCarryForward = Loadable(lazy(() => import('../school/pages/Finance/Fee
 const AssignFees = Loadable(lazy(() => import('../school/pages/Finance/AssignFees')));
 const AssignFeesEdit = Loadable(lazy(() => import('../school/pages/Finance/AssignFeesEdit')));
 const AssignFeesEditGlobal = Loadable(lazy(() => import('../school/pages/Finance/AssignFeesEditGlobal')));
+const EditFee = Loadable(lazy(() => import('../school/pages/Finance/EditFee')));
 const FeesDiscount = Loadable(lazy(() => import('../school/pages/Finance/FeesDiscount')));
 const FeeTypes = Loadable(lazy(() => import('../school/pages/Finance/FeeTypes')));
 const FeePermissions = Loadable(lazy(() => import('../school/pages/Finance/FeePermissions')));
 const FeeReport = Loadable(lazy(() => import('../school/pages/Finance/FeeReport')));
 const CollectFeeIndividual = Loadable(lazy(() => import('../school/pages/Finance/CollectFeeIndividual')));
+const StudentTransactionHistory = Loadable(lazy(() => import('../school/pages/Finance/StudentTransactionHistory')));
 
 // Accounts Pages
 const Income = Loadable(lazy(() => import('../school/pages/Accounts/Income')));
@@ -182,6 +189,9 @@ const CreateAccountant = Loadable(lazy(() => import('../school/pages/UserCreatio
 const CreateLibrarian = Loadable(lazy(() => import('../school/pages/UserCreation/CreateLibrarian')));
 const CreateReceptionist = Loadable(lazy(() => import('../school/pages/UserCreation/CreateReceptionist')));
 const CreateSchoolAdmin = Loadable(lazy(() => import('../school/pages/UserCreation/CreateSchoolAdmin')));
+const CreatePro = Loadable(lazy(() => import('../school/pages/UserCreation/CreatePro')));
+const CreateTransportManager = Loadable(lazy(() => import('../school/pages/UserCreation/CreateTransportManager')));
+const CreateHostelWarden = Loadable(lazy(() => import('../school/pages/UserCreation/CreateHostelWarden')));
 const Modules = Loadable(lazy(() => import('../school/pages/SystemSettings/Modules')));
 const CustomFields = Loadable(lazy(() => import('../school/pages/SystemSettings/CustomFields')));
 const CaptchaSetting = Loadable(lazy(() => import('../school/pages/SystemSettings/CaptchaSetting')));
@@ -198,6 +208,11 @@ const IssueNewBook = Loadable(lazy(() => import('../school/pages/Library/IssueNe
 const ManageBooks = Loadable(lazy(() => import('../school/pages/Library/ManageBooks')));
 const BookCategories = Loadable(lazy(() => import('../school/pages/Library/BookCategories')));
 const LibraryMembers = Loadable(lazy(() => import('../school/pages/Library/LibraryMembers')));
+
+// Campaign Pages
+const ManageCampaigns = Loadable(lazy(() => import('../school/pages/Campaign/ManageCampaigns')));
+const MyCampaigns = Loadable(lazy(() => import('../school/pages/Campaign/MyCampaigns')));
+
 
 // Hostel Pages
 const HostelDashboard = Loadable(lazy(() => import('../school/pages/Hostel/HostelDashboard')));
@@ -277,6 +292,7 @@ const HostelReport = Loadable(lazy(() => import('../school/pages/Reports/HostelR
 const TransportReport = Loadable(lazy(() => import('../school/pages/Reports/TransportReport')));
 const CertificateReport = Loadable(lazy(() => import('../school/pages/Reports/CertificateReport')));
 const ReportPlaceholder = Loadable(lazy(() => import('../school/pages/Reports/ReportPlaceholder')));
+const ExaminationReport = Loadable(lazy(() => import('../school/pages/Reports/ExaminationReport')));
 
 // Certificates Pages
 const CertificateTemplates = Loadable(lazy(() => import('../school/pages/Certificates/CertificateTemplates')));
@@ -318,6 +334,10 @@ const Router = [
       { index: true, element: <DashboardRedirect /> },
       { path: 'dashboard', element: <SchoolDashboard /> },
       { path: 'teacher-dashboard', element: <TeacherDashboard /> },
+      { path: 'branch-admin-dashboard', element: <BranchAdminDashboard /> },
+      { path: 'branch-principal-dashboard', element: <BranchPrincipalDashboard /> },
+      { path: 'principal-dashboard', element: <PrincipalDashboard /> },
+      { path: 'pro-dashboard', element: <PRODashboard /> },
       { path: 'update-password', element: <UpdatePassword /> },
 
       // Student Routes
@@ -343,6 +363,7 @@ const Router = [
       { path: 'behavior-records/add', element: <AddBehaviorRecordPage /> },
       { path: 'disabled-students', element: <DisabledStudents /> },
       { path: 'bulk-edit', element: <BulkEdit /> },
+      { path: 'siblings-data', element: <SiblingsData /> },
       { path: 'quick-admission', element: <QuickStudentAdmissionList /> },
       { path: 'quick-admission/add', element: <QuickStudentAdmissionForm /> },
       { path: 'quick-admission/:id', element: <QuickStudentAdmissionForm /> },
@@ -387,11 +408,13 @@ const Router = [
           { path: 'assign-fees', element: <AssignFees /> },
           { path: 'assign-fees/edit', element: <AssignFeesEditGlobal /> },
           { path: 'assign-fees/edit/:studentId', element: <AssignFeesEdit /> },
+          { path: 'edit-fee', element: <EditFee /> },
           { path: 'fees-discount', element: <FeesDiscount /> },
           { path: 'fee-types', element: <FeeTypes /> },
           { path: 'fee-types/:id', element: <FeeTypes /> },
           { path: 'fee-permissions', element: <FeePermissions /> },
           { path: 'collect-fees/:studentId', element: <CollectFeeIndividual /> },
+          { path: 'transaction-history/:studentId', element: <StudentTransactionHistory /> },
         ],
       },
 
@@ -428,6 +451,11 @@ const Router = [
       { path: 'library/books', element: <ManageBooks /> },
       { path: 'library/categories', element: <BookCategories /> },
       { path: 'library/members', element: <LibraryMembers /> },
+
+      // Campaign Routes
+      { path: 'campaign/manage', element: <ManageCampaigns /> },
+      { path: 'campaign/my-campaigns', element: <MyCampaigns /> },
+
 
       // Transport Routes
       { path: 'transport', element: <TransportDashboard /> },
@@ -574,6 +602,9 @@ const Router = [
       { path: 'users/create/librarian', element: <CreateLibrarian /> },
       { path: 'users/create/receptionist', element: <CreateReceptionist /> },
       { path: 'users/create/school-admin', element: <CreateSchoolAdmin /> },
+      { path: 'users/create/pro', element: <CreatePro /> },
+      { path: 'users/create/transport-manager', element: <CreateTransportManager /> },
+      { path: 'users/create/hostel-warden', element: <CreateHostelWarden /> },
       { path: 'settings/modules', element: <Modules /> },
       { path: 'settings/custom-fields', element: <CustomFields /> },
       { path: 'settings/captcha', element: <CaptchaSetting /> },
@@ -617,6 +648,7 @@ const Router = [
           { path: 'hostel', element: <HostelReport /> },
           { path: 'transport', element: <TransportReport /> },
           { path: 'certificate', element: <CertificateReport /> },
+          { path: 'examinations', element: <ExaminationReport /> },
           { path: ':reportType', element: <ReportPlaceholder /> },
         ],
       },

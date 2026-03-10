@@ -20,8 +20,7 @@ const BCrumb = [
 
 const ROLES = [
   { id: 'school_admin', name: 'School Admin', description: 'Full access within school (all branches)', icon: 'solar:shield-user-bold-duotone', color: '#4F46E5' },
-  { id: 'branch_admin', name: 'Branch Admin', description: 'Full access within assigned branch', icon: 'solar:buildings-2-bold-duotone', color: '#0284C7' },
-  { id: 'branch_principal', name: 'Branch Principal', description: 'Read-only oversight of assigned branch', icon: 'solar:eye-bold-duotone', color: '#7C3AED' },
+  { id: 'branch_admin', name: 'Branch Admin', description: 'Branch management and oversight', icon: 'solar:buildings-bold-duotone', color: '#8B5CF6' },
   { id: 'principal', name: 'Principal', description: 'School leadership (all branches)', icon: 'solar:crown-bold-duotone', color: '#B45309' },
   { id: 'teacher', name: 'Teacher', description: 'Teaching staff', icon: 'solar:square-academic-cap-bold-duotone', color: '#059669' },
   { id: 'student', name: 'Student', description: 'Student portal access', icon: 'solar:user-bold-duotone', color: '#0891B2' },
@@ -231,10 +230,9 @@ const MENU_SECTIONS = [
 // ── Default access per role ──
 const ROLE_DEFAULTS = {
   school_admin: getAllMenuIds(), // full access
-  branch_admin: getAllMenuIds(), // full access within branch
-  branch_principal: ['dashboard_overview', 'profile', 'calendar', 'announcements', 'class_list', 'subject_list', 'timetable_view', 'syllabus', 'homework_list', 'online_classes', 'student_list', 'attendance_report', 'behaviour', 'exam_schedule', 'marks_report', 'report_cards', 'fee_structure', 'fee_dues', 'fee_reports', 'staff_list', 'leave_report', 'staff_attendance', 'messages', 'notice_board', 'library', 'transport', 'report_academic', 'report_financial', 'report_attendance'],
+  branch_admin: ['dashboard_overview', 'profile', 'calendar', 'announcements', 'class_list', 'subject_list', 'timetable_view', 'syllabus', 'add_homework', 'homework_list', 'online_classes', 'student_list', 'add_student', 'student_bulk_upload', 'attendance_mark', 'attendance_report', 'behaviour', 'exam_schedule', 'marks_entry', 'materials_entry', 'marks_report', 'report_cards', 'fee_structure', 'fee_collection', 'fee_dues', 'fee_reports', 'staff_list', 'leave_approve', 'leave_request', 'leave_report', 'staff_attendance', 'messages', 'notice_board', 'library', 'transport', 'report_academic', 'report_financial', 'report_attendance'],
   principal: getAllMenuIds(), // school leadership — full visibility
-  teacher: ['dashboard_overview', 'profile', 'calendar', 'announcements', 'class_list', 'subject_list', 'timetable_view', 'timetable_create', 'syllabus', 'homework_list', 'homework_create', 'online_classes', 'student_list', 'attendance_mark', 'attendance_report', 'behaviour', 'exam_schedule', 'marks_entry', 'marks_report', 'report_cards', 'leave_apply', 'staff_attendance', 'messages', 'notice_board', 'library'],
+  teacher: ['dashboard_overview', 'profile', 'calendar', 'announcements', 'class_list', 'subject_list', 'timetable_view', 'syllabus', 'homework_list', 'homework_create', 'online_classes', 'student_list', 'attendance_mark', 'attendance_report', 'behaviour', 'exam_schedule', 'marks_entry', 'marks_report', 'report_cards', 'leave_apply', 'staff_attendance', 'messages', 'notice_board', 'library'],
   student: ['dashboard_overview', 'profile', 'calendar', 'announcements', 'timetable_view', 'syllabus', 'homework_list', 'homework_submit', 'online_classes', 'attendance_report', 'exam_schedule', 'marks_report', 'report_cards', 'messages', 'notice_board', 'library'],
   parent: ['dashboard_overview', 'profile', 'calendar', 'announcements', 'timetable_view', 'homework_list', 'attendance_report', 'exam_schedule', 'marks_report', 'report_cards', 'fee_structure', 'fee_dues', 'messages', 'notice_board', 'transport'],
   accountant: ['dashboard_overview', 'profile', 'fee_structure', 'fee_collect', 'fee_dues', 'fee_reports', 'expenses', 'salary', 'report_financial'],

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Calendar, Download, Users, Briefcase, Filter, Clock, CheckCircle2, XCircle } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, LineChart, Line } from 'recharts';
 import './Reports.css';
 
 const AttendanceReport = () => {
@@ -212,6 +213,61 @@ const AttendanceReport = () => {
                         <div style={{ height: '6px', background: '#f0f2f7', borderRadius: '3px', overflow: 'hidden' }}>
                             <div style={{ width: '93%', height: '100%', background: '#7367f0' }}></div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Attendance Analytics Graphs */}
+            <div className="rpt-row rpt-row-2" style={{ marginTop: '20px' }}>
+                <div className="rpt-card">
+                    <div className="rpt-card-header">
+                        <h5 className="rpt-card-title">Attendance Trends (Last 7 Days)</h5>
+                    </div>
+                    <div className="rpt-chart-body">
+                        <ResponsiveContainer width="100%" height={250}>
+                            <LineChart data={[
+                                { day: 'Mon', students: 92, teachers: 95 },
+                                { day: 'Tue', students: 88, teachers: 92 },
+                                { day: 'Wed', students: 95, teachers: 98 },
+                                { day: 'Thu', students: 91, teachers: 94 },
+                                { day: 'Fri', students: 93, teachers: 96 },
+                                { day: 'Sat', students: 85, teachers: 90 },
+                                { day: 'Sun', students: 0, teachers: 0 }
+                            ]}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                                <XAxis dataKey="day" axisLine={false} tickLine={false} />
+                                <YAxis domain={[0, 100]} axisLine={false} tickLine={false} />
+                                <Tooltip />
+                                <Legend verticalAlign="top" height={36} />
+                                <Line name="Students %" type="monotone" dataKey="students" stroke="#3d5ee1" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                                <Line name="Teachers %" type="monotone" dataKey="teachers" stroke="#ff9f43" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+
+                <div className="rpt-card">
+                    <div className="rpt-card-header">
+                        <h5 className="rpt-card-title">Class-wise Attendance Today</h5>
+                    </div>
+                    <div className="rpt-chart-body">
+                        <ResponsiveContainer width="100%" height={250}>
+                            <BarChart data={[
+                                { class: 'Class 1', pct: 95 },
+                                { class: 'Class 2', pct: 88 },
+                                { class: 'Class 3', pct: 92 },
+                                { class: 'Class 4', pct: 85 },
+                                { class: 'Class 5', pct: 97 },
+                                { class: 'Class 6', pct: 90 },
+                                { class: 'Class 7', pct: 93 }
+                            ]}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                                <XAxis dataKey="class" axisLine={false} tickLine={false} />
+                                <YAxis domain={[0, 100]} axisLine={false} tickLine={false} />
+                                <Tooltip />
+                                <Bar dataKey="pct" fill="#7367f0" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
                     </div>
                 </div>
             </div>

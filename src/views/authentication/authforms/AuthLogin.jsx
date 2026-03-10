@@ -135,110 +135,106 @@ const AuthLogin = () => {
   };
 
   return (
-    <>
-      <div className="text-center">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/25 mb-4 mx-auto">
-          <IconSchool size={32} className="text-white" />
+    <div className="w-full max-w-md mx-auto">
+      {/* Logo Section */}
+      <div className="flex items-center gap-4 mb-12">
+        <div className="w-14 h-14 bg-slate-900 rounded-xl flex items-center justify-center text-white shadow-lg">
+          <IconSchool size={30} stroke={2} />
         </div>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Sign in to your school portal</p>
+        <div>
+          <h1 className="text-3xl font-black text-slate-800 tracking-tight leading-none uppercase">OUR SCHOOL ERP</h1>
+          <p className="text-[11px] uppercase tracking-[0.2em] font-bold text-slate-500 mt-1">School Management System</p>
+        </div>
       </div>
 
-      <form className="mt-6" onSubmit={handleLogin}>
-        {error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">
-            {error}
-          </div>
-        )}
+      <div>
+        <h2 className="text-[1.7rem] font-bold text-slate-800 mb-8">Login to your account</h2>
 
-        {/* Username */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-            Username
-          </label>
-          <div className="relative">
-            <IconMail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+        <form onSubmit={handleLogin}>
+
+          {/* Username Input */}
+          <div className="flex items-center bg-[#f4f6fa] rounded-2xl px-5 py-3.5 mb-5 shadow-sm">
+            <IconMail size={22} className="text-slate-400 mr-3" />
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter your username"
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all text-sm"
+              placeholder="Username or Email"
+              className="bg-transparent border-none outline-none w-full text-slate-700 font-semibold placeholder-slate-400 text-[15px]"
               disabled={isLoading}
               required
             />
           </div>
-        </div>
 
-        {/* Password */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-            Password
-          </label>
-          <div className="relative">
-            <IconLock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          {/* Password Input */}
+          <div className="flex items-center bg-[#f4f6fa] rounded-2xl px-5 py-3.5 mb-6 shadow-sm">
+            <IconLock size={22} className="text-slate-400 mr-3" />
             <input
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              className="w-full pl-10 pr-11 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all text-sm"
+              placeholder="Password"
+              className="bg-transparent border-none outline-none w-full text-slate-700 font-semibold placeholder-slate-400 text-[15px]"
               disabled={isLoading}
               required
             />
-
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              className="p-1 focus:outline-none text-slate-400 hover:text-slate-600 transition-colors ml-2"
             >
-              {showPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
+              {showPassword ? <IconEyeOff size={20} /> : <IconEye size={20} />}
             </button>
           </div>
-        </div>
 
-        <div className="flex justify-between my-5">
-          <div className="flex items-center gap-2">
-            <Checkbox id="accept" />
-            <Label htmlFor="accept" className="opacity-90 font-normal cursor-pointer">
-              Remember this Device
-            </Label>
-          </div>
-          <Link to={'/auth/auth2/forgot-password'} className="text-primary text-sm font-medium">
-            Forgot Password ?
-          </Link>
-        </div>
+          {/* Extras & Submit */}
+          <div className="flex flex-col gap-6 mb-8">
+            <Link to={'/auth/auth2/forgot-password'} className="text-[14px] font-bold text-slate-500 hover:text-blue-700 w-fit transition-colors">
+              Forget password?
+            </Link>
 
-        <Button
-          type="submit"
-          className="w-full mt-4"
-          disabled={isLoading}
-        >
-          {isLoading ? 'Logging in...' : 'Login'}
-        </Button>
-      </form>
-
-      {/* Quick login buttons (dev only) */}
-      <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-700">
-        <p className="text-xs text-gray-400 dark:text-gray-500 mb-3 text-center">Quick Login (Demo)</p>
-        <div className="grid grid-cols-3 gap-2">
-          {Object.entries(DEMO_USERS).map(([key, demo]) => (
             <button
-              key={key}
-              type="button"
-              onClick={() => quickLogin(key)}
-              className="flex flex-col items-center gap-1 p-2 rounded-lg border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-center"
+              type="submit"
+              disabled={isLoading}
+              className="bg-[#1e3a8a] hover:bg-[#1e40af] text-white rounded-xl py-4 font-bold text-[16px] w-[180px] shadow-lg shadow-blue-900/20 active:scale-95 transition-all flex justify-center items-center"
             >
-              <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
-                <demo.icon size={16} className="text-blue-500" />
-              </div>
-              <span className="text-[10px] font-medium text-gray-600 dark:text-gray-400 leading-tight">
-                {demo.label}
-              </span>
+              {isLoading ? (
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white" />
+              ) : (
+                "Login"
+              )}
             </button>
-          ))}
+          </div>
+
+          {/* Error block */}
+          {error && (
+            <div className="text-red-600 text-[13px] font-bold mt-2 p-3 bg-red-50 rounded-xl border border-red-100 flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
+              {error}
+            </div>
+          )}
+        </form>
+
+        {/* Dev Tools / Quick Login */}
+        <div className="mt-10 pt-8 border-t border-slate-100">
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">Demo Access (Dev Only)</p>
+          <div className="flex flex-wrap gap-3">
+            {Object.entries(DEMO_USERS).map(([key, demo]) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => quickLogin(key)}
+                className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 hover:bg-white hover:shadow-md border border-slate-100 text-sm font-bold text-slate-600 transition-all active:scale-95"
+              >
+                <demo.icon size={16} className="text-[#1e3a8a]" />
+                {demo.label}
+              </button>
+            ))}
+          </div>
         </div>
+
       </div>
-    </>
+    </div>
   );
 };
 

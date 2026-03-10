@@ -26,7 +26,7 @@ const DashboardRedirect = () => {
         return <Navigate to="/school/dashboard" replace />;
     }
 
-    if (roles.includes('branch_admin') || roles.includes('branch_principal')) {
+    if (roles.includes('branch_admin')) {
         return <Navigate to="/school/dashboard" replace />;
     }
 
@@ -36,6 +36,18 @@ const DashboardRedirect = () => {
 
     if (roles.includes('student')) {
         return <Navigate to="/school/student-dashboard" replace />;
+    }
+
+    if (roles.includes('transport_manager')) {
+        return <Navigate to="/school/transport" replace />;
+    }
+
+    if (roles.includes('hostel_warden')) {
+        return <Navigate to="/school/hostel" replace />;
+    }
+
+    if (roles.includes('pro')) {
+        return <Navigate to="/school/dashboard" replace />;
     }
 
     // Default fallback

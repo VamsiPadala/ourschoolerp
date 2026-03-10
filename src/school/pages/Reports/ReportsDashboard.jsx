@@ -10,13 +10,13 @@ import './Reports.css';
 // ─── Dummy Data ───────────────────────────────────────────────────────────────
 const kpiData = [
     { label: 'Total Students', value: '1,248', change: '+4.2%', up: true, color: '#3d5ee1', bg: '#eef1fd', icon: '👨‍🎓' },
-    { label: 'Student Attendance', value: '92.4%', change: '+1.8%', up: true, color: '#28c76f', bg: '#e8faf1', icon: '✅' },
-    { label: 'Income This Month', value: '₹4,82,300', change: '+11.5%', up: true, color: '#ff9f43', bg: '#fff5e6', icon: '💰' },
+    { label: 'New Admissions', value: '150', change: '+12%', up: true, color: '#28c76f', bg: '#e8faf1', icon: '🎓' },
+    { label: 'Left Students', value: '45', change: '-5.1%', up: false, color: '#ea5455', bg: '#fce8e8', icon: '📉' },
+    { label: 'Total Classes', value: '24', change: '0%', up: true, color: '#ff9f43', bg: '#fff5e6', icon: '🏫' },
+    { label: 'Income This Month', value: '₹4,82,300', change: '+11.5%', up: true, color: '#7367f0', bg: '#efedfd', icon: '💰' },
     { label: 'Expense This Month', value: '₹1,23,450', change: '-3.2%', up: false, color: '#ea5455', bg: '#fce8e8', icon: '📉' },
-    { label: 'Total Fees Due', value: '₹8,62,978', change: '-5.1%', up: false, color: '#7367f0', bg: '#efedfd', icon: '🏦' },
     { label: 'Fee Collection Today', value: '₹34,200', change: '+22%', up: true, color: '#00cfe8', bg: '#e0f9fc', icon: '💳' },
-    { label: 'Total Staff', value: '87', change: '+2', up: true, color: '#ff6b6b', bg: '#fff0f0', icon: '👩‍🏫' },
-    { label: 'Staff On Leave', value: '3', change: '-1', up: true, color: '#6c757d', bg: '#f0f0f0', icon: '🏖️' },
+    { label: 'Total Staff', value: '87', change: '+2', up: true, color: '#ff6b6b', bg: '#fff0f0', icon: '👩‍🏫' }
 ];
 
 const monthlyFeeData = [
@@ -134,18 +134,33 @@ const bookInventoryData = [
 ];
 
 const quickReportLinks = {
-    'Academics': [
+    'Student Report': [
         { label: 'Student Report', icon: '👨‍🎓', path: '/school/reports/student', color: '#3d5ee1' },
-        { label: 'Progress Report', icon: '📈', path: '/school/reports/progress-report', color: '#7367f0' },
-        { label: 'Class Report', icon: '🏫', path: '/school/reports/class', color: '#28c76f' },
-        { label: 'Merit Report', icon: '🏆', path: '/school/reports/merit', color: '#ff9f43' },
-        { label: 'Terminal Report', icon: '🖥️', path: '/school/reports/terminal', color: '#00cfe8' },
-        { label: 'Attendance Report', icon: '✅', path: '/school/reports/attendance', color: '#7367f0' },
-        { label: 'Timetable Report', icon: '📅', path: '/school/reports/timetable', color: '#ea5455' },
-        { label: 'Exam Schedule', icon: '📝', path: '/school/reports/exam-schedule', color: '#3d5ee1' },
+        { label: 'Class Strength', icon: '🏫', path: '/school/reports/class-strength', color: '#28c76f' },
+        { label: 'Admission Report', icon: '🎓', path: '/school/reports/admissions', color: '#ff9f43' },
+        { label: 'Left Students', icon: '📉', path: '/school/reports/left-students', color: '#ea5455' },
+        { label: 'Student Movement', icon: '📈', path: '/school/reports/student-movement', color: '#7367f0' },
+    ],
+    'Academics': [
+        { label: 'Attendance Report', icon: '✅', path: '/school/reports/attendance', color: '#00cfe8' },
+        { label: 'Timetable Report', icon: '📅', path: '/school/reports/timetable', color: '#ff6b6b' },
+        { label: 'Certificate Report', icon: '🎓', path: '/school/reports/certificate', color: '#3d5ee1' },
+    ],
+    'Examination': [
+        { label: 'Dashboard Summary', icon: '📊', path: '/school/reports/examinations?tab=summary', color: '#7367f0' },
+        { label: 'Exam Wise Report', icon: '📄', path: '/school/reports/examinations?tab=examwise', color: '#3d5ee1' },
+        { label: 'Class Wise Report', icon: '🏫', path: '/school/reports/examinations?tab=classwise', color: '#28c76f' },
+        { label: 'Subject Wise Report', icon: '🧪', path: '/school/reports/examinations?tab=subjectwise', color: '#ff9f43' },
+        { label: 'Student Progress', icon: '👨‍🎓', path: '/school/reports/examinations?tab=progress', color: '#7367f0' },
+        { label: 'Topper List', icon: '🏆', path: '/school/reports/examinations?tab=toppers', color: '#00cfe8' },
+        { label: 'Fail Students', icon: '📉', path: '/school/reports/examinations?tab=toppers', color: '#ea5455' },
+        { label: 'Marks Distribution', icon: '📈', path: '/school/reports/examinations?tab=summary', color: '#3d5ee1' },
+        { label: 'Multi Exam Comp', icon: '🔄', path: '/school/reports/examinations?tab=multi', color: '#7367f0' },
+        { label: 'Pass Percentage', icon: '✅', path: '/school/reports/examinations?tab=classwise', color: '#28c76f' },
         { label: 'Hall Ticket', icon: '🎫', path: '/school/reports/hall-ticket', color: '#28c76f' },
-        { label: 'Online Exam', icon: '🌐', path: '/school/reports/online-exam', color: '#ff9f43' },
-        { label: 'Certificate Report', icon: '🎓', path: '/school/reports/certificate', color: '#00cfe8' },
+        { label: 'Exam Schedule', icon: '📝', path: '/school/reports/exam-schedule', color: '#3d5ee1' },
+        { label: 'Teacher Analytics', icon: '👩‍🏫', path: '/school/reports/examinations?tab=teacher', color: '#ff9f43' },
+        { label: 'School Analytics', icon: '🏢', path: '/school/reports/examinations?tab=school', color: '#00cfe8' },
     ],
     'Fees & Accounts': [
         { label: 'Fees Report', icon: '💵', path: '/school/reports/fees', color: '#ff9f43' },
@@ -231,7 +246,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 const ReportsDashboard = () => {
-    const [activeTab, setActiveTab] = useState('Academics');
+    const [activeTab, setActiveTab] = useState('Student Report');
     const [activePeriod, setActivePeriod] = useState('This Year');
 
     const tabs = Object.keys(quickReportLinks);

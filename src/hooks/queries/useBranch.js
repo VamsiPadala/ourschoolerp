@@ -43,8 +43,8 @@ import { queryKeys } from '../../lib/query-keys';
 // ── Hooks ──
 
 /**
- * Fetch branch dashboard statistics.
- * Only call this for branch_admin / branch_principal users.
+ * Helper hook to fetch branch profile.
+ * Only call this for branch_admin users.
  */
 export const useBranchStats = (branchId) => {
   return useQuery({
