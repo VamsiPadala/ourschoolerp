@@ -44,7 +44,7 @@ export default defineConfig({
           name: 'load-js-files-as-tsx',
           setup(build) {
             build.onLoad(
-              { filter: /src\\.*\.js$/ },
+              { filter: /src[/\\](.*)\.js$/ },
               async (args) => ({
                 loader: 'tsx',
                 contents: await fs.readFile(args.path, 'utf8'),
@@ -56,7 +56,19 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: 'dist', // ✅ this is required for Netlify
+    outDir: 'dist', 
+    chunkSizeWarningLimit: 1500,
+    rollupOptions: {
+        output: {
+            manualChunks(id) {
+                if (id.includes('node_modules')) {
+                    if (id.includes('@radix-ui') || id.includes('framer-motion')) return 'ui';
+                    if (id.includes('recharts') || id.includes('apexcharts')) return 'charts';
+                    return 'vendor';
+                }
+            }
+        }
+    }
   },
   server: {
     proxy: {
