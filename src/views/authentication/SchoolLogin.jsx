@@ -95,11 +95,15 @@ const SchoolLogin = () => {
         }
       }
 
-      // 1. Authenticate with backend
-      const response = await api.post(loginEndpoint, {
-        username,
-        password
-      }, { params: loginParams });
+      // 1. Authenticate with backend using x-www-form-urlencoded which FastAPI expects
+      const formData = new URLSearchParams();
+      formData.append('username', username);
+      formData.append('password', password);
+
+      const response = await api.post(loginEndpoint, formData, {
+        params: loginParams,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      });
 
       // 2. Save token FIRST — axios interceptor needs it for the /me call
       localStorage.setItem('auth_token', response.access_token);

@@ -61,7 +61,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://ourschoolerp-m9y9k.ondigitalocean.app/',
+        target: 'http://localhost:8000',
         changeOrigin: true,
         secure: false,
       },

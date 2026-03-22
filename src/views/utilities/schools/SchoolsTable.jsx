@@ -131,8 +131,27 @@ export const SchoolsTable = ({
                 size={'sm'}
                 variant={'ghost'}
                 className="size-8! rounded-full hover:bg-lightinfo hover:text-info"
-                onClick={() => window.open(`/school/dashboard?id=${schoolId}`, '_blank')}
-                title="Open school in new tab">
+                onClick={() => {
+                  const school = row.original;
+                  const mockSchoolAdminToken = 'demo-token-school-' + Math.random().toString(36).substr(2);
+                  const mockProfile = {
+                      id: 800 + school.id,
+                      username: (school.code || 'SCH').toLowerCase() + '_admin',
+                      full_name: (school.name || "School") + " Admin",
+                      email: (school.email || "admin@example.com"),
+                      role: 'school_admin',
+                      school_code: (school.code || 'SCH'),
+                      is_first_login: false
+                  };
+  
+                  localStorage.setItem('auth_token', mockSchoolAdminToken);
+                  localStorage.setItem('auth_user', JSON.stringify(mockProfile));
+                  localStorage.setItem('tenant_id', (school.code || 'SCH'));
+                  
+                  // Open school dashboard in NEW TAB
+                  window.open(`/school/dashboard`, '_blank');
+                }}
+                title="Login as School Admin (Demo Mode)">
                 <ExternalLink className="size-5" />
               </Button>
             )}

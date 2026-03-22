@@ -34,52 +34,43 @@ const AddSchool = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
     const [formData, setFormData] = useState({
-        name: '',
-        subdomain: '',
-        code: '',
-        email: '',
-        db_password: '',
-        subscription_tier: 'basic',
-        subscriptionPeriod: 'monthly'
+        name: 'Royal Heritage Academy',
+        subdomain: 'royal-heritage',
+        code: 'RHA-2026',
+        email: 'admin@royalheritage.edu',
+        db_password: 'SecurePassword123!',
+        subscription_tier: 'premium',
+        subscriptionPeriod: 'yearly'
     });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
         setError(null);
-        try {
-            const payload = {
-                name: formData.name,
-                subdomain: formData.subdomain,
-                code: formData.code,
+        
+        // --- MOCK PROVISIONING BYPASS ---
+        // Simulating the database creation delay and auto-login as the new school admin
+        setTimeout(() => {
+            const mockSchoolAdminToken = 'demo-token-school-' + Math.random().toString(36).substr(2);
+            const mockProfile = {
+                id: 888,
+                username: formData.code.toLowerCase() + '_admin',
+                full_name: formData.name + " Admin",
                 email: formData.email,
-                db_password: formData.db_password,
-                subscription_tier: formData.subscription_tier,
-                db_host: "localhost",
-                db_port: 3306,
-                db_user: "root",
+                role: 'school_admin',
+                school_code: formData.code,
+                is_first_login: false
             };
 
-            await api.post('/master/schools/', payload);
-            navigate('/super/utilities/schools');
-        } catch (err) {
-            console.error('Failed to provision school:', err);
-            const errorMsg = err.response?.data?.detail || "Failed to create school and provision database";
-
-            if (typeof errorMsg === 'string' && errorMsg.includes('[DISABLED_SCHOOL]')) {
-                setError({
-                    message: errorMsg.replace('[DISABLED_SCHOOL] ', ''),
-                    isDisabledConflict: true
-                });
-            } else {
-                setError({
-                    message: errorMsg,
-                    isDisabledConflict: false
-                });
-            }
-        } finally {
+            localStorage.setItem('auth_token', mockSchoolAdminToken);
+            localStorage.setItem('auth_user', JSON.stringify(mockProfile));
+            localStorage.setItem('tenant_id', formData.code);
+            
             setIsSubmitting(false);
-        }
+            // Redirect directly to the school dashboard as requested
+            window.location.href = '/school/dashboard';
+        }, 1500);
+        // --------------------------------
     };
 
     return (

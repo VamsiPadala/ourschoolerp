@@ -19,6 +19,12 @@ import { api } from 'src/lib/api-client';
 import { IconSchool, IconBuildingBank, IconUser, IconLock, IconEye, IconEyeOff, IconMail } from '@tabler/icons-react';
 
 const DEMO_USERS = {
+  admin: {
+    username: 'admin',
+    password: 'admin123',
+    label: 'Super Admin',
+    icon: IconSchool,
+  },
   school_admin: {
     username: 'school_admin',
     password: 'admin123',
@@ -68,6 +74,28 @@ const AuthLogin = () => {
     setIsLoading(true);
 
     try {
+      // ── DEMO Bypass ──
+      const isDemoUser = Object.values(DEMO_USERS).find(u => u.username === username && u.password === password);
+      if (isDemoUser) {
+        const demoToken = 'demo-token-' + Math.random().toString(36).substr(2);
+        const demoProfile = {
+          id: 999,
+          username: isDemoUser.username,
+          full_name: isDemoUser.label,
+          email: `${isDemoUser.username}@example.com`,
+          role: isDemoUser.username === 'admin' ? 'super_admin' : (isDemoUser.username === 'school_admin' ? 'school_admin' : 'teacher'),
+          is_first_login: false
+        };
+
+        localStorage.setItem('auth_token', demoToken);
+        localStorage.setItem('auth_user', JSON.stringify(demoProfile));
+        authLogin(demoToken, demoProfile);
+        
+        navigate(demoProfile.role === 'super_admin' ? '/super/dashboard' : '/school/dashboard');
+        return;
+      }
+      // ─────────────────
+
       let loginEndpoint = '/super-admin/login';
       let loginParams = {};
 
@@ -89,10 +117,15 @@ const AuthLogin = () => {
         localStorage.removeItem('tenant_id');
       }
 
-      const response = await api.post(loginEndpoint, {
-        username,
-        password
-      }, { params: loginParams });
+      // Use URLSearchParams for x-www-form-urlencoded which FastAPI expects for OAuth2 login
+      const formData = new URLSearchParams();
+      formData.append('username', username);
+      formData.append('password', password);
+
+      const response = await api.post(loginEndpoint, formData, {
+        params: loginParams,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      });
 
       localStorage.setItem('auth_token', response.access_token);
 
