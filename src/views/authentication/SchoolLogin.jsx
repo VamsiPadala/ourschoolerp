@@ -28,7 +28,7 @@ const DEMO_USERS = {
       role: 'school_admin',
       schoolId: 1,
       role_assignments: [],
-      permissions: ['student.read', 'student.write', 'teacher.read', 'fees.view', 'course.read', 'school.settings', 'users.manage']
+      permissions: ['student_list', 'staff_list', 'fee_reports', 'class_list', 'settings']
     }
   },
   branch_admin: {
@@ -43,7 +43,7 @@ const DEMO_USERS = {
       branchId: 1,
       branchName: 'Main Branch',
       role_assignments: [],
-      permissions: ['student.read', 'attendance.mark', 'teacher.read', 'course.read', 'users.manage']
+      permissions: ['student_list', 'attendance_mark', 'staff_list', 'class_list']
     }
   }
 };

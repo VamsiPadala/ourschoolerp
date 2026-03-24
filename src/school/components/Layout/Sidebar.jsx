@@ -257,7 +257,6 @@ const menuData = [
             {
                 title: 'Finance & Fees',
                 icon: IconCash,
-                permission: 'fees.view',
                 subItems: [
                     { title: 'Fee Type', path: '/school/finance/fee-types' },
                     { title: 'Assign Fee', path: '/school/finance/assign-fees' },
@@ -296,7 +295,6 @@ const menuData = [
             {
                 title: 'Student Information',
                 icon: IconUser,
-                permission: 'student.read',
                 subItems: [
                     { title: 'Student List', path: '/school/student-list' },
                     { title: 'Quick Student Admission', path: '/school/quick-admission' },
@@ -311,28 +309,26 @@ const menuData = [
             {
                 title: 'Teachers',
                 icon: IconUsers,
-                permission: 'teacher.read',
                 subItems: [
-                    { title: 'All Teachers', path: '/school/teachers/all', permission: 'teacher.read' },
-                    { title: 'Teachers List', path: '/school/teachers/list', permission: 'teacher.read' },
-                    { title: 'TimeTable', path: '/school/teachers/routine', permission: 'course.read' },
-                    { title: 'User', path: '/school/teachers/user', permission: 'teacher.read' }
+                    { title: 'All Teachers', path: '/school/teachers/all' },
+                    { title: 'Teachers List', path: '/school/teachers/list' },
+                    { title: 'TimeTable', path: '/school/teachers/routine' },
+                    { title: 'User', path: '/school/teachers/user' }
                 ]
             },
             {
                 title: 'Academics',
                 icon: IconSchool,
-                permission: 'course.read',
                 subItems: [
-                    { title: 'Classes', path: '/school/academics/classes', permission: 'school.settings' },
-                    { title: 'Sections', path: '/school/academics/sections', permission: 'school.settings' },
-                    { title: 'Subjects', path: '/school/academics/subjects', permission: 'course.read' },
-                    { title: 'Assign Subjects', path: '/school/academics/assign-subjects', permission: 'course.write' },
-                    { title: 'Assign Class Teacher', path: '/school/academics/assign-class-teacher', permission: 'school.settings' },
-                    { title: 'Manage Periods', path: '/school/academics/manage-periods', permission: 'school.settings' },
-                    { title: 'Class Timetable', path: '/school/academics/class-timetable', permission: 'course.read' },
-                    { title: 'Promote Students', path: '/school/academics/promote-students', permission: 'student.write' },
-                    { title: 'Homework', path: '/school/academics/homework', permission: 'course.read' }
+                    { title: 'Classes', path: '/school/academics/classes' },
+                    { title: 'Sections', path: '/school/academics/sections' },
+                    { title: 'Subjects', path: '/school/academics/subjects' },
+                    { title: 'Assign Subjects', path: '/school/academics/assign-subjects' },
+                    { title: 'Assign Class Teacher', path: '/school/academics/assign-class-teacher' },
+                    { title: 'Manage Periods', path: '/school/academics/manage-periods' },
+                    { title: 'Class Timetable', path: '/school/academics/class-timetable' },
+                    { title: 'Promote Students', path: '/school/academics/promote-students' },
+                    { title: 'Homework', path: '/school/academics/homework' }
                 ]
             },
 
@@ -357,16 +353,15 @@ const menuData = [
             {
                 title: 'Human Resource',
                 icon: IconBriefcase,
-                permission: 'teacher.read',
                 subItems: [
-                    { title: 'Staff Directory', path: '/school/hr/staff', permission: 'teacher.read' },
-                    { title: 'Staff Attendance', path: '/school/hr/attendance', permission: 'attendance.mark' },
-                    { title: 'Payroll', path: '/school/hr/payroll', permission: 'fees.report' },
-                    { title: 'Set Salary', path: '/school/hr/set-salary', permission: 'school.settings' },
-                    { title: 'Approve Leave Request', path: '/school/hr/leave', permission: 'teacher.read' },
-                    { title: 'Leave Types', path: '/school/hr/leave-types', permission: 'school.settings' },
-                    { title: 'Departments', path: '/school/hr/departments', permission: 'school.settings' },
-                    { title: 'Designations', path: '/school/hr/designations', permission: 'school.settings' }
+                    { title: 'Staff Directory', path: '/school/hr/staff' },
+                    { title: 'Staff Attendance', path: '/school/hr/attendance' },
+                    { title: 'Payroll', path: '/school/hr/payroll' },
+                    { title: 'Set Salary', path: '/school/hr/set-salary' },
+                    { title: 'Approve Leave Request', path: '/school/hr/leave' },
+                    { title: 'Leave Types', path: '/school/hr/leave-types' },
+                    { title: 'Departments', path: '/school/hr/departments' },
+                    { title: 'Designations', path: '/school/hr/designations' }
                 ]
             },
             {
@@ -472,30 +467,29 @@ const menuData = [
             {
                 title: 'System Setting',
                 icon: IconSettings,
-                permission: 'school.settings',
                 subItems: [
-                    { title: 'Manage Branches', path: '/school/settings/branches', permission: 'school.settings' },
-                    { title: 'General Setting', path: '/school/settings/general', permission: 'school.settings' },
-                    { title: 'Session Setting', path: '/school/settings/session', permission: 'school.settings' },
-                    { title: 'Notification Setting', path: '/school/settings/notifications', permission: 'school.settings' },
-                    { title: 'WhatsApp Messaging', path: '/school/settings/whatsapp', permission: 'school.settings' },
-                    { title: 'SMS Setting', path: '/school/settings/sms', permission: 'school.settings' },
-                    { title: 'Email Setting', path: '/school/settings/email', permission: 'school.settings' },
-                    { title: 'Payment Methods', path: '/school/settings/payments', permission: 'school.settings' },
-                    { title: 'Print Header Footer', path: '/school/settings/print', permission: 'school.settings' },
-                    { title: 'Thermal Print', path: '/school/settings/thermal-print', permission: 'school.settings' },
-                    { title: 'Front CMS Setting', path: '/school/settings/cms', permission: 'school.settings' },
-                    { title: 'Roles Permissions', path: '/school/settings/roles', permission: 'roles.manage' },
-                    { title: 'Backup Restore', path: '/school/settings/backup', permission: 'school.settings' },
-                    { title: 'Modules', path: '/school/settings/modules', permission: 'school.settings' },
-                    { title: 'Custom Fields', path: '/school/settings/custom-fields', permission: 'school.settings' },
-                    { title: 'Captcha Setting', path: '/school/settings/captcha', permission: 'school.settings' },
-                    { title: 'System Fields', path: '/school/settings/system-fields', permission: 'school.settings' },
-                    { title: 'Student Profile Update', path: '/school/settings/student-profile', permission: 'school.settings' },
-                    { title: 'Online Admission', path: '/school/settings/admission', permission: 'school.settings' },
-                    { title: 'File Types', path: '/school/settings/file-types', permission: 'school.settings' },
-                    { title: 'Sidebar Menu', path: '/school/settings/sidebar', permission: 'school.settings' },
-                    { title: 'System Update', path: '/school/settings/update', permission: 'school.settings' }
+                    { title: 'Manage Branches', path: '/school/settings/branches', permission: 'settings' },
+                    { title: 'General Setting', path: '/school/settings/general', permission: 'settings' },
+                    { title: 'Session Setting', path: '/school/settings/session', permission: 'settings' },
+                    { title: 'Notification Setting', path: '/school/settings/notifications', permission: 'settings' },
+                    { title: 'WhatsApp Messaging', path: '/school/settings/whatsapp', permission: 'settings' },
+                    { title: 'SMS Setting', path: '/school/settings/sms', permission: 'settings' },
+                    { title: 'Email Setting', path: '/school/settings/email', permission: 'settings' },
+                    { title: 'Payment Methods', path: '/school/settings/payments', permission: 'settings' },
+                    { title: 'Print Header Footer', path: '/school/settings/print', permission: 'settings' },
+                    { title: 'Thermal Print', path: '/school/settings/thermal-print', permission: 'settings' },
+                    { title: 'Front CMS Setting', path: '/school/settings/cms', permission: 'settings' },
+                    { title: 'Roles Permissions', path: '/school/settings/roles', permission: 'settings' },
+                    { title: 'Backup Restore', path: '/school/settings/backup', permission: 'settings' },
+                    { title: 'Modules', path: '/school/settings/modules', permission: 'settings' },
+                    { title: 'Custom Fields', path: '/school/settings/custom-fields', permission: 'settings' },
+                    { title: 'Captcha Setting', path: '/school/settings/captcha', permission: 'settings' },
+                    { title: 'System Fields', path: '/school/settings/system-fields', permission: 'settings' },
+                    { title: 'Student Profile Update', path: '/school/settings/student-profile', permission: 'settings' },
+                    { title: 'Online Admission', path: '/school/settings/admission', permission: 'settings' },
+                    { title: 'File Types', path: '/school/settings/file-types', permission: 'settings' },
+                    { title: 'Sidebar Menu', path: '/school/settings/sidebar', permission: 'settings' },
+                    { title: 'System Update', path: '/school/settings/update', permission: 'settings' }
                 ]
             }
         ]

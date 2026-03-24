@@ -84,6 +84,7 @@ const AuthLogin = () => {
           full_name: isDemoUser.label,
           email: `${isDemoUser.username}@example.com`,
           role: isDemoUser.username === 'admin' ? 'super_admin' : (isDemoUser.username === 'school_admin' ? 'school_admin' : 'teacher'),
+          permissions: isDemoUser.username === 'admin' ? [] : ['student_list', 'staff_list', 'fee_reports', 'class_list', 'settings', 'attendance_mark'],
           is_first_login: false
         };
 
