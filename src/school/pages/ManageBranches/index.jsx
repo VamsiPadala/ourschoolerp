@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { IconBuilding, IconPlus, IconEdit, IconTrash, IconCheck, IconX, IconMapPin, IconPhone, IconUser, IconLoader } from '@tabler/icons-react';
+import { IconBuilding, IconPlus, IconEdit, IconTrash, IconCheck, IconX, IconMapPin, IconPhone, IconUser, IconLoader, IconMail, IconHash, IconArrowsExchange } from '@tabler/icons-react';
 import { useBranch } from '../../../context/BranchContext';
 import useBranches from '../../../hooks/useBranches';
 
-const EMPTY_FORM = { name: '', address: '', city: '', phone: '', principal_name: '', is_active: true };
+const EMPTY_FORM = { name: '', code: '', email: '', address: '', city: '', phone: '', principal_name: '', is_active: true };
 
 const ManageBranches = () => {
     const { activeBranch, setActiveBranch, fetchBranches } = useBranch();
@@ -23,7 +23,20 @@ const ManageBranches = () => {
     };
 
     const openCreate = () => { setForm(EMPTY_FORM); setEditingBranch(null); setShowModal(true); };
-    const openEdit = (b) => { setForm({ name: b.name, address: b.address || '', city: b.city || '', phone: b.phone || '', principal_name: b.principal_name || '', is_active: b.is_active }); setEditingBranch(b); setShowModal(true); };
+    const openEdit = (b) => { 
+        setForm({ 
+            name: b.name, 
+            code: b.code || '', 
+            email: b.email || '',
+            address: b.address || '', 
+            city: b.city || '', 
+            phone: b.phone || '', 
+            principal_name: b.principal_name || '', 
+            is_active: b.is_active 
+        }); 
+        setEditingBranch(b); 
+        setShowModal(true); 
+    };
     const closeModal = () => { setShowModal(false); setEditingBranch(null); };
 
     const handleSave = async () => {
@@ -74,162 +87,243 @@ const ManageBranches = () => {
                 </button>
             </div>
 
-            {/* Branch Cards Grid */}
-            {branches.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '80px 20px' }}>
-                    <div style={{ fontSize: 48, marginBottom: 16 }}>🏫</div>
-                    <div style={{ fontWeight: 700, fontSize: 18, color: '#374151', marginBottom: 8 }}>No branches yet</div>
-                    <div style={{ fontSize: 13, color: '#9ca3af', marginBottom: 24 }}>Click "Add Branch" to create your first campus</div>
-                    <button onClick={openCreate} style={{ padding: '10px 24px', borderRadius: 12, background: '#3D5EE1', border: 'none', color: 'white', fontWeight: 700, cursor: 'pointer' }}>
-                        + Add Branch
-                    </button>
-                </div>
-            ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(320px,1fr))', gap: 20 }}>
-                    {branches.map((b) => {
-                        const isActive = activeBranch?.id === b.id;
-                        return (
-                            <div key={b.id} style={{ background: 'white', borderRadius: 16, boxShadow: isActive ? '0 0 0 2.5px #3D5EE1, 0 8px 32px rgba(61,94,225,0.14)' : '0 4px 20px rgba(0,0,0,0.06)', border: isActive ? '1.5px solid #3D5EE1' : '1px solid #f1f5f9', overflow: 'hidden', position: 'relative', transition: 'all 0.2s' }}>
-                                {/* Top accent */}
-                                <div style={{ height: 4, background: isActive ? 'linear-gradient(90deg,#3D5EE1,#6C49EF)' : '#f1f5f9' }} />
-
-                                {isActive && (
-                                    <div style={{ position: 'absolute', top: 12, right: 12, padding: '3px 10px', borderRadius: 20, background: '#eef2ff', color: '#3D5EE1', fontSize: 10, fontWeight: 800 }}>ACTIVE</div>
-                                )}
-
-                                <div style={{ padding: '20px 20px 16px' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
-                                        <div style={{ width: 44, height: 44, borderRadius: 12, background: isActive ? 'linear-gradient(135deg,#3D5EE1,#6C49EF)' : '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                                            <IconBuilding size={20} color={isActive ? 'white' : '#6b7280'} />
-                                        </div>
-                                        <div>
-                                            <div style={{ fontWeight: 800, fontSize: 16, color: '#1e1b4b' }}>{b.name}</div>
-                                            <div style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 20, background: b.is_active ? '#d1fae5' : '#fee2e2', color: b.is_active ? '#065f46' : '#b91c1c', display: 'inline-block', marginTop: 2 }}>
-                                                {b.is_active ? '● Active' : '● Inactive'}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                                        {b.address && (
-                                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 12, color: '#6b7280' }}>
-                                                <IconMapPin size={14} style={{ flexShrink: 0, marginTop: 1 }} />
-                                                <span>{b.address}{b.city ? `, ${b.city}` : ''}</span>
-                                            </div>
-                                        )}
-                                        {b.phone && (
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#6b7280' }}>
-                                                <IconPhone size={14} /> {b.phone}
-                                            </div>
-                                        )}
-                                        {b.principal_name && (
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#6b7280' }}>
-                                                <IconUser size={14} /> {b.principal_name}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {/* Actions */}
-                                <div style={{ padding: '12px 20px', borderTop: '1px solid #f1f5f9', display: 'flex', gap: 8 }}>
-                                    {!isActive && (
-                                        <button onClick={() => setActiveBranch(b)}
-                                            style={{ flex: 1, padding: '8px', borderRadius: 10, border: '1.5px solid #3D5EE1', background: 'white', color: '#3D5EE1', fontWeight: 700, fontSize: 12, cursor: 'pointer', transition: 'all 0.15s' }}
-                                            onMouseEnter={e => { e.currentTarget.style.background = '#3D5EE1'; e.currentTarget.style.color = 'white'; }}
-                                            onMouseLeave={e => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = '#3D5EE1'; }}>
-                                            Switch to This
-                                        </button>
-                                    )}
-                                    <button onClick={() => openEdit(b)}
-                                        style={{ padding: '8px 14px', borderRadius: 10, border: '1px solid #e5e7eb', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#374151', fontWeight: 600 }}>
-                                        <IconEdit size={14} /> Edit
-                                    </button>
-                                    <button onClick={() => setConfirmDelete(b)}
-                                        style={{ padding: '8px 14px', borderRadius: 10, border: '1px solid #fee2e2', background: '#fff5f5', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#ef4444', fontWeight: 600 }}>
-                                        <IconTrash size={14} /> Delete
-                                    </button>
-                                </div>
-                            </div>
-                        );
-                    })}
+            {/* Quick Switch Row (Easy Switch) */}
+            {branches.length > 0 && (
+                <div style={{ marginBottom: 32, padding: '20px', background: 'white', borderRadius: 20, boxShadow: '0 4px 20px rgba(0,0,0,0.03)', border: '1px solid #f1f5f9' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+                        <IconArrowsExchange size={18} color="#3D5EE1" />
+                        <h3 style={{ fontSize: 14, fontWeight: 800, color: '#1e1b4b', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            Quick Switch Campus
+                        </h3>
+                    </div>
+                    <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 8, scrollbarWidth: 'none' }}>
+                        {branches.map(b => (
+                            <button
+                                key={b.id}
+                                onClick={() => setActiveBranch(b)}
+                                style={{
+                                    padding: '12px 20px',
+                                    borderRadius: 14,
+                                    background: activeBranch?.id === b.id ? 'linear-gradient(135deg,#3D5EE1,#6C49EF)' : '#f8fafc',
+                                    color: activeBranch?.id === b.id ? 'white' : '#475569',
+                                    fontWeight: 700,
+                                    fontSize: 13,
+                                    border: activeBranch?.id === b.id ? 'none' : '1px solid #e2e8f0',
+                                    boxShadow: activeBranch?.id === b.id ? '0 8px 16px rgba(61,94,225,0.25)' : 'none',
+                                    cursor: 'pointer',
+                                    whiteSpace: 'nowrap',
+                                    transition: 'all 0.2s',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 10
+                                }}
+                            >
+                                <IconBuilding size={16} />
+                                {b.name}
+                                {activeBranch?.id === b.id && <IconCheck size={14} />}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             )}
 
+            {/* Branch Details Section Title */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+                <IconBuilding size={20} color="#3D5EE1" />
+                <h2 style={{ fontSize: 18, fontWeight: 800, color: '#1e1b4b', margin: 0 }}>All Active Branches Details</h2>
+            </div>
+
+            {/* Branch Cards Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(340px,1fr))', gap: 24 }}>
+                {/* Create New Branch Interactive Card */}
+                <div 
+                    onClick={openCreate}
+                    style={{ 
+                        background: '#f8fafc', 
+                        borderRadius: 20, 
+                        border: '2px dashed #cbd5e1', 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        cursor: 'pointer',
+                        minHeight: 220,
+                        padding: 30,
+                        transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#3D5EE1'; e.currentTarget.style.background = '#f1f5f9'; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = '#cbd5e1'; e.currentTarget.style.background = '#f8fafc'; }}
+                >
+                    <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'white', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+                        <IconPlus size={28} color="#3D5EE1" />
+                    </div>
+                    <div style={{ fontWeight: 800, fontSize: 16, color: '#1e1b4b' }}>Create New Branch</div>
+                    <div style={{ fontSize: 13, color: '#64748b', marginTop: 6, textAlign: 'center' }}>Add another school campus location to your network</div>
+                </div>
+
+                {branches.map((b) => {
+                    const isActive = activeBranch?.id === b.id;
+                    return (
+                        <div key={b.id} style={{ background: 'white', borderRadius: 20, boxShadow: isActive ? '0 0 0 3px #3D5EE1, 0 12px 40px rgba(61,94,225,0.14)' : '0 10px 30px rgba(0,0,0,0.04)', border: isActive ? 'none' : '1px solid #f1f5f9', overflow: 'hidden', position: 'relative', transition: 'all 0.2s' }}>
+                            {isActive && (
+                                <div style={{ position: 'absolute', top: 16, right: 16, padding: '4px 12px', borderRadius: 20, background: 'linear-gradient(135deg,#3D5EE1,#6C49EF)', color: 'white', fontSize: 10, fontWeight: 900, boxShadow: '0 4px 10px rgba(61,94,225,0.3)' }}>ACTIVE</div>
+                            )}
+
+                            <div style={{ padding: '24px 24px 20px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18 }}>
+                                    <div style={{ width: 52, height: 52, borderRadius: 14, background: isActive ? 'linear-gradient(135deg,#3D5EE1,#6C49EF)' : '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: isActive ? '0 6px 16px rgba(61,94,225,0.2)' : 'none' }}>
+                                        <IconBuilding size={24} color={isActive ? 'white' : '#6b7280'} />
+                                    </div>
+                                    <div>
+                                        <div style={{ fontWeight: 800, fontSize: 18, color: '#1e1b4b' }}>{b.name}</div>
+                                        {b.code && <div style={{ fontSize: 12, fontWeight: 600, color: '#3D5EE1', marginTop: 2 }}>Code: {b.code}</div>}
+                                    </div>
+                                </div>
+
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                                    {b.address && (
+                                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13, color: '#475569' }}>
+                                            <IconMapPin size={16} style={{ flexShrink: 0, marginTop: 2, color: '#94a3b8' }} />
+                                            <span style={{ lineHeight: 1.5 }}>{b.address}{b.city ? `, ${b.city}` : ''}</span>
+                                        </div>
+                                    )}
+                                    {b.phone && (
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: '#475569' }}>
+                                            <IconPhone size={16} color="#94a3b8" /> {b.phone}
+                                        </div>
+                                    )}
+                                    {b.email && (
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: '#475569' }}>
+                                            <IconMail size={16} color="#94a3b8" /> {b.email}
+                                        </div>
+                                    )}
+                                    {b.principal_name && (
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: '#475569' }}>
+                                            <IconUser size={16} color="#94a3b8" /> Principal: {b.principal_name}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Actions area */}
+                            <div style={{ padding: '16px 24px', borderTop: '1px solid #f8fafc', display: 'flex', gap: 10, background: '#fcfdfe' }}>
+                                {!isActive && (
+                                    <button onClick={() => setActiveBranch(b)}
+                                        style={{ flex: 1, padding: '10px', borderRadius: 12, border: '1.5px solid #3D5EE1', background: 'white', color: '#3D5EE1', fontWeight: 700, fontSize: 12, cursor: 'pointer', transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+                                        onMouseEnter={e => { e.currentTarget.style.background = '#3D5EE1'; e.currentTarget.style.color = 'white'; }}
+                                        onMouseLeave={e => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = '#3D5EE1'; }}>
+                                        <IconArrowsExchange size={16} /> Switch
+                                    </button>
+                                )}
+                                <button onClick={() => openEdit(b)}
+                                    style={{ padding: '10px 16px', borderRadius: 12, border: '1px solid #e2e8f0', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#334155', fontWeight: 600 }}>
+                                    <IconEdit size={16} /> Edit
+                                </button>
+                                <button onClick={() => setConfirmDelete(b)}
+                                    style={{ padding: '10px 16px', borderRadius: 12, border: '1px solid #fee2e2', background: '#fff5f5', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#ef4444', fontWeight: 600 }}>
+                                    <IconTrash size={16} />
+                                </button>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+
             {/* Add/Edit Modal */}
             {showModal && (
-                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+                <div style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
                     onClick={e => { if (e.target === e.currentTarget) closeModal(); }}>
-                    <div style={{ background: 'white', borderRadius: 20, boxShadow: '0 24px 64px rgba(0,0,0,0.2)', width: '100%', maxWidth: 520, overflow: 'hidden' }}>
+                    <div style={{ background: 'white', borderRadius: 24, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', width: '100%', maxWidth: 580, overflow: 'hidden' }}>
                         {/* Modal Header */}
-                        <div style={{ padding: '20px 24px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                                <div style={{ width: 36, height: 36, borderRadius: 10, background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <IconBuilding size={18} color="#3D5EE1" />
+                        <div style={{ padding: '24px 28px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                <div style={{ width: 40, height: 40, borderRadius: 12, background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <IconBuilding size={20} color="#3D5EE1" />
                                 </div>
-                                <span style={{ fontWeight: 800, fontSize: 17, color: '#1e1b4b' }}>{editingBranch ? 'Edit Branch' : 'Add New Branch'}</span>
+                                <div>
+                                    <span style={{ fontWeight: 800, fontSize: 18, color: '#1e1b4b', display: 'block' }}>{editingBranch ? 'Edit Campus Branch' : 'Add New Branch'}</span>
+                                    <span style={{ fontSize: 12, color: '#64748b' }}>Enter the details to {editingBranch ? 'update' : 'register'} a school campus</span>
+                                </div>
                             </div>
-                            <button onClick={closeModal} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid #e5e7eb', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <IconX size={16} color="#6b7280" />
+                            <button onClick={closeModal} style={{ width: 36, height: 36, borderRadius: 10, border: '1px solid #e2e8f0', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}>
+                                <IconX size={20} color="#64748b" />
                             </button>
                         </div>
 
-                        {/* Form */}
-                        <div style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 14 }}>
-                            {[
-                                { key: 'name', label: 'Branch Name *', placeholder: 'e.g. Main Campus' },
-                                { key: 'address', label: 'Address', placeholder: 'Street address' },
-                                { key: 'city', label: 'City', placeholder: 'City name' },
-                                { key: 'phone', label: 'Phone', placeholder: '+91 9876543210' },
-                                { key: 'principal_name', label: "Principal's Name", placeholder: 'Full name' },
-                            ].map(f => (
-                                <div key={f.key}>
-                                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#374151', marginBottom: 5 }}>{f.label}</label>
-                                    <input value={form[f.key]} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
-                                        placeholder={f.placeholder}
-                                        style={{ width: '100%', padding: '9px 13px', borderRadius: 10, border: '1.5px solid #e5e7eb', fontSize: 13, outline: 'none', boxSizing: 'border-box', fontFamily: 'inherit', color: '#1f2937', background: 'white' }}
-                                        onFocus={e => e.target.style.borderColor = '#3D5EE1'}
-                                        onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
+                        {/* Form Body - Scrollable Area */}
+                        <div style={{ 
+                            padding: '28px', 
+                            display: 'grid', 
+                            gridTemplateColumns: '1fr 1fr', 
+                            gap: 18, 
+                            maxHeight: 'calc(90vh - 160px)', 
+                            overflowY: 'auto',
+                            scrollbarWidth: 'thin'
+                        }}>
+                            <div style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'column', gap: 18 }}>
+                                {[
+                                    { key: 'name', label: 'Branch Name *', placeholder: 'e.g. Main Campus', full: true, icon: <IconBuilding size={16} /> },
+                                    { key: 'code', label: 'Branch Code', placeholder: 'e.g. MC-001', icon: <IconHash size={16} /> },
+                                    { key: 'email', label: 'Branch Email', placeholder: 'contact@school.com', icon: <IconMail size={16} /> },
+                                    { key: 'address', label: 'Full Address', placeholder: 'Door no, Street, Area', full: true, icon: <IconMapPin size={16} /> },
+                                    { key: 'city', label: 'City', placeholder: 'e.g. Bangalore' },
+                                    { key: 'phone', label: 'Phone Number', placeholder: '+91 98765 43210', icon: <IconPhone size={16} /> },
+                                    { key: 'principal_name', label: "Principal In-Charge", placeholder: 'Full Name', full: true, icon: <IconUser size={16} /> },
+                                ].map(f => (
+                                    <div key={f.key} style={{ gridColumn: f.full ? 'span 2' : 'span 1' }}>
+                                        <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 8 }}>
+                                            {f.icon || <IconBuilding size={16} />} {f.label}
+                                        </label>
+                                        <input value={form[f.key]} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
+                                            placeholder={f.placeholder}
+                                            style={{ width: '100%', padding: '12px 14px', borderRadius: 12, border: '1.5px solid #e2e8f0', fontSize: 14, outline: 'none', boxSizing: 'border-box', fontFamily: 'inherit', color: '#1e1b4b', background: '#f8fafc', transition: 'all 0.2s' }}
+                                            onFocus={e => { e.target.style.borderColor = '#3D5EE1'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(61,94,225,0.1)'; }}
+                                            onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} />
+                                    </div>
+                                ))}
+                            </div>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', gridColumn: 'span 2', background: '#f1f5f9', padding: '12px 16px', borderRadius: 12 }}>
+                                <input type="checkbox" checked={form.is_active} onChange={e => setForm(p => ({ ...p, is_active: e.target.checked }))} style={{ width: 20, height: 20, accentColor: '#3D5EE1' }} />
+                                <div>
+                                    <span style={{ fontSize: 14, fontWeight: 700, color: '#1e1b4b', display: 'block' }}>Mark as Active</span>
+                                    <span style={{ fontSize: 11, color: '#64748b' }}>Inactive branches won't be visible in general selectors</span>
                                 </div>
-                            ))}
-                            <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
-                                <input type="checkbox" checked={form.is_active} onChange={e => setForm(p => ({ ...p, is_active: e.target.checked }))} style={{ width: 16, height: 16, accentColor: '#3D5EE1' }} />
-                                <span style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Branch is Active</span>
                             </label>
                         </div>
 
-                        {/* Modal Footer */}
-                        <div style={{ padding: '16px 24px', borderTop: '1px solid #f1f5f9', display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-                            <button onClick={closeModal} style={{ padding: '9px 20px', borderRadius: 10, border: '1px solid #e5e7eb', background: 'white', fontWeight: 600, fontSize: 13, cursor: 'pointer', color: '#6b7280' }}>
+                        {/* Modal Footer Controls */}
+                        <div style={{ padding: '20px 28px', borderTop: '1px solid #f1f5f9', display: 'flex', gap: 12, justifyContent: 'flex-end', background: '#fcfdfe' }}>
+                            <button onClick={closeModal} style={{ padding: '11px 24px', borderRadius: 12, border: '1px solid #e2e8f0', background: 'white', fontWeight: 600, fontSize: 14, cursor: 'pointer', color: '#64748b', transition: 'all 0.2s' }}>
                                 Cancel
                             </button>
                             <button onClick={handleSave} disabled={saving}
-                                style={{ padding: '9px 24px', borderRadius: 10, border: 'none', background: 'linear-gradient(135deg,#3D5EE1,#6C49EF)', color: 'white', fontWeight: 700, fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, opacity: saving ? 0.7 : 1 }}>
-                                {saving && <IconLoader size={14} />}
-                                {saving ? 'Saving...' : editingBranch ? 'Update Branch' : 'Create Branch'}
+                                style={{ padding: '11px 32px', borderRadius: 12, border: 'none', background: 'linear-gradient(135deg,#3D5EE1,#6C49EF)', color: 'white', fontWeight: 700, fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10, opacity: saving ? 0.7 : 1, boxShadow: '0 4px 12px rgba(61,94,225,0.3)', transition: 'all 0.2s' }}>
+                                {saving && <IconLoader size={18} className="animate-spin" />}
+                                {saving ? 'Saving...' : editingBranch ? 'Update Campus' : 'Register Branch'}
                             </button>
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* Confirm Delete Modal */}
+            {/* Delete Confirmation Modal */}
             {confirmDelete && (
-                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1001, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-                    <div style={{ background: 'white', borderRadius: 16, padding: '28px 28px', maxWidth: 400, width: '100%', boxShadow: '0 24px 64px rgba(0,0,0,0.2)' }}>
-                        <div style={{ width: 52, height: 52, borderRadius: 14, background: '#fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-                            <IconTrash size={24} color="#ef4444" />
+                <div style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(4px)', zIndex: 1001, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+                    <div style={{ background: 'white', borderRadius: 24, padding: '32px', maxWidth: 420, width: '100%', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', textAlign: 'center' }}>
+                        <div style={{ width: 64, height: 64, borderRadius: 20, background: '#fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', boxShadow: '0 8px 16px rgba(239, 68, 68, 0.15)' }}>
+                            <IconTrash size={32} color="#ef4444" />
                         </div>
-                        <h3 style={{ textAlign: 'center', fontSize: 17, fontWeight: 800, color: '#1e1b4b', marginBottom: 8 }}>Delete Branch?</h3>
-                        <p style={{ textAlign: 'center', fontSize: 13, color: '#6b7280', marginBottom: 24 }}>
-                            Are you sure you want to delete <strong>"{confirmDelete.name}"</strong>? This action cannot be undone.
+                        <h3 style={{ fontSize: 20, fontWeight: 800, color: '#1e1b4b', marginBottom: 10 }}>Remove Campus?</h3>
+                        <p style={{ fontSize: 14, color: '#64748b', marginBottom: 28, lineHeight: 1.6 }}>
+                            Are you sure you want to delete <strong>"{confirmDelete.name}"</strong>? This will remove all associated configurations. This action cannot be reversed.
                         </p>
-                        <div style={{ display: 'flex', gap: 10 }}>
-                            <button onClick={() => setConfirmDelete(null)} style={{ flex: 1, padding: '10px', borderRadius: 10, border: '1px solid #e5e7eb', background: 'white', fontWeight: 600, cursor: 'pointer' }}>
-                                Cancel
+                        <div style={{ display: 'flex', gap: 12 }}>
+                            <button onClick={() => setConfirmDelete(null)} style={{ flex: 1, padding: '12px', borderRadius: 12, border: '1px solid #e2e8f0', background: 'white', fontWeight: 600, color: '#64748b', cursor: 'pointer', transition: 'all 0.2s' }}>
+                                Keep Branch
                             </button>
                             <button onClick={() => handleDelete(confirmDelete.id)} disabled={saving}
-                                style={{ flex: 1, padding: '10px', borderRadius: 10, border: 'none', background: '#ef4444', color: 'white', fontWeight: 700, cursor: 'pointer', opacity: saving ? 0.7 : 1 }}>
-                                {saving ? 'Deleting...' : 'Yes, Delete'}
+                                style={{ flex: 1, padding: '12px', borderRadius: 12, border: 'none', background: '#ef4444', color: 'white', fontWeight: 700, cursor: 'pointer', opacity: saving ? 0.7 : 1, transition: 'all 0.2s', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.25)' }}>
+                                {saving ? 'Removing...' : 'Yes, Delete'}
                             </button>
                         </div>
                     </div>

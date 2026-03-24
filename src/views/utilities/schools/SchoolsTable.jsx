@@ -51,6 +51,28 @@ export const SchoolsTable = ({
   const navigate = useNavigate();
   const [globalFilter, setGlobalFilter] = useState('');
   const [sorting, setSorting] = useState([]);
+  
+  const handleSchoolRedirect = (school) => {
+    if (isDisabledView) return;
+    
+    const mockSchoolAdminToken = 'demo-token-school-' + Math.random().toString(36).substr(2);
+    const mockProfile = {
+      id: 800 + school.id,
+      username: (school.code || 'SCH').toLowerCase() + '_admin',
+      full_name: (school.name || "School") + " Admin",
+      email: (school.email || "admin@example.com"),
+      role: 'school_admin',
+      school_code: (school.code || 'SCH'),
+      is_first_login: false
+    };
+
+    localStorage.setItem('auth_token', mockSchoolAdminToken);
+    localStorage.setItem('auth_user', JSON.stringify(mockProfile));
+    localStorage.setItem('tenant_id', (school.code || 'SCH'));
+
+    // Open school dashboard in NEW TAB
+    window.open(`/school/dashboard`, '_blank');
+  };
 
   const renderValue = (val) => {
     if (val === null || val === undefined) return '-';
@@ -131,26 +153,7 @@ export const SchoolsTable = ({
                 size={'sm'}
                 variant={'ghost'}
                 className="size-8! rounded-full hover:bg-lightinfo hover:text-info"
-                onClick={() => {
-                  const school = row.original;
-                  const mockSchoolAdminToken = 'demo-token-school-' + Math.random().toString(36).substr(2);
-                  const mockProfile = {
-                      id: 800 + school.id,
-                      username: (school.code || 'SCH').toLowerCase() + '_admin',
-                      full_name: (school.name || "School") + " Admin",
-                      email: (school.email || "admin@example.com"),
-                      role: 'school_admin',
-                      school_code: (school.code || 'SCH'),
-                      is_first_login: false
-                  };
-  
-                  localStorage.setItem('auth_token', mockSchoolAdminToken);
-                  localStorage.setItem('auth_user', JSON.stringify(mockProfile));
-                  localStorage.setItem('tenant_id', (school.code || 'SCH'));
-                  
-                  // Open school dashboard in NEW TAB
-                  window.open(`/school/dashboard`, '_blank');
-                }}
+                onClick={() => handleSchoolRedirect(row.original)}
                 title="Login as School Admin (Demo Mode)">
                 <ExternalLink className="size-5" />
               </Button>
@@ -335,11 +338,19 @@ export const SchoolsTable = ({
                   {table.getRowModel().rows.length > 0 ?
                     table.getRowModel().rows.map((row) =>
                       <TableRow key={row.id} className="hover:bg-primary/10 transition-colors">
-                        {row.getVisibleCells().map((cell) =>
-                          <TableCell key={cell.id} className="text-gray-700 dark:text-white/70">
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell
+                            key={cell.id}
+                            className={`text-gray-700 dark:text-white/70 ${cell.column.id !== 'action' && !isDisabledView ? 'cursor-pointer hover:text-primary transition-colors' : ''}`}
+                            onClick={() => {
+                              if (cell.column.id !== 'action') {
+                                handleSchoolRedirect(row.original);
+                              }
+                            }}
+                          >
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </TableCell>
-                        )}
+                        ))}
                       </TableRow>
                     ) :
 
